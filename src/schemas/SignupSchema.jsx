@@ -7,10 +7,10 @@ export const signUpSchema = yup.object({
     .string()
     .min(8, "length of password must be minimum 8")
     .required("Please entr your password"),
-  // confirmPassword: yup
-  //   .string()
-  //   .required()
-  //   .oneOf([yup.ref("password"), null], "Password must be same"),
+    confirmPassword: yup
+      .string()
+      .required()
+      .oneOf([yup.ref("password"), null], "Password must be same"),
   // gender: yup
   //   .string()
   //   .required("Please select gender")

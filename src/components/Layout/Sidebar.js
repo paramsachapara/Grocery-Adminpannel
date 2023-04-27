@@ -52,7 +52,8 @@ export default function ClippedDrawer({ children }) {
                   "MANAGE ORDERS",
                   "SWND MAIL",
                   "ADD CATEGORY",
-                  "SIGNUP",
+                  // "SIGNUP",
+                  // "Login"
                 ].map((text, index) => (
                   <ListItem key={text} disablePadding>
                     <ListItemButton>

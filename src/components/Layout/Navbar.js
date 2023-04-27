@@ -22,8 +22,12 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
+import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 
 const pages = ["Add prouct", "Dashboard", "Orderlist"];
 const settings = ["Profile", "Logout"];
@@ -50,12 +54,41 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const [open, setOpen] = React.useState(false);
+
+
+    
+
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+const navigate=useNavigate();
+  const Logout = (setting) => {
+    if(setting==="Logout"){
+      toast.success("Logout Successfully", {
+        position: "bottom-center",
+        duration: 3000,
+      })
+      sessionStorage.clear();
+      navigate("/login");
+    }
+  }
   return (
     <AppBar
       position="fixed"
       color="success"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+    This is a success message!
+  </Alert>
+</Snackbar>
       <Toolbar>
         <ShoppingCartIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
         <Typography
@@ -75,6 +108,9 @@ function Navbar() {
         >
           GROCERY APP
         </Typography>
+        <div>
+          <Toaster />
+        </div>
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <Button
             onClick={() => setOpenDrawer(true)}
@@ -167,11 +203,17 @@ function Navbar() {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            {settings.map((setting) => (
+            {settings.map((setting) => {
+             return (
+             
+                
               <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">{setting}</Typography>
-              </MenuItem>
-            ))}
+                <Typography textAlign="center" onClick={()=>Logout(setting)}>{setting}</Typography>
+                </MenuItem>
+              
+                
+              )}
+            )}
           </Menu>
         </Box>
         <Drawer

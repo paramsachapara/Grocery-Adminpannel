@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Grid,
   Paper,
@@ -8,73 +8,83 @@ import {
   Button,
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import { useFormik } from "formik";
 import { signUpSchema } from "../schemas/SignupSchema";
 import axios from "axios";
+import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const initialValues = {
   first_name: "",
   last_name: "",
   email: "",
   password: "",
-  // confirmPassword: "",
+  confirmPassword: "",
   // gender: "",
 };
 
 function Signup() {
+
+  useEffect(() => {
+    if(sessionStorage.getItem("token")){
+      toast.success("Oops,You Already Login", {
+        position: "bottom-center",
+        duration: 3000,        
+      })
+      navigate("/home");
+    }
+  })
+  const navigate=useNavigate()
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: (values, action) => {
+      let token=sessionStorage.getItem("token");
       console.log(values);
-
-      //  if (!token) {
+      const Obj={
+        first_name:values.first_name,
+        last_name:values.last_name,
+        email:values.email,
+        password:values.confirmPassword,
+      }
+       if (!token) {
       console.log(values);
       const options = {
-        method: "POST",
+        method: "post",
         url: "http://localhost:8080/api/v1/admin/register",
-        data: values,
+        data: Obj,
       };
 
       axios
         .request(options)
         .then(function (login_res) {
           if (login_res) {
-            console.log("login_res.data");
-            sessionStorage.setItem(
-              "token",
-              JSON.stringify(login_res.data.token)
-            );
-            // toast.success("Login Successfully", {
-            //   position: "bottom-center",
-            //   duration: 3000,
-            // });
-            // navigate("/dashboard");
+            console.log("login_res data",login_res);
+            toast.success("Signup Successfully", {
+              position: "bottom-center",
+              duration: 3000,
+            });
+            navigate("/login");
           }
         })
         .catch(function (error) {
           console.error(error);
-          // toast.error(
-          //   error.response.data.message
-          //     ? error.response.data.message
-          //     : "Error With Login",
-          //   {
-          //     position: "bottom-center",
-          //     duration: 3000,
-          //   }
-          // );
+          toast.error(
+            error.response.data.message
+              ? error.response.data.message
+              : "Error With Login",
+            {
+              position: "bottom-center",
+              duration: 3000,
+            }
+          );
         });
       action.resetForm();
-      //  } else {
-      //    toast.error("You are already logged in", {
-      //      position: "bottom-center",
-      //      duration: 3000,
-      //    });
-      //  }
+       } else {
+         toast.error("You are already logged in", {
+           position: "bottom-center",
+           duration: 3000,
+         });
+       }
     },
 
     validationSchema: signUpSchema,
@@ -83,15 +93,18 @@ function Signup() {
   const paperStyle = {
     padding: 20,
     height: "auto",
-    width: "280px",
+    width: "350px",
     margin: "20px auto",
   };
   const avatarStyle = { backgroundColor: "green" };
-  const inputFielsStyle = { margin: "3px 0 0 1px" };
+  const inputFielsStyle = { marginTop: "15px",marginBottom: "15px" };
   const SubmitButtonStyle = { margin: "15px 0 0 0 " };
   return (
     <>
       <Grid>
+      <div>
+        <Toaster />
+      </div>
         <Paper elevation={4} style={paperStyle}>
           <Grid align="center">
             <Avatar style={avatarStyle}>
@@ -106,7 +119,7 @@ function Signup() {
             <TextField
               fullWidth
               style={inputFielsStyle}
-              label="Name"
+              label="First Name"
               name="first_name"
               onChange={formik.handleChange}
               value={formik.values.name}
@@ -117,7 +130,7 @@ function Signup() {
             <TextField
               fullWidth
               style={inputFielsStyle}
-              label="Name"
+              label="Last Name"
               name="last_name"
               onChange={formik.handleChange}
               value={formik.values.name}
@@ -136,32 +149,6 @@ function Signup() {
             {formik.errors.email && formik.touched.email && (
               <div style={{ color: "red" }}>{formik.errors.email}</div>
             )}
-            {/* <FormControl style={inputFielsStyle}>
-              <FormLabel id="demo-controlled-radio-buttons-group">
-                Gender
-              </FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-controlled-radio-buttons-group"
-                name="gender"
-                style={{ display: "initial" }}
-                onChange={formik.handleChange}
-                value={formik.values.gender}
-              >
-                <FormControlLabel
-                  value="female"
-                  control={<Radio />}
-                  label="Female"
-                />
-                <FormControlLabel
-                  value="male"
-                  control={<Radio />}
-                  label="Male"
-                />
-              </RadioGroup>
-            </FormControl>
-            {formik.errors.gender && (
-              <div style={{ color: "red" }}>{formik.errors.gender}</div>
-            )} */}
             <TextField
               fullWidth
               style={inputFielsStyle}
@@ -174,7 +161,7 @@ function Signup() {
             {formik.errors.password && formik.touched.password && (
               <div style={{ color: "red" }}>{formik.errors.password}</div>
             )}
-            {/* <TextField
+            <TextField
               fullWidth
               style={inputFielsStyle}
               label="Confirm Password"
@@ -188,7 +175,7 @@ function Signup() {
                 <div style={{ color: "red" }}>
                   {formik.errors.confirmPassword}
                 </div>
-              )} */}
+              )}
             <Grid align="center">
               <Button
                 type="submit"
@@ -198,6 +185,16 @@ function Signup() {
               >
                 SignUp
               </Button>
+            </Grid>
+            <Grid align="center">
+              <p
+                onClick={() => navigate("/login")}
+                variant="contained"
+                color="primary"
+                style={{ cursor: "pointer" }}
+              >
+               Already have an account? <span style={{color:"blue"}}>Login</span>
+              </p>
             </Grid>
           </form>
         </Paper>
