@@ -1,10 +1,10 @@
 import "./App.css";
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../src/assets/components/Home.js";
-import Signup from "../src/assets/components/Signup";
-import AddProduct from "./assets/components/Products/AddProduct";
-import PrivateComponent from "./PrivateComponent";
+import Home from "./components/Home.js";
+import Signup from './components/Signup'
+import AddProduct from "./components/Products/AddProduct";
+// import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
 
