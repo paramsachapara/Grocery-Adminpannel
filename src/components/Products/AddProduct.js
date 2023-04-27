@@ -1,7 +1,7 @@
 import React from "react";
 import ProductSchema from "../../schemas/AddProductSchema";
 import { useFormik } from "formik";
-import Sidebar from "../Layout/Sidebar";
+import Sidebar from "../../components/Layout/Sidebar";
 
 import {
   TextField,

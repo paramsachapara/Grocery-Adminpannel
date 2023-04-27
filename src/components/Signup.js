@@ -14,22 +14,69 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { useFormik } from "formik";
-import { signUpSchema } from "../schemas";
+import { signUpSchema } from "../schemas/SignupSchema";
+import axios from "axios";
 
 const initialValues = {
-  name: "",
+  first_name: "",
+  last_name: "",
   email: "",
   password: "",
-  confirmPassword: "",
-  gender: "",
+  // confirmPassword: "",
+  // gender: "",
 };
 
 function Signup() {
   const formik = useFormik({
     initialValues: initialValues,
-    onSubmit: (values) => {
+    onSubmit: (values, action) => {
       console.log(values);
+
+      //  if (!token) {
+      console.log(values);
+      const options = {
+        method: "POST",
+        url: "http://localhost:8080/api/v1/admin/register",
+        data: values,
+      };
+
+      axios
+        .request(options)
+        .then(function (login_res) {
+          if (login_res) {
+            console.log("login_res.data");
+            sessionStorage.setItem(
+              "token",
+              JSON.stringify(login_res.data.token)
+            );
+            // toast.success("Login Successfully", {
+            //   position: "bottom-center",
+            //   duration: 3000,
+            // });
+            // navigate("/dashboard");
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+          // toast.error(
+          //   error.response.data.message
+          //     ? error.response.data.message
+          //     : "Error With Login",
+          //   {
+          //     position: "bottom-center",
+          //     duration: 3000,
+          //   }
+          // );
+        });
+      action.resetForm();
+      //  } else {
+      //    toast.error("You are already logged in", {
+      //      position: "bottom-center",
+      //      duration: 3000,
+      //    });
+      //  }
     },
+
     validationSchema: signUpSchema,
   });
 
@@ -60,7 +107,18 @@ function Signup() {
               fullWidth
               style={inputFielsStyle}
               label="Name"
-              name="name"
+              name="first_name"
+              onChange={formik.handleChange}
+              value={formik.values.name}
+            />
+            {formik.errors.name && formik.touched.name && (
+              <div style={{ color: "red" }}>{formik.errors.name}</div>
+            )}
+            <TextField
+              fullWidth
+              style={inputFielsStyle}
+              label="Name"
+              name="last_name"
               onChange={formik.handleChange}
               value={formik.values.name}
             />
@@ -78,7 +136,7 @@ function Signup() {
             {formik.errors.email && formik.touched.email && (
               <div style={{ color: "red" }}>{formik.errors.email}</div>
             )}
-            <FormControl style={inputFielsStyle}>
+            {/* <FormControl style={inputFielsStyle}>
               <FormLabel id="demo-controlled-radio-buttons-group">
                 Gender
               </FormLabel>
@@ -103,7 +161,7 @@ function Signup() {
             </FormControl>
             {formik.errors.gender && (
               <div style={{ color: "red" }}>{formik.errors.gender}</div>
-            )}
+            )} */}
             <TextField
               fullWidth
               style={inputFielsStyle}
@@ -116,7 +174,7 @@ function Signup() {
             {formik.errors.password && formik.touched.password && (
               <div style={{ color: "red" }}>{formik.errors.password}</div>
             )}
-            <TextField
+            {/* <TextField
               fullWidth
               style={inputFielsStyle}
               label="Confirm Password"
@@ -130,7 +188,7 @@ function Signup() {
                 <div style={{ color: "red" }}>
                   {formik.errors.confirmPassword}
                 </div>
-              )}
+              )} */}
             <Grid align="center">
               <Button
                 type="submit"
