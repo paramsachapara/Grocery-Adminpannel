@@ -53,6 +53,7 @@ export default function Orderdetails(){
     const params = useParams();
     const [orderData,setOrderData]=React.useState([])
     const [orderItems,setOrderItems]=React.useState([])
+    // const [customerDetails,setCustomerDetails]=React.useState([])
 
 
     const get_All_Orders=()=>{
@@ -112,9 +113,9 @@ export default function Orderdetails(){
           <Box sx={{ height: "100px" }} />
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
   <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-    <Tab label="Order Items" {...a11yProps(0)} />
-    <Tab label="Item Two" {...a11yProps(1)} />
-    <Tab label="Item Three" {...a11yProps(2)} />
+    <Tab label="Order Items" {...a11yProps(0)} style={{fontWeight:'bolder'}}/>
+    <Tab label="Customer Details" {...a11yProps(1)} style={{fontWeight:'bolder'}} />
+    <Tab label="Customer Address" {...a11yProps(2)} style={{fontWeight:'bolder'}} />
   </Tabs>
 </Box>
 <TabPanel value={value} index={0}>
@@ -142,16 +143,81 @@ export default function Orderdetails(){
               </TableRow>
           ))}
         </TableBody>
-        {/* <TableRow>
-        <TableCell align="center" colSpan={5}>
-              Subtotal :- {orderData ? orderData.sub_total:0}
-            </TableCell>
-        </TableRow> */}
       </Table>
     </TableContainer>
+    <Box sx={{ height: "30px" }} />
+    <Box
+      sx={{
+        width: 300,
+        height: 300,
+        
+      }}
+      >
+<TableContainer component={Paper} >
+      <Table sx={{ minWidth: 270 }} aria-label="customized table" >
+        <TableBody>
+        <TableRow>
+        <TableCell align="left" >
+              Subtotal :-
+            </TableCell>
+        <TableCell align="left" >
+              {orderData ? orderData.sub_total:0}
+            </TableCell>
+        </TableRow>
+        <TableRow>
+        <TableCell align="left" >
+            Tax Amount :- 
+            </TableCell>
+        <TableCell align="left" >
+            {orderData ? orderData.tax_amount:0}
+            </TableCell>
+        </TableRow>
+        <TableRow>
+        <TableCell align="left"  style={{fontWeight:'bolder'}}>
+        Paid Amount :- 
+            </TableCell>
+        <TableCell align="left"  style={{fontWeight:'bolder'}}>
+        {orderData ? orderData.paid_amount:0}
+            </TableCell>
+        </TableRow>  
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </Box>
 </TabPanel>
 <TabPanel value={value} index={1}>
-  Item Two
+<TableContainer component={Paper}>
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            {/* <TableCell style={{fontWeight:'bolder'}} align="left">Sr. No.</TableCell> */}
+            <TableCell style={{fontWeight:'bolder'}} align="left">First Name</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Last Name</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Primary Mobile No.</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Primary Email Id</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Date Of Birth</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Secondary Mobile No.</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Secondary Email Id</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {/* {orderItems.map((row,index) => ( */}
+            <TableRow>
+              
+                <TableCell align="left">{ orderData ?  orderData.customer.first_name : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.last_name : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.primary_mobile_number : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.primary_email : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.date_of_birth : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.secondary_mobile_number : null}</TableCell>
+                <TableCell align="left">{ orderData ?  orderData.customer.secondary_email : null}</TableCell>
+              </TableRow>
+           {/* ))} */}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <Box sx={{ height: "30px" }} />
+
 </TabPanel>
 <TabPanel value={value} index={2}>
   Item Three
