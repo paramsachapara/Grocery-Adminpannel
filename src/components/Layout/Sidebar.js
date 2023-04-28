@@ -52,6 +52,7 @@ export default function ClippedDrawer({ children }) {
                   "MANAGE ORDERS",
                   "SWND MAIL",
                   "ADD CATEGORY",
+                  "Order List"
                   // "SIGNUP",
                   // "Login"
                 ].map((text, index) => (
