@@ -73,7 +73,17 @@ const [orderData,setOrderData]=React.useState([])
                 console.log("Delivered")
               }
             }
-            
+            // console.log("get_Orders_res",get_Orders_res.data.data)
+              get_Orders_res.data.data.sort((a, b) => {
+                if (a.createdAt < b.createdAt) {
+                  return 1;
+                }
+                if (a.createdAt > b.createdAt) {
+                  return -1;
+                }
+                return 0;
+              });
+              // console.log("get_Orders_res",get_Orders_res.data.data)
             setOrderData(get_Orders_res.data.data)
           }
         })
@@ -213,6 +223,9 @@ const [orderData,setOrderData]=React.useState([])
     return (
       <Sidebar>
       <Box sx={{ height: "100px" }} />
+      <Typography  variant="h3" gutterBottom align='center'>
+      Order List
+      </Typography>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
@@ -226,7 +239,7 @@ const [orderData,setOrderData]=React.useState([])
         </TableHead>
         <TableBody>
           {orderData.map((row,index) => (
-            <TableRow key={index} onClick={() => oderDetail(row.id)}>
+            <TableRow key={index} onClick={() => oderDetail(row.id)} style={{cursor:'pointer'}}>
               <TableCell component="th" scope="row" align="left">
                 {index+1}
               </TableCell>

@@ -96,6 +96,10 @@ export default function Orderdetails(){
               
               setOrderData(get_Orders_res.data.data)
               setOrderItems(get_Orders_res.data.data.order_items)
+              console.log("customerDetails",orderData)
+              // customerDetails.push(get_Orders_res.data.data.customer)
+              // setCustomerDetails(customerDetails.push(get_Orders_res.data.data.customer))
+              // console.log("customerDetails",customerDetails)
             }
           })
           .catch(function (error) {
@@ -111,6 +115,9 @@ export default function Orderdetails(){
     return (
         <Sidebar>
           <Box sx={{ height: "100px" }} />
+          <Typography  variant="h3" gutterBottom align='center'>
+      Order Details
+      </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
   <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
     <Tab label="Order Items" {...a11yProps(0)} style={{fontWeight:'bolder'}}/>
@@ -119,6 +126,9 @@ export default function Orderdetails(){
   </Tabs>
 </Box>
 <TabPanel value={value} index={0}>
+<Typography  variant="h4" gutterBottom align='center'>
+      Order Items
+      </Typography>
 <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
@@ -127,6 +137,7 @@ export default function Orderdetails(){
             <TableCell style={{fontWeight:'bolder'}} align="left">Product Name</TableCell>
             <TableCell style={{fontWeight:'bolder'}} align="left">Quantity</TableCell>
             <TableCell style={{fontWeight:'bolder'}} align="left">Product Amount</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Total Product Amount</TableCell>
             <TableCell style={{fontWeight:'bolder'}} align="left">Product Description</TableCell>
           </TableRow>
         </TableHead>
@@ -138,7 +149,8 @@ export default function Orderdetails(){
               </TableCell>
                 <TableCell align="left">{row.product.title}</TableCell>
                 <TableCell align="left">{row.qty}</TableCell>
-                <TableCell align="left">{row.product.amount}</TableCell>
+                <TableCell align="left"> ₹{row.product.amount}</TableCell>
+                <TableCell align="left"> ₹{row.product.amount * row.qty}</TableCell>
                 <TableCell align="left">{row.product.description}</TableCell>
               </TableRow>
           ))}
@@ -161,7 +173,7 @@ export default function Orderdetails(){
               Subtotal :-
             </TableCell>
         <TableCell align="left" >
-              {orderData ? orderData.sub_total:0}
+        ₹{orderData ? orderData.sub_total:0}
             </TableCell>
         </TableRow>
         <TableRow>
@@ -169,7 +181,7 @@ export default function Orderdetails(){
             Tax Amount :- 
             </TableCell>
         <TableCell align="left" >
-            {orderData ? orderData.tax_amount:0}
+        ₹{orderData ? orderData.tax_amount:0}
             </TableCell>
         </TableRow>
         <TableRow>
@@ -177,7 +189,7 @@ export default function Orderdetails(){
         Paid Amount :- 
             </TableCell>
         <TableCell align="left"  style={{fontWeight:'bolder'}}>
-        {orderData ? orderData.paid_amount:0}
+        ₹{orderData ? orderData.paid_amount:0}
             </TableCell>
         </TableRow>  
         </TableBody>
@@ -186,6 +198,9 @@ export default function Orderdetails(){
     </Box>
 </TabPanel>
 <TabPanel value={value} index={1}>
+<Typography  variant="h4" gutterBottom align='center'>
+      Customes Details
+      </Typography>
 <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
@@ -201,16 +216,15 @@ export default function Orderdetails(){
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* {orderItems.map((row,index) => ( */}
+          {/* {customerDetails.map((row,index) => ( */}
             <TableRow>
-              
-                <TableCell align="left">{ orderData ?  orderData.customer.first_name : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.last_name : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.primary_mobile_number : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.primary_email : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.date_of_birth : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.secondary_mobile_number : null}</TableCell>
-                <TableCell align="left">{ orderData ?  orderData.customer.secondary_email : null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.first_name : null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.last_name : null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.primary_mobile_number : null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.primary_email : null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.date_of_birth ? orderData.customer.date_of_birth : '----'  :null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.secondary_mobile_number ? orderData.customer.secondary_mobile_number : '----': null}</TableCell>
+                <TableCell align="left">{ orderData.customer ? orderData.customer.secondary_email? orderData.customer.secondary_email : '----' : null}</TableCell>
               </TableRow>
            {/* ))} */}
         </TableBody>
@@ -220,7 +234,42 @@ export default function Orderdetails(){
 
 </TabPanel>
 <TabPanel value={value} index={2}>
-  Item Three
+<Typography  variant="h4" gutterBottom align='center'>
+      Customer Address
+      </Typography>
+<TableContainer component={Paper}>
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            {/* <TableCell style={{fontWeight:'bolder'}} align="left">Sr. No.</TableCell> */}
+            <TableCell style={{fontWeight:'bolder'}} align="left">Tag</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Address line 1</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Address line 2</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Area</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Country</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">State</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">City</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Landmark</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Postal Code</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {/* {customerDetails.map((row,index) => ( */}
+            <TableRow>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.tag : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.address_line_1 : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.address_line_2 : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.area : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.country : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.state : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.city : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.landmark : null}</TableCell>
+                <TableCell align="left">{ orderData.billing_address ? orderData.billing_address.postal_code : null}</TableCell>
+              </TableRow>
+           {/* ))} */}
+        </TableBody>
+      </Table>
+    </TableContainer>
 </TabPanel>
         </Sidebar>
     )
