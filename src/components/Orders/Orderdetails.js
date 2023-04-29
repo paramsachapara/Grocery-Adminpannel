@@ -12,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { FallingLines } from "react-loader-spinner";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -53,6 +54,8 @@ export default function Orderdetails(){
     const params = useParams();
     const [orderData,setOrderData]=React.useState([])
     const [orderItems,setOrderItems]=React.useState([])
+    const [isLoader,setIsLoader]=React.useState(true)
+
     // const [customerDetails,setCustomerDetails]=React.useState([])
 
 
@@ -73,7 +76,9 @@ export default function Orderdetails(){
     .request(options)
           .then(function (get_Orders_res) {
             if (get_Orders_res) {
-              
+              setTimeout(() => {
+                setIsLoader(false)
+              }, 2000);
               console.log("get_Orders_res",get_Orders_res);
               // allOrdersArr=get_Orders_res.data.data
               // let Date="2023-05-01"
@@ -115,7 +120,27 @@ export default function Orderdetails(){
     return (
         <Sidebar>
           <Box sx={{ height: "100px" }} />
-          <Typography  variant="h3" gutterBottom align='center'>
+
+          {
+        isLoader ? 
+        <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%"
+      }}
+    >
+      <FallingLines
+        color="#4fa94d"
+        width="200"
+        visible={true}
+        ariaLabel='falling-lines-loading'
+      />
+    </div> : 
+
+    <>
+          <Typography  variant="h2" gutterBottom align='center'>
       Order Details
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -271,6 +296,8 @@ export default function Orderdetails(){
       </Table>
     </TableContainer>
 </TabPanel>
+</>
+}
         </Sidebar>
     )
 }

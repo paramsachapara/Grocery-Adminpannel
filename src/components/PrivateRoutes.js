@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 export default function PrivateRoutes(){
   let auth = sessionStorage.getItem('token');
   const [istoast,setIsToast] = useState(false);

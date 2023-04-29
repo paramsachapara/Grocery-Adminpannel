@@ -2,23 +2,17 @@ import React, { useEffect } from "react";
 import Sidebar from '../Layout/Sidebar'
 import TablePagination from '@mui/material/TablePagination';
 import Box from "@mui/material/Box";
-import PropTypes from 'prop-types';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import axios from "axios";
-import { toast } from "react-hot-toast";
-import { styled } from "@mui/styles";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { FallingLines } from "react-loader-spinner";
 
 
 export default function Orderlist() {
@@ -43,12 +37,13 @@ export default function Orderlist() {
   // }));
 
 const [orderData,setOrderData]=React.useState([])
+const [isLoader,setIsLoader]=React.useState(true)
   // let allOrdersArr=[];
   const get_All_Orders=()=>{
     console.log("get_Orders_res");
 
-      let token=JSON.parse(sessionStorage.getItem("token"));
-      if(token){
+    let token=JSON.parse(sessionStorage.getItem("token"));
+    if(token){
   const options = {
     method: "get",
     url: "http://localhost:8080/api/v1/admin/get-all-orders",
@@ -61,7 +56,9 @@ const [orderData,setOrderData]=React.useState([])
   .request(options)
         .then(function (get_Orders_res) {
           if (get_Orders_res) {
-            
+            setTimeout(() => {
+              setIsLoader(false)
+            }, 2000);
             console.log("get_Orders_res",get_Orders_res);
             // allOrdersArr=get_Orders_res.data.data
             // let Date="2023-05-01"
@@ -222,9 +219,30 @@ const [orderData,setOrderData]=React.useState([])
     console.log("Array",Array)
     return (
       <Sidebar>
-      <Box sx={{ height: "100px" }} />
-      <Typography  variant="h3" gutterBottom align='center'>
+        <Box sx={{ height: "100px" }} />
+      {
+        isLoader ? 
+        <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%"
+      }}
+    >
+      <FallingLines
+        color="#4fa94d"
+        width="200"
+        visible={true}
+        ariaLabel='falling-lines-loading'
+      />
+    </div> : 
+      <>
+      {orderData ? <Typography  variant="h2" gutterBottom align='center'>
       Order List
+      </Typography>:null}
+      <Typography  variant="h6" gutterBottom align='right'>
+      Total Orders {orderData.length}  
       </Typography>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -238,7 +256,7 @@ const [orderData,setOrderData]=React.useState([])
           </TableRow>
         </TableHead>
         <TableBody>
-          {orderData.map((row,index) => (
+          {orderData ? orderData.map((row,index) => (
             <TableRow key={index} onClick={() => oderDetail(row.id)} style={{cursor:'pointer'}}>
               <TableCell component="th" scope="row" align="left">
                 {index+1}
@@ -248,7 +266,11 @@ const [orderData,setOrderData]=React.useState([])
               <TableCell align="left">{row.estimate_delivery_date}</TableCell>
               <TableCell align="left">{row.paid_amount}</TableCell>
             </TableRow>
-          ))}
+          )): 
+          <Typography  variant="h4" gutterBottom align='center'>
+      No Orders Are There
+      </Typography>
+          }
         </TableBody>
       </Table>
     </TableContainer>
@@ -260,6 +282,10 @@ const [orderData,setOrderData]=React.useState([])
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      </>
+
+    }
+
     </Sidebar>
     );
   }
