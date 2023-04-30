@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home.js";
 import Signup from './components/Signup'
 import AddProduct from "./components/Products/AddProduct";
+import CustomersDetails from "./components/Customers/CustomersDetails";
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
@@ -15,6 +16,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/customer-details/:customerId" element={<CustomersDetails />} />
+
 
         {/* <Route element={<PrivateComponent />}>
         </Route> */}
