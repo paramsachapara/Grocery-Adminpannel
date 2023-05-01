@@ -101,7 +101,6 @@ const subCategoryValidationSchema = Yup.object().shape({
   categoryName: Yup.string().required("Category Name is required"),
   parentCategory: Yup.string().required("parent Category is required"),
 });
-
 function SubCategory() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -112,9 +111,13 @@ function SubCategory() {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [encryptedId, setEncryptedId] = useState("");
+  const [subCategoryId,setSubCategoryId] = useState(null)
+  const [parentCategory, setParentCategory] = useState('')
+  
   const initialValues = {
     categoryName: "",
-    parentCategory: "",
+    parentCategory:parentCategory,
   };
   const formik = useFormik({
     initialValues: initialValues,
@@ -126,48 +129,103 @@ function SubCategory() {
   });
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - subCategory.length) : 0;
+  page > 0 ? Math.max(0, (1 + page) * rowsPerPage - subCategory.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
+  
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  
 
   useEffect(() => {
     setIde(id);
     console.log(ide);
     axios
-      .get("http://localhost:8080/api/v1/category/get-all-categories")
-      .then((res) => {
+    .get("http://localhost:8080/api/v1/category/get-all-categories")
+    .then((res) => {
         console.log(res.data.data);
         setCategories(res.data.data);
+        const parentCategory=res.data.data.find((res)=>res.id==id);
+        console.log(parentCategory,'pc')
+        setParentCategory(parentCategory.title);
         const subCategories = res.data.data.filter((category) => {
           return category.parent_id == id;
         });
+
         console.log(subCategories, "subCategories");
         setSubCategory(subCategories);
-        // console.log(subCategory)
       })
       .catch((err) => {
         console.log(err);
       });
   }, [id]);
 
-  const [card, setCard] = useState({
-    name: "",
-    description: "",
-  });
-  const handleClick = () => {
+  const handleClick = (title,id,parentId) => {
+    setSubCategoryId(id) 
+    console.log(id,'id')
     setIsEditing(true);
+    formik.setFieldValue('categoryName',title)
+    const parentCategory = categories.find((res)=>res.id==parentId)
+    console.log(parentCategory.title,'parentCategory')
+    formik.setFieldValue('parentCategory',parentCategory.title)
   };
-  console.log(isEditing);
+
   const handleDelete = (title) => {
     console.log(title);
   };
+
+  const updateSubCategory = () =>{
+    let matchedCategory
+    console.log(subCategoryId,'subCadhf')
+    console.log(formik.values.categoryName,'dsafun')
+    if(subCategoryId){
+      matchedCategory = categories.find((res) => res.id == subCategoryId )
+      console.log(JSON.stringify(matchedCategory.parent_id,'asd'),
+      )
+      console.log(matchedCategory,'mat')
+      if(matchedCategory){
+        const values =   {
+          title: formik.values.categoryName,
+          parent_id: JSON.stringify(matchedCategory.parent_id),
+        }
+        const config = {
+          headers: {
+            id: matchedCategory.id,
+          },
+        };
+        if(values){
+          axios
+          .get("http://localhost:8080/api/v1/encryption", config)
+          .then((res) => {
+            
+            const token = JSON.parse(sessionStorage.getItem("token"));
+            axios
+            .put(
+              "http://localhost:8080/api/v1/category/update-category",values,
+              {
+                headers: {
+                  id: res.data.data,
+                  token: token,
+                },
+              }
+              )
+              .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => console.log(err));
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        }
+      }
+    }
+  }
+  
   return (
     <Sidebar>
       {isEditing ? (
@@ -175,24 +233,25 @@ function SubCategory() {
           <form onSubmit={formik.handleSubmit}>
             <Box>
               <Autocomplete
+              disabled
                 id="category"
                 freeSolo
                 options={categories
                   .filter((res) => res.parent_id == null)
                   .map((option) => option.title)}
-                value={value}
-                onChange={(event, newValue) => {
-                  console.log(newValue);
-                  setValue(newValue);
-                }}
-                inputValue={inputValue}
-                onInputChange={(event, newInputValue) => {
-                  setInputValue(newInputValue);
-                }}
-                style={{ width: "50%" }}
-                // onChange={handleParentCategoryChange}
-                renderInput={(params) => (
-                  <TextField {...params} label="Category" />
+                  value={parentCategory}
+                  onChange={(event, newValue) => {
+                    console.log(newValue);
+                    setValue(newValue);
+                  }}
+                  inputValue={inputValue}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                  }}
+                  style={{ width: "50%" }}
+                  // onChange={handleParentCategoryChange}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Category" />
                 )}
               />
             </Box>
@@ -216,15 +275,16 @@ function SubCategory() {
                 sx={{ marginRight: "30px" }}
                 variant="contained"
                 color="success"
+                onClick={updateSubCategory}
               >
-                Add Category
+                Update Category
               </Button>
               <Button
                 variant="contained"
-                onClick={() => setSubCategory(true)}
+                onClick={() => setIsEditing(false)}
                 color="success"
               >
-                Back
+                cancel
               </Button>
             </Box>
           </form>
@@ -263,7 +323,7 @@ function SubCategory() {
                         </Typography>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
-                        <EditIcon onClick={handleClick} />
+                        <EditIcon onClick={()=>handleClick(row.title,row.id,row.parent_id)} />
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
                         <DeleteIcon onClick={() => handleDelete(row.title)} />

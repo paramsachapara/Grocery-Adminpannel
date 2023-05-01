@@ -13,8 +13,9 @@ import SubCategory from "./components/Category/SubCategory";
 import Orderlist from "./components/Orders/Orderlist";
 import Orderdetails from "./components/Orders/Orderdetails";
 import CustomersList from "./components/Customers/CustomersList";
-import AllProduct from "./components/Products/AllProduct";
-import AddProduct from "./components/Products/AddProduct";
+import OrderItems from "./components/Customers/OrderItems";
+import AddProduct from './components/Products/AddProduct'
+import AllProduct from './components/Products/AllProduct'
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
@@ -31,8 +32,12 @@ const App = () => {
           path="/customer-details/:customerId"
           element={<CustomersDetails />}
         />
-        <Route path="/add-category" element={<AddCategory />} />
-        <Route path="add-category/sub-category/:id" element={<SubCategory />} />
+        <Route
+          path="/order-items/:orderId"
+          element={<OrderItems />}
+        />
+         <Route path="/add-category" element={<AddCategory />}/>
+        <Route path="add-category/sub-category/:id" element={<SubCategory/>}/>
         <Route path="/order-list" element={<Orderlist />} />
         <Route path="/order-list/:id" element={<Orderdetails />} />
       </Route>
