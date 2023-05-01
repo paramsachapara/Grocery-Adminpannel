@@ -26,6 +26,7 @@ export default function EditProductForm(props) {
   const { selectedProduct, setOpenEditDialog } = props;
 
   const theme = useTheme();
+  let avatar
 
   const initialValues = {
     title: selectedProduct.title || "",
@@ -34,18 +35,16 @@ export default function EditProductForm(props) {
     amount: selectedProduct.amount || "",
     discount_type: selectedProduct.discount_type || "",
     discount_amount: selectedProduct.discount_amount || 0,
-    avatar_image: selectedProduct.avatar_image || [],
-    categoryArrayFromBody:[1],
+    avatar_image: selectedProduct.avatar_image || {} ,
+    categoryArrayFromBody:[1,2],
   };
 
   // const handleChange = (event, value) => {
   //   formik.setFieldValue("categoryArrayFromBody", value);
   // };
-  const handleImageUpload = (e) => {
-    const files = e.target.files[0];
-    console.log("Files ", files);
-    // const files = e.target.files;
-    formik.setFieldValue("avatar_image", files.name);
+  const handleAvatarChange = (event) => {
+    formik.setFieldValue("avatar_image", event.currentTarget.files[0]);
+  
   };
   const onSubmit = (values) =>{
     console.log("on submit",values)
@@ -62,7 +61,7 @@ export default function EditProductForm(props) {
       .then((res) => {
         // console.log("id", id);
         console.log("Eid", res.data.data);
-     
+       
         axios.put("http://localhost:8080/api/v1/product/update-product",values,{
           headers:{
             token:token,
@@ -81,54 +80,9 @@ export default function EditProductForm(props) {
   }
 
   const formik = useFormik({
-    initialValues: initialValues,onSubmit:onSubmit
-    // onSubmit: (values, action) => {
-    //   let token = sessionStorage.getItem("token");
-    //   console.log(values);
-    //   if (token) {
-    //     console.log(values);
-
-    //     const options = {
-    //       method: "post",
-    //       url: "http://localhost:8080/api/v1/product/update-product",
-
-    //       data: values,
-    //       headers: { token: JSON.parse(token), product_id: encryptedId },
-    //     };
-
-    //     axios
-    //       .request(options)
-    //       .then(function (login_res) {
-    //         if (login_res) {
-    //           console.log("login_res data", login_res);
-    //           toast.success("Signup Successfully", {
-    //             position: "bottom-center",
-    //             duration: 3000,
-    //           });
-    //           // navigate("/login");
-    //         }
-    //       })
-    //       .catch(function (error) {
-    //         console.error(error);
-    //         toast.error(
-    //           error.response.data.message
-    //             ? error.response.data.message
-    //             : "Error With fetching data",
-    //           {
-    //             position: "bottom-center",
-    //             duration: 3000,
-    //           }
-    //         );
-    //       });
-    //     action.resetForm();
-    //   } else {
-    //     toast.error("You are already logged in", {
-    //       position: "bottom-center",
-    //       duration: 3000,
-    //     });
-    //   }
-    // },,
-    ,validationSchema: AddProductSchema,
+    initialValues: initialValues,
+    onSubmit:onSubmit,
+    validationSchema: AddProductSchema,
   });
   const handleCancel = () => {
     setOpenEditDialog(false);
@@ -309,7 +263,7 @@ export default function EditProductForm(props) {
                   label="Product Images"
                   id="avatar_image"
                   autoComplete="off"
-                  onChange={(e) => handleImageUpload(e)}
+                  onChange={handleAvatarChange}
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.discount_amount &&
