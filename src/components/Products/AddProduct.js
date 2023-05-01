@@ -22,32 +22,6 @@ import * as Yup from "yup";
 const theme = createTheme();
 
 export default function AddProduct() {
-  const products = [
-    {
-      id: 1,
-      name: "Product A",
-      description: "This is a sample product description.",
-      price: 29.99,
-      image: "https://via.placeholder.com/150",
-      category: "Category A",
-    },
-    {
-      id: 2,
-      name: "Product B",
-      description: "This is another product description.",
-      price: 19.99,
-      image: "https://via.placeholder.com/150",
-      category: "Category B",
-    },
-    {
-      id: 3,
-      name: "Product C",
-      description: "Yet another product description.",
-      price: 9.99,
-      image: "https://via.placeholder.com/150",
-      category: "Category C",
-    },
-  ];
   const initialValues = {
     title: "",
     short_description: "",
