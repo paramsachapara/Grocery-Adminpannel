@@ -113,17 +113,17 @@ function EnhancedTableHead(props) {
     onRequestSort(event, property);
   };
 
-
   return (
     <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
       <TableRow>
-        <TableCell padding="checkbox">Sr No.</TableCell>
+        <TableCell padding="checkbox"  style={{fontWeight:'bolder',color:'white'}}>Sr No.</TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align="center"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
+            style={{fontWeight:'bolder',color:'white'}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -231,9 +231,9 @@ export default function CustomersList() {
   };
 
   const tableCellStylesForBlocked = {
-    color:'grey',
-    fontWeight:'light',
-  }
+    color: "grey",
+    fontWeight: "light",
+  };
   return originalRows && originalRows.length > 0 ? (
     <Box
       sx={{ width: "100%", marginTop: 15, marginRight: 7, overflowX: "auto" }}
@@ -276,7 +276,7 @@ export default function CustomersList() {
                     key={index}
                     selected={isItemSelected}
                     sx={{
-                      cursor:"pointer",
+                      cursor: "pointer",
                       backgroundColor: row.is_active ? undefined : "#f5f5f5",
                       "&:hover": {
                         backgroundColor: row.is_active
@@ -294,7 +294,12 @@ export default function CustomersList() {
                         }}
                       />
                     </TableCell> */}
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{index + 1}</TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {index + 1}
+                    </TableCell>
 
                     <TableCell
                       component="th"
@@ -302,21 +307,52 @@ export default function CustomersList() {
                       scope="row"
                       padding="none"
                       align="center"
-                      sx={row.is_active?undefined:tableCellStylesForBlocked}
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
                     >
                       {row.username}
                     </TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{row.first_name}</TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{row.last_name}</TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {row.first_name}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {row.last_name}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
                       {row.primary_mobile_number}
                     </TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{row.primary_email}</TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{row.date_of_birth}</TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {row.primary_email}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {row.date_of_birth}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
                       {row.secondary_mobile_number}
                     </TableCell>
-                    <TableCell align="center" sx={row.is_active?undefined:tableCellStylesForBlocked}>{row.secondary_email}</TableCell>
+                    <TableCell
+                      align="center"
+                      sx={row.is_active ? undefined : tableCellStylesForBlocked}
+                    >
+                      {row.secondary_email}
+                    </TableCell>
                     {/* <TableCell align="center">{row.is_active?<CheckIcon/>:<ClearIcon/>}</TableCell> */}
                     {/* <TableCell align="left">
                       {row.addresses.map((address) => {

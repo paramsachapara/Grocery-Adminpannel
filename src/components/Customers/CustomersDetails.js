@@ -153,6 +153,7 @@ function CustomersDetails() {
   return (
     <>
       <Sidebar />
+
       <Box marginTop={5} marginLeft={35} marginRight={10}>
         <Box
           sx={{
@@ -166,7 +167,7 @@ function CustomersDetails() {
               <KeyboardBackspaceIcon />
             </IconButton>
           </Tooltip>
-          <h1>Customer Details</h1>
+          <Box component='h3'>Customer Details</Box>
           <Box>
             <Tooltip title="Edit">
               <IconButton onClick={editCustomer}>
@@ -232,6 +233,8 @@ function CustomersDetails() {
             </TableBody>
           </Table>
         </TableContainer>
+        
+     <OrdersTable userDetails = {userDetails}/>
       </Box>
       <EditCustomerDialog
         openEditCustomer={openEditCustomer}
@@ -260,7 +263,6 @@ function CustomersDetails() {
         handleNo={handleNoForUnblock}
         contentForDeleteDialog="Are you sure you want to Unblock this customer?"
       />
-     
     </>
   );
 }
