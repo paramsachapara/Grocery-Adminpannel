@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home.js";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import AddProduct from "./components/Products/AddProduct";
 import CustomersDetails from "./components/Customers/CustomersDetails";
 import PrivateRoutes from "./components/PrivateRoutes";
 
@@ -14,27 +13,26 @@ import SubCategory from "./components/Category/SubCategory";
 import Orderlist from "./components/Orders/Orderlist";
 import Orderdetails from "./components/Orders/Orderdetails";
 import CustomersList from "./components/Customers/CustomersList";
+import AllProduct from "./components/Products/AllProduct";
+import AddProduct from "./components/Products/AddProduct";
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
 
 const App = () => {
   return (
-
-      <Routes>
-        <Route element={<PrivateRoutes />}>
+    <Routes>
+      <Route element={<PrivateRoutes />}>
         <Route path="/home" element={<Home />} />
         <Route path="/add-product" element={<AddProduct />} />
-        <Route
-          path="/customer-list"
-          element={<CustomersList />}
-        />
+        <Route path="/all-product" element={<AllProduct />}></Route>
+        <Route path="/customer-list" element={<CustomersList />} />
         <Route
           path="/customer-details/:customerId"
           element={<CustomersDetails />}
         />
-         <Route path="/add-category" element={<AddCategory />}/>
-        <Route path="add-category/sub-category/:id" element={<SubCategory/>}/>
+        <Route path="/add-category" element={<AddCategory />} />
+        <Route path="add-category/sub-category/:id" element={<SubCategory />} />
         <Route path="/order-list" element={<Orderlist />} />
         <Route path="/order-list/:id" element={<Orderdetails />} />
       </Route>
@@ -44,11 +42,9 @@ const App = () => {
 
       {/* <Route element={<PrivateComponent />}> */}
 
-
-        {/* <Route element={<PrivateComponent />}>
+      {/* <Route element={<PrivateComponent />}>
         </Route> */}
-      </Routes>
-
+    </Routes>
   );
 };
 

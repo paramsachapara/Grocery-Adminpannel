@@ -1,19 +1,18 @@
 import React, { useEffect } from "react";
-import Sidebar from '../Layout/Sidebar'
-import TablePagination from '@mui/material/TablePagination';
+import Sidebar from "../Layout/Sidebar";
+import TablePagination from "@mui/material/TablePagination";
 import Box from "@mui/material/Box";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FallingLines } from "react-loader-spinner";
-
 
 export default function Orderlist() {
   // const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -25,7 +24,7 @@ export default function Orderlist() {
   //     fontSize: 14,
   //   },
   // }));
-  
+
   // const StyledTableRow = styled(TableRow)(({ theme }) => ({
   //   '&:nth-of-type(odd)': {
   //     backgroundColor: theme.palette.action.hover,
@@ -36,63 +35,63 @@ export default function Orderlist() {
   //   },
   // }));
 
-const [orderData,setOrderData]=React.useState([])
-const [isLoader,setIsLoader]=React.useState(true)
+  const [orderData, setOrderData] = React.useState([]);
+  const [isLoader, setIsLoader] = React.useState(true);
   // let allOrdersArr=[];
-  const get_All_Orders=()=>{
+  const get_All_Orders = () => {
     console.log("get_Orders_res");
 
-    let token=JSON.parse(sessionStorage.getItem("token"));
-    if(token){
-  const options = {
-    method: "get",
-    url: "http://localhost:8080/api/v1/admin/get-all-orders",
-    headers: 
-      {'token': token}
-    
-  };
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    if (token) {
+      const options = {
+        method: "get",
+        url: "http://localhost:8080/api/v1/admin/get-all-orders",
+        headers: { token: token },
+      };
 
-  axios
-  .request(options)
+      axios
+        .request(options)
         .then(function (get_Orders_res) {
           if (get_Orders_res) {
             setTimeout(() => {
-              setIsLoader(false)
+              setIsLoader(false);
             }, 2000);
-            console.log("get_Orders_res",get_Orders_res);
+            console.log("get_Orders_res", get_Orders_res);
             // allOrdersArr=get_Orders_res.data.data
             // let Date="2023-05-01"
-            let orderDate = new Date().toLocaleDateString('en-CA')
-            
-            for(let i=0;i<get_Orders_res.data.data.length;i++){
-              if(get_Orders_res.data.data[i].estimate_delivery_date===orderDate){
-                get_Orders_res.data.data[i].estimate_delivery_date="Delivered"
-                console.log("Delivered")
+            let orderDate = new Date().toLocaleDateString("en-CA");
+
+            for (let i = 0; i < get_Orders_res.data.data.length; i++) {
+              if (
+                get_Orders_res.data.data[i].estimate_delivery_date === orderDate
+              ) {
+                get_Orders_res.data.data[i].estimate_delivery_date =
+                  "Delivered";
+                console.log("Delivered");
               }
             }
             // console.log("get_Orders_res",get_Orders_res.data.data)
-              get_Orders_res.data.data.sort((a, b) => {
-                if (a.createdAt < b.createdAt) {
-                  return 1;
-                }
-                if (a.createdAt > b.createdAt) {
-                  return -1;
-                }
-                return 0;
-              });
-              // console.log("get_Orders_res",get_Orders_res.data.data)
-            setOrderData(get_Orders_res.data.data)
+            get_Orders_res.data.data.sort((a, b) => {
+              if (a.createdAt < b.createdAt) {
+                return 1;
+              }
+              if (a.createdAt > b.createdAt) {
+                return -1;
+              }
+              return 0;
+            });
+            // console.log("get_Orders_res",get_Orders_res.data.data)
+            setOrderData(get_Orders_res.data.data);
           }
         })
         .catch(function (error) {
           console.error(error);
         });
-       
-  }
-  }
-  useEffect(()=>{
-    get_All_Orders()
-},[])
+    }
+  };
+  useEffect(() => {
+    get_All_Orders();
+  }, []);
 
   // const Orders=[
   //   { "id": 1, "name": "John" },
@@ -196,32 +195,31 @@ const [isLoader,setIsLoader]=React.useState(true)
   //   { "id": 99, "name": "Peter" },
   //   { "id": 100, "name": "Simon" }
   // ]
-  
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
-  
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
-    const navigate=useNavigate()
-    const oderDetail=(id)=>{
-      navigate("/order-list/"+id)
-    }
-    const lastPostIndex= (page+1) * rowsPerPage
-    const firstPostIndex=lastPostIndex - rowsPerPage
 
-    const Array=orderData.slice(firstPostIndex,lastPostIndex)
-    console.log("Array",Array)
-    return (
-      <Sidebar>
-        <Box sx={{ height: "100px" }} />
-      {
-        isLoader ? 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const navigate = useNavigate();
+  const oderDetail = (id) => {
+    navigate("/order-list/" + id);
+  };
+  const lastPostIndex = (page + 1) * rowsPerPage;
+  const firstPostIndex = lastPostIndex - rowsPerPage;
+
+  const Array = orderData.slice(firstPostIndex, lastPostIndex);
+  console.log("Array", Array);
+  return (
+    <Sidebar>
+      <Box sx={{ height: "100px" }} />
+      {isLoader ? (
         <div
       style={{
         display: "flex",
@@ -236,7 +234,7 @@ const [isLoader,setIsLoader]=React.useState(true)
         visible={true}
         ariaLabel='falling-lines-loading'
       />
-    </div> : 
+    </div> ) : (
       <>
       {orderData? orderData.length>0 ? 
 <>
@@ -291,13 +289,7 @@ const [isLoader,setIsLoader]=React.useState(true)
           }
           </>
           
-    }
-
+         )}
     </Sidebar>
-    );
-  }
-
-
-
-
-
+  );
+}
