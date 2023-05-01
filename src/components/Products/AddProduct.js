@@ -56,7 +56,7 @@ export default function AddProduct() {
     discount_type: "",
     discount_amount: "",
     avatar_image: [],
-    categoryArrayFromBody: [],
+    categoryArrayFromBody: [2, 4],
   };
   const onSubmit = (values) => {
     console.log(values);
@@ -66,10 +66,9 @@ export default function AddProduct() {
   };
   const handleImageUpload = (e) => {
     const files = e.target.files;
-    formik.setFieldValue("avatar_image", [
-      ...formik.values.avatar_image,
-      ...files,
-    ]);
+    console.log("Files ", files[0].name);
+    // const files = e.target.files;
+    formik.setFieldValue("avatar_image", files[0].name);
   };
   const validationSchema = Yup.object({
     title: Yup.string()
@@ -104,14 +103,17 @@ export default function AddProduct() {
     discount_type: Yup.string()
       .required("Required")
       .max(50, "max 50 characters are allowed"),
-    categoryArrayFromBody: Yup.array()
-      .min(1, "Please select category")
-      .required("Required"),
+    // categoryArrayFromBody: Yup.array()
+    //   .min(1, "Please select category")
+    //   .required("Required"),
   });
 
   const formik = useFormik({
     initialValues,
-    onSubmit,
+    onSubmit: (values, action) => {
+      let token = sessionStorage.getItem("token");
+      console.log("Add produt", values);
+    },
     validationSchema,
   });
   console.log(formik.errors);
@@ -286,7 +288,7 @@ export default function AddProduct() {
                   fullWidth
                   accept="image/*"
                   type="file"
-                  multiple
+                  // multiple
                   name="avatar_image"
                   label="Product Images"
                   id="avatar_image"
@@ -307,7 +309,7 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <Autocomplete
                   multiple
                   required
@@ -337,7 +339,7 @@ export default function AddProduct() {
                       {formik.errors.categoryArrayFromBody}
                     </div>
                   )}
-              </Grid>
+              </Grid> */}
             </Grid>
 
             <Button
