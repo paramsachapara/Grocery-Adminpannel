@@ -33,7 +33,10 @@ export default function AddProduct() {
     categoryArrayFromBody: [2, 4],
   };
   const onSubmit = (values) => {
+    let token = sessionStorage.getItem("token");
     console.log(values);
+    if (token) {
+    }
   };
   const handleChange = (event, value) => {
     formik.setFieldValue("categoryArrayFromBody", value);
