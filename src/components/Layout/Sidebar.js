@@ -52,6 +52,7 @@ export default function ClippedDrawer({ children }) {
                   "MANAGE ORDERS",
                   "ADD CATEGORY",
                   "ORDER LIST",
+                  "CUSTOMER LIST",
                   "LOGOUT",
 
                   // "SIGNUP",
