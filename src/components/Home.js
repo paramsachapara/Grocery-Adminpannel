@@ -11,7 +11,7 @@ export function Home() {
     <>
     <Box sx={{display:'flex'}}>
       <Sidebar></Sidebar>
-      <CustomersList></CustomersList>
+     
     </Box>
     </>
   );

@@ -36,12 +36,12 @@ function CustomersDetails() {
 
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
+    let token = JSON.parse(sessionStorage.getItem('token'))
     if (encryptedId) {
       axios
         .get("http://localhost:8080/api/v1/admin/get-all-orders", {
           headers: {
-            token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyODMzNTA5LCJleHAiOjE2ODI4NzY3MDl9.j4sdWV-B5fPRHqtAa5LVASo1r6QSdV9d_qt0zTXbCYw",
+            token:token,
             customer_id: encryptedId,
           },
         })
@@ -74,11 +74,11 @@ function CustomersDetails() {
   };
   const handleYes = () => {
     if (encryptedId) {
+      let token = JSON.parse(sessionStorage.getItem('token'))
       axios
         .delete("http://localhost:8080/api/v1/admin/delete-customer", {
           headers: {
-            token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyODMzNTA5LCJleHAiOjE2ODI4NzY3MDl9.j4sdWV-B5fPRHqtAa5LVASo1r6QSdV9d_qt0zTXbCYw",
+            token:token,
             customer_id: encryptedId,
           },
         })
@@ -101,12 +101,12 @@ function CustomersDetails() {
     }
   };
   const handleYesForBlock = () => {
+    let token = JSON.parse(sessionStorage.getItem('token'))
     if (encryptedId) {
       axios
         .put("http://localhost:8080/api/v1/admin/block-customer", null, {
           headers: {
-            token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyODMzNTA5LCJleHAiOjE2ODI4NzY3MDl9.j4sdWV-B5fPRHqtAa5LVASo1r6QSdV9d_qt0zTXbCYw",
+            token:token,
             customer_id: encryptedId,
           },
         })
@@ -129,12 +129,12 @@ function CustomersDetails() {
     }
   };
   const handleYesForUnblock = () => {
+    let token = JSON.parse(sessionStorage.getItem('token'))
     if (encryptedId) {
       axios
         .put("http://localhost:8080/api/v1/admin/unblock-customer", null, {
           headers: {
-            token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyODMzNTA5LCJleHAiOjE2ODI4NzY3MDl9.j4sdWV-B5fPRHqtAa5LVASo1r6QSdV9d_qt0zTXbCYw",
+            token:token,
             customer_id: encryptedId,
           },
         })
@@ -163,7 +163,7 @@ function CustomersDetails() {
           }}
         >
           <Tooltip title="Go Back">
-            <IconButton onClick={() => navigate("/")}>
+            <IconButton onClick={() => navigate("/customer-list")}>
               <KeyboardBackspaceIcon />
             </IconButton>
           </Tooltip>

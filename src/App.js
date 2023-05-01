@@ -9,6 +9,7 @@ import CustomersDetails from "./components/Customers/CustomersDetails";
 import PrivateRoutes from "./components/PrivateRoutes";
 import Orderlist from "./components/Orders/Orderlist";
 import Orderdetails from "./components/Orders/Orderdetails";
+import CustomersList from "./components/Customers/CustomersList";
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
@@ -19,6 +20,10 @@ const App = () => {
       <Route element={<PrivateRoutes />}>
         <Route path="/home" element={<Home />} />
         <Route path="/add-product" element={<AddProduct />} />
+        <Route
+          path="/customer-list"
+          element={<CustomersList />}
+        />
         <Route
           path="/customer-details/:customerId"
           element={<CustomersDetails />}
