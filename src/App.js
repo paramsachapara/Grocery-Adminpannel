@@ -6,13 +6,13 @@ import Signup from "./components/Signup";
 import Login from "./components/Login";
 import AddProduct from "./components/Products/AddProduct";
 import PrivateRoutes from "./components/PrivateRoutes";
-<<<<<<< HEAD
+
 import AddCategory from "./components/Category/AddCategory";
 import SubCategory from "./components/Category/SubCategory";
-=======
+
 import Orderlist from "./components/Orders/Orderlist";
 import Orderdetails from "./components/Orders/Orderdetails";
->>>>>>> 8c7269d8ba219d298246fd38178a8f8a0174cc69
+
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
