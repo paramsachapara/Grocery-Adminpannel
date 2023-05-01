@@ -109,7 +109,7 @@ export default function AddProduct() {
           url: "http://localhost:8080/api/v1/product/add-product",
 
           data: initialValues,
-          headers: { token: token },
+          headers: { token: JSON.parse(token) },
         };
 
         axios
@@ -155,7 +155,8 @@ export default function AddProduct() {
         <Sidebar />
         <Box
           sx={{
-            marginTop: 18,
+            marginTop: 8,
+            marginLeft: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -163,7 +164,7 @@ export default function AddProduct() {
         >
           <Box component="form" sx={{ mt: 3 }} onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   autoComplete="off"
                   name="title"
@@ -187,7 +188,7 @@ export default function AddProduct() {
                   </div>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   autoComplete="off"
                   name="short_description"
@@ -212,7 +213,7 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   required
                   fullWidth
@@ -236,7 +237,7 @@ export default function AddProduct() {
                   </div>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   required
                   fullWidth
@@ -260,7 +261,7 @@ export default function AddProduct() {
                   </div>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   required
                   fullWidth
@@ -286,7 +287,7 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   required
                   fullWidth
@@ -312,7 +313,7 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <OutlinedInput
                   required
                   fullWidth
@@ -339,7 +340,7 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={12} md={6} >
                 <FormControl sx={{ width: "100%", maxWidth: 600 }}>
                   <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
                   <Select
@@ -370,8 +371,8 @@ export default function AddProduct() {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
-                {/* <Autocomplete
+                </FormControl> */}
+              {/* <Autocomplete
                   multiple
                   required
                   id="categoryArrayFromBody"
@@ -388,7 +389,7 @@ export default function AddProduct() {
                     />
                   )}
                 /> */}
-                {formik.touched.categoryArrayFromBody &&
+              {/* {formik.touched.categoryArrayFromBody &&
                   formik.errors.categoryArrayFromBody && (
                     <div
                       style={{
@@ -400,7 +401,7 @@ export default function AddProduct() {
                       {formik.errors.categoryArrayFromBody}
                     </div>
                   )}
-              </Grid>
+              </Grid> */}
             </Grid>
 
             <Button
