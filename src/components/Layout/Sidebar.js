@@ -48,10 +48,12 @@ export default function ClippedDrawer({ children }) {
               <List>
                 {[
                   "ADD PRODUCT",
+                  "ALL PRODUCT",
                   "MANAGE ORDERS",
-                  "SWND MAIL",
                   "ADD CATEGORY",
-                  "Order List"
+                  "ORDER LIST",
+                  "LOGOUT",
+
                   // "SIGNUP",
                   // "Login"
                 ].map((text, index) => (
@@ -61,14 +63,14 @@ export default function ClippedDrawer({ children }) {
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
                       <NavLink to={"/" + text.toLowerCase().replace(" ", "-")}>
-                      <ListItemText
-                        primary={text}
-                        // onClick={() => {
+                        <ListItemText
+                          primary={text}
+                          // onClick={() => {
                           // navigate("signup");
                           // navigate("/" + text.toLowerCase().replace(" ", "-"));
-                          
+
                           // }}
-                          />
+                        />
                       </NavLink>
                     </ListItemButton>
                   </ListItem>

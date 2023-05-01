@@ -28,16 +28,13 @@ import MailIcon from "@mui/icons-material/Mail";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 
-const pages = ["Add prouct", "Dashboard", "Orderlist"];
+const pages = ["Dashboard", "ORDER LIST", "All PRODUCT"];
 const settings = ["Profile", "Logout"];
 
 function Navbar() {
-
-
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
-
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -53,30 +50,26 @@ function Navbar() {
 
   const [open, setOpen] = React.useState(false);
 
-
-    
-
-
   const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
     setOpen(false);
   };
-const navigate=useNavigate();
+  const navigate = useNavigate();
   const Logout = (setting) => {
-    if(setting==="Logout"){
+    if (setting === "Logout") {
       toast.success("Logout Successfully", {
         position: "bottom-center",
         duration: 3000,
-      })
+      });
       sessionStorage.clear();
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/login");
-      },1500)
+      }, 1500);
     }
-  }
+  };
   return (
     <AppBar
       position="fixed"
@@ -84,10 +77,10 @@ const navigate=useNavigate();
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-  <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-    This is a success message!
-  </Alert>
-</Snackbar>
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          This is a success message!
+        </Alert>
+      </Snackbar>
       <Toolbar>
         <ShoppingCartIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
         <Typography
@@ -203,16 +196,17 @@ const navigate=useNavigate();
             onClose={handleCloseUserMenu}
           >
             {settings.map((setting) => {
-             return (
-             
-                
-              <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                <Typography textAlign="center" onClick={()=>Logout(setting)}>{setting}</Typography>
+              return (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography
+                    textAlign="center"
+                    onClick={() => Logout(setting)}
+                  >
+                    {setting}
+                  </Typography>
                 </MenuItem>
-              
-                
-              )}
-            )}
+              );
+            })}
           </Menu>
         </Box>
         <Drawer
@@ -225,10 +219,11 @@ const navigate=useNavigate();
             <List>
               {[
                 "ADD PRODUCT",
+                "ALL PRODUCT",
                 "MANAGE ORDERS",
-                "SWND MAIL",
                 "ADD CATEGORY",
-                "SIGNUP",
+                "ORDER LIST",
+                "LOGOUT",
               ].map((text, index) => (
                 <ListItem key={text} disablePadding>
                   <ListItemButton>

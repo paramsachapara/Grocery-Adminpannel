@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home.js";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import AddProduct from "./components/Products/AddProduct";
 import CustomersDetails from "./components/Customers/CustomersDetails";
 import PrivateRoutes from "./components/PrivateRoutes";
 
@@ -21,15 +20,12 @@ import OrderItems from "./components/Customers/OrderItems";
 
 const App = () => {
   return (
-
-      <Routes>
-        <Route element={<PrivateRoutes />}>
+    <Routes>
+      <Route element={<PrivateRoutes />}>
         <Route path="/home" element={<Home />} />
         <Route path="/add-product" element={<AddProduct />} />
-        <Route
-          path="/customer-list"
-          element={<CustomersList />}
-        />
+        <Route path="/all-product" element={<AllProduct />}></Route>
+        <Route path="/customer-list" element={<CustomersList />} />
         <Route
           path="/customer-details/:customerId"
           element={<CustomersDetails />}
@@ -49,11 +45,9 @@ const App = () => {
 
       {/* <Route element={<PrivateComponent />}> */}
 
-
-        {/* <Route element={<PrivateComponent />}>
+      {/* <Route element={<PrivateComponent />}>
         </Route> */}
-      </Routes>
-
+    </Routes>
   );
 };
 

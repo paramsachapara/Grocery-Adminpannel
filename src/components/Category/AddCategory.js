@@ -100,10 +100,6 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-  return { name, calories, fat };
-}
-
 function AddCategory() {
   const [subCategory, setSubCategory] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -167,7 +163,6 @@ function AddCategory() {
     axios
       .get("http://localhost:8080/api/v1/encryption", config)
       .then((res) => {
-        setEncryptedId(res.data.data);
         const token = JSON.parse(sessionStorage.getItem("token"));
         axios
           .put(
@@ -178,7 +173,7 @@ function AddCategory() {
             },
             {
               headers: {
-                id: encryptedId,
+                id: res.data.data,
                 token: token,
               },
             }
@@ -193,6 +188,8 @@ function AddCategory() {
         console.log(err);
       });
   };
+
+  
   const handleDelete = (title) => {
     console.log(title);
     let matchedCategory = categories.find((res) => res.title == title);
@@ -290,6 +287,7 @@ function AddCategory() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  
   return (
     <>
       {subCategory ? (
@@ -500,5 +498,4 @@ function AddCategory() {
     </>
   );
 }
-
 export default AddCategory;
