@@ -14,6 +14,8 @@ import Orderlist from "./components/Orders/Orderlist";
 import Orderdetails from "./components/Orders/Orderdetails";
 import CustomersList from "./components/Customers/CustomersList";
 import OrderItems from "./components/Customers/OrderItems";
+import AddProduct from './components/Products/AddProduct'
+import AllProduct from './components/Products/AllProduct'
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
