@@ -57,7 +57,9 @@ if(!token){
               "token",
               JSON.stringify(login_res.data.data.token)
             );
-            navigate("/home");
+            setTimeout(()=>{
+              navigate("/home");
+            },1500)
           }
         })
         .catch(function (error) {
