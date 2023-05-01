@@ -221,96 +221,75 @@ export default function Orderlist() {
       <Box sx={{ height: "100px" }} />
       {isLoader ? (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
-        >
-          <FallingLines
-            color="#4fa94d"
-            width="200"
-            visible={true}
-            ariaLabel="falling-lines-loading"
-          />
-        </div>
-      ) : (
-        <>
-          {orderData ? (
-            <Typography variant="h2" gutterBottom align="center">
-              Order List
-            </Typography>
-          ) : null}
-          <Typography variant="h6" gutterBottom align="right">
-            Total Orders {orderData.length}
-          </Typography>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ fontWeight: "bolder" }} align="left">
-                    Sr. No.
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bolder" }} align="left">
-                    Username
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bolder" }} align="left">
-                    Order Date
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bolder" }} align="left">
-                    Estimate Delivery Date
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bolder" }} align="left">
-                    Paid Amount
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {orderData ? (
-                  orderData.length ? (
-                    orderData.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        onClick={() => oderDetail(row.id)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <TableCell component="th" scope="row" align="left">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell align="left">
-                          {row.customer.username}
-                        </TableCell>
-                        <TableCell align="left">{row.order_date}</TableCell>
-                        <TableCell align="left">
-                          {row.estimate_delivery_date}
-                        </TableCell>
-                        <TableCell align="left">{row.paid_amount}</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <Typography variant="h4" gutterBottom align="center">
-                      No Orders Are There
-                    </Typography>
-                  )
-                ) : (
-                  <Typography variant="h4" gutterBottom align="center">
-                    No Orders Are There
-                  </Typography>
-                )}
-              </TableBody>
-            </Table>
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%"
+      }}
+    >
+      <FallingLines
+        color="#4fa94d"
+        width="200"
+        visible={true}
+        ariaLabel='falling-lines-loading'
+      />
+    </div> ) : (
+      <>
+      {orderData? orderData.length>0 ? 
+<>
+        {orderData ? <Typography  variant="h2" gutterBottom align='center'>
+      Order List
+      </Typography>:null}
+      <Typography  variant="h6" gutterBottom align='right'>
+      Total Orders {orderData.length}  
+      </Typography>
+      <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Sr. No.</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Username</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Order Date</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Estimate Delivery Date</TableCell>
+            <TableCell style={{fontWeight:'bolder'}} align="left">Paid Amount</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {orderData ? orderData.map((row,index) => (
+            <TableRow key={index} onClick={() => oderDetail(row.id)} style={{cursor:'pointer'}}>
+              <TableCell component="th" scope="row" align="left">
+                {index+1}
+              </TableCell>
+              <TableCell align="left">{row.customer.username}</TableCell>
+              <TableCell align="left">{row.order_date}</TableCell>
+              <TableCell align="left">{row.estimate_delivery_date}</TableCell>
+              <TableCell align="left">{row.paid_amount}</TableCell>
+            </TableRow>
+          ))
+          : 
+          null}
+          </TableBody>
+          </Table>
           </TableContainer>
           <TablePagination
-            component="div"
-            count={orderData.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+          component="div"
+          count={orderData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </>
-      )}
+          </>
+        : 
+        <Typography  variant="h4" gutterBottom align='center'>
+        No Orders Are There
+        </Typography>
+          :null  
+          }
+          </>
+          
+         )}
     </Sidebar>
   );
 }
