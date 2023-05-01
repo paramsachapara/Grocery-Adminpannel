@@ -26,6 +26,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
+import AddProductSchema from "../../schemas/AddProductSchema";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -95,43 +96,6 @@ export default function AddProduct() {
     // const files = e.target.files;
     formik.setFieldValue("avatar_image", files[0].name);
   };
-  const validationSchema = Yup.object({
-    title: Yup.string()
-      .required("Required")
-      .max(20, "max 20 characters allowed"),
-    short_description: Yup.string()
-      .required("Required")
-      .max(20, "max 20 characters allowed"),
-    description: Yup.string()
-      .required("Required")
-      .max(50, "max 50 characters are allowed"),
-    amount: Yup.string()
-      .required("Required")
-      .test("is-valid-price", "Please enter a valid price", function (value) {
-        const { path, createError } = this;
-        const parsedValue = parseFloat(value);
-        if (isNaN(parsedValue)) {
-          return createError({ path, message: "Please enter a valid price" });
-        }
-        return true;
-      }),
-    discount_amount: Yup.string()
-      .required("Required")
-      .test("is-valid-price", "Please enter a valid price", function (value) {
-        const { path, createError } = this;
-        const parsedValue = parseFloat(value);
-        if (isNaN(parsedValue)) {
-          return createError({ path, message: "Please enter a valid price" });
-        }
-        return true;
-      }),
-    discount_type: Yup.string()
-      .required("Required")
-      .max(50, "max 50 characters are allowed"),
-    // categoryArrayFromBody: Yup.array()
-    //   .min(1, "Please select category")
-    //   .required("Required"),
-  });
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -143,7 +107,8 @@ export default function AddProduct() {
         const options = {
           method: "post",
           url: "http://localhost:8080/api/v1/product/add-product",
-          data: initialValues,
+          data: values,
+          headers: { token: token },
         };
 
         axios
@@ -163,7 +128,7 @@ export default function AddProduct() {
             toast.error(
               error.response.data.message
                 ? error.response.data.message
-                : "Error With Login",
+                : "Error With fetching data",
               {
                 position: "bottom-center",
                 duration: 3000,
@@ -178,7 +143,7 @@ export default function AddProduct() {
         });
       }
     },
-    validationSchema,
+    validationSchema: AddProductSchema,
   });
   console.log(formik.errors);
   return (
