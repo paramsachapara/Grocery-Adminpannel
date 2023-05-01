@@ -21,8 +21,9 @@ import { Tooltip } from "@mui/material";
 import SuccessToast from "../../utils/SuccessToast";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import OrdersTable from "./OrdersTable";
-import HomeIcon from '@mui/icons-material/Home';
-import BusinessIcon from '@mui/icons-material/Business';
+import HomeIcon from "@mui/icons-material/Home";
+import BusinessIcon from "@mui/icons-material/Business";
+import { color } from "@mui/system";
 
 function CustomersDetails() {
   const { customerId } = useParams();
@@ -38,12 +39,12 @@ function CustomersDetails() {
 
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
-    let token = JSON.parse(sessionStorage.getItem('token'))
+    let token = JSON.parse(sessionStorage.getItem("token"));
     if (encryptedId && token) {
       axios
         .get("http://localhost:8080/api/v1/admin/get-all-orders-by-id", {
           headers: {
-            token:token,
+            token: token,
             customer_id: encryptedId,
           },
         })
@@ -75,12 +76,12 @@ function CustomersDetails() {
     }
   };
   const handleYes = () => {
-    let token = JSON.parse(sessionStorage.getItem('token'))
+    let token = JSON.parse(sessionStorage.getItem("token"));
     if (encryptedId && token) {
       axios
         .delete("http://localhost:8080/api/v1/admin/delete-customer", {
           headers: {
-            token:token,
+            token: token,
             customer_id: encryptedId,
           },
         })
@@ -103,12 +104,12 @@ function CustomersDetails() {
     }
   };
   const handleYesForBlock = () => {
-    let token = JSON.parse(sessionStorage.getItem('token'))
+    let token = JSON.parse(sessionStorage.getItem("token"));
     if (encryptedId && token) {
       axios
         .put("http://localhost:8080/api/v1/admin/block-customer", null, {
           headers: {
-            token:token,
+            token: token,
             customer_id: encryptedId,
           },
         })
@@ -131,12 +132,12 @@ function CustomersDetails() {
     }
   };
   const handleYesForUnblock = () => {
-    let token = JSON.parse(sessionStorage.getItem('token'))
+    let token = JSON.parse(sessionStorage.getItem("token"));
     if (encryptedId && token) {
       axios
         .put("http://localhost:8080/api/v1/admin/unblock-customer", null, {
           headers: {
-            token:token,
+            token: token,
             customer_id: encryptedId,
           },
         })
@@ -169,7 +170,7 @@ function CustomersDetails() {
               <KeyboardBackspaceIcon />
             </IconButton>
           </Tooltip>
-          <Box component='h3'>Customer Details</Box>
+          <Box component="h3">Customer Details</Box>
           <Box>
             <Tooltip title="Edit">
               <IconButton onClick={editCustomer}>
@@ -218,7 +219,9 @@ function CustomersDetails() {
               </TableRow>
               <TableRow>
                 <TableCell>Mobile Number</TableCell>
-                <TableCell align="right">{userDetails.primary_mobile_number}</TableCell>
+                <TableCell align="right">
+                  {userDetails.primary_mobile_number}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Email </TableCell>
@@ -226,48 +229,66 @@ function CustomersDetails() {
               </TableRow>
               <TableRow>
                 <TableCell>Secondary Mobile Number </TableCell>
-                <TableCell align="right">{userDetails.secondary_mobile_number}</TableCell>
+                <TableCell align="right">
+                  {userDetails.secondary_mobile_number}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Secondary email </TableCell>
-                <TableCell align="right">{userDetails.secondary_email}</TableCell>
+                <TableCell align="right">
+                  {userDetails.secondary_email}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Addresses </TableCell>
                 <TableCell align="right">
-  {userDetails.addresses &&
-    userDetails.addresses.map((address) => {
-      return (
-        <ul style={{ listStyle: 'none', display: 'inline-flex' }}  key={address.id}>
-          <li style={{ display: 'flex', alignItems: 'center' }} key={address.id}>
-           {address.tag==='home' ? <HomeIcon style={{ marginRight: '5px' }} />:<BusinessIcon style={{ marginRight: '5px' }} />}
-            {address.address_line_1 +
-              ',' +
-              address.address_line_2 +
-              ',' +
-              address.area +
-              ',' +
-              address.city +
-              '-' +
-              address.postal_code +
-              ',' +
-              address.state +
-              ',' +
-              address.country +
-              ',' +
-              address.landmark}
-          </li>
-        </ul>
-      );
-    })}
-</TableCell>
-
+                  {userDetails.addresses &&
+                  userDetails.addresses.length == 0 ? (
+                    <span style={{ color: "red" }}>No address found</span>
+                  ) : (
+                    userDetails.addresses &&
+                    userDetails.addresses.map((address) => {
+                      return (
+                        <ul
+                          style={{ listStyle: "none", display: "inline-flex" }}
+                          key={address.id}
+                        >
+                          <li
+                            style={{ display: "flex", alignItems: "center" }}
+                            key={address.id}
+                          >
+                            {address.tag === "home" ? (
+                              <HomeIcon style={{ marginRight: "5px" }} />
+                            ) : (
+                              <BusinessIcon style={{ marginRight: "5px" }} />
+                            )}
+                            {address.address_line_1 +
+                              "," +
+                              address.address_line_2 +
+                              "," +
+                              address.area +
+                              "," +
+                              address.city +
+                              "-" +
+                              address.postal_code +
+                              "," +
+                              address.state +
+                              "," +
+                              address.country +
+                              "," +
+                              address.landmark}
+                          </li>
+                        </ul>
+                      );
+                    })
+                  )}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
-        
-     <OrdersTable userDetails = {userDetails}/>
+
+        <OrdersTable userDetails={userDetails} />
       </Box>
       <EditCustomerDialog
         openEditCustomer={openEditCustomer}
