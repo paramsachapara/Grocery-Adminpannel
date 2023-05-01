@@ -51,7 +51,7 @@ export default function AddProduct() {
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: (values, action) => {
-      let token = sessionStorage.getItem("token");
+      let token = JSON.parse(sessionStorage.getItem("token"));
       console.log(values);
       if (token) {
         console.log(values);

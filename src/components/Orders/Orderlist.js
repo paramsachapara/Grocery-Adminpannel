@@ -46,7 +46,7 @@ export default function Orderlist() {
       const options = {
         method: "get",
         url: "http://localhost:8080/api/v1/admin/get-all-orders",
-        headers: { token: token },
+        headers: { 'token': token },
       };
 
       axios
