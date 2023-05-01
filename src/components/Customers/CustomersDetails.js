@@ -21,6 +21,8 @@ import { Tooltip } from "@mui/material";
 import SuccessToast from "../../utils/SuccessToast";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import OrdersTable from "./OrdersTable";
+import HomeIcon from '@mui/icons-material/Home';
+import BusinessIcon from '@mui/icons-material/Business';
 
 function CustomersDetails() {
   const { customerId } = useParams();
@@ -37,9 +39,9 @@ function CustomersDetails() {
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
     let token = JSON.parse(sessionStorage.getItem('token'))
-    if (encryptedId) {
+    if (encryptedId && token) {
       axios
-        .get("http://localhost:8080/api/v1/admin/get-all-orders", {
+        .get("http://localhost:8080/api/v1/admin/get-all-orders-by-id", {
           headers: {
             token:token,
             customer_id: encryptedId,
@@ -47,7 +49,7 @@ function CustomersDetails() {
         })
         .then((res) => {
           setUserDetails(res.data.data);
-          console.log(userDetails);
+          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error, "error");
@@ -73,8 +75,8 @@ function CustomersDetails() {
     }
   };
   const handleYes = () => {
-    if (encryptedId) {
-      let token = JSON.parse(sessionStorage.getItem('token'))
+    let token = JSON.parse(sessionStorage.getItem('token'))
+    if (encryptedId && token) {
       axios
         .delete("http://localhost:8080/api/v1/admin/delete-customer", {
           headers: {
@@ -102,7 +104,7 @@ function CustomersDetails() {
   };
   const handleYesForBlock = () => {
     let token = JSON.parse(sessionStorage.getItem('token'))
-    if (encryptedId) {
+    if (encryptedId && token) {
       axios
         .put("http://localhost:8080/api/v1/admin/block-customer", null, {
           headers: {
@@ -130,7 +132,7 @@ function CustomersDetails() {
   };
   const handleYesForUnblock = () => {
     let token = JSON.parse(sessionStorage.getItem('token'))
-    if (encryptedId) {
+    if (encryptedId && token) {
       axios
         .put("http://localhost:8080/api/v1/admin/unblock-customer", null, {
           headers: {
@@ -199,36 +201,67 @@ function CustomersDetails() {
             <TableBody>
               <TableRow>
                 <TableCell>User Name</TableCell>
-                <TableCell>{userDetails.username}</TableCell>
+                <TableCell align="right">{userDetails.username}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>First Name</TableCell>
-                <TableCell>{userDetails.first_name}</TableCell>
+                <TableCell align="right">{userDetails.first_name}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell>Last Name</TableCell>
-                <TableCell>{userDetails.last_name}</TableCell>
+                <TableCell align="right">{userDetails.last_name}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Date Of Birth</TableCell>
-                <TableCell>{userDetails.date_of_birth}</TableCell>
+                <TableCell align="right">{userDetails.date_of_birth}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Mobile Number</TableCell>
-                <TableCell>{userDetails.primary_mobile_number}</TableCell>
+                <TableCell align="right">{userDetails.primary_mobile_number}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Email </TableCell>
-                <TableCell>{userDetails.primary_email}</TableCell>
+                <TableCell align="right">{userDetails.primary_email}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Secondary Mobile Number </TableCell>
-                <TableCell>{userDetails.secondary_mobile_number}</TableCell>
+                <TableCell align="right">{userDetails.secondary_mobile_number}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Secondary email </TableCell>
-                <TableCell>{userDetails.secondary_email}</TableCell>
+                <TableCell align="right">{userDetails.secondary_email}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Addresses </TableCell>
+                <TableCell align="right">
+  {userDetails.addresses &&
+    userDetails.addresses.map((address) => {
+      return (
+        <ul style={{ listStyle: 'none', display: 'inline-flex' }}  key={address.id}>
+          <li style={{ display: 'flex', alignItems: 'center' }} key={address.id}>
+           {address.tag==='home' ? <HomeIcon style={{ marginRight: '5px' }} />:<BusinessIcon style={{ marginRight: '5px' }} />}
+            {address.address_line_1 +
+              ',' +
+              address.address_line_2 +
+              ',' +
+              address.area +
+              ',' +
+              address.city +
+              '-' +
+              address.postal_code +
+              ',' +
+              address.state +
+              ',' +
+              address.country +
+              ',' +
+              address.landmark}
+          </li>
+        </ul>
+      );
+    })}
+</TableCell>
+
               </TableRow>
             </TableBody>
           </Table>
