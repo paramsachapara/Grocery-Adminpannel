@@ -56,9 +56,11 @@ if(!token){
             console.log("login_res.data",login_res);
             sessionStorage.setItem(
               "token",
-              JSON.stringify(login_res.data.data.authToken)
+              JSON.stringify(login_res.data.data.token)
             );
-            navigate("/home");
+            setTimeout(()=>{
+              navigate("/home");
+            },1500)
           }
         })
         .catch(function (error) {

@@ -31,7 +31,9 @@ function Signup() {
         position: "bottom-center",
         duration: 3000,        
       })
-      navigate("/home");
+      setTimeout(()=>{
+        navigate("/home");
+      },1500)
     }
   })
   const navigate=useNavigate()

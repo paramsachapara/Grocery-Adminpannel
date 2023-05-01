@@ -72,7 +72,9 @@ const navigate=useNavigate();
         duration: 3000,
       })
       sessionStorage.clear();
-      navigate("/login");
+      setTimeout(()=>{
+        navigate("/login");
+      },1500)
     }
   }
   return (
