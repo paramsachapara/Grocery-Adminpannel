@@ -17,6 +17,7 @@ import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import Sidebar from '../Layout/Sidebar'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -164,11 +165,11 @@ export default function CustomersList() {
   const [originalRows, setOriginalRows] = React.useState([]);
 
   useEffect(() => {
+    let token = JSON.parse(sessionStorage.getItem('token'))
     axios
       .get("http://localhost:8080/api/v1/admin/get-all-customers", {
         headers: {
-          token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyODMzNTA5LCJleHAiOjE2ODI4NzY3MDl9.j4sdWV-B5fPRHqtAa5LVASo1r6QSdV9d_qt0zTXbCYw",
+          token:token
         },
       })
       .then((res) => {
@@ -235,6 +236,10 @@ export default function CustomersList() {
     fontWeight: "light",
   };
   return originalRows && originalRows.length > 0 ? (
+    <Box sx={{display:'flex'}}>
+    <Sidebar></Sidebar>
+   
+  
     <Box
       sx={{ width: "100%", marginTop: 15, marginRight: 7, overflowX: "auto" }}
     >
@@ -392,9 +397,17 @@ export default function CustomersList() {
         />
       </Paper>
     </Box>
+    </Box>
   ) : (
+    <Box sx={{display:'flex'}}>
+    <Sidebar></Sidebar>
+   
     <Box component="h1" variant="h3" sx={{ marginTop: 25, marginLeft: 30 }}>
       Error in getting data from server
     </Box>
+    </Box>
+
   );
+ 
+  
 }
