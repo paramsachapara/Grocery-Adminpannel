@@ -28,11 +28,11 @@ export default function EditCustomerForm(props) {
     if (values) {
         if(encryptedId){
             console.log(values)
+          let token = JSON.parse(sessionStorage.getItem('token'));
           axios
             .put("http://localhost:8080/api/v1/admin/edit-customer",values, {
               headers: {
-                token:
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgyNzM3OTI5LCJleHAiOjE2ODI3ODExMjl9.GylvSddIf1ytZO5Qn3NwQjwBEwoTbydx0Dm3o1dYo8o",
+                token: token,
                 customer_id: encryptedId
               }
             })

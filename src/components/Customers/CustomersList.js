@@ -166,19 +166,22 @@ export default function CustomersList() {
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem('token'))
-    axios
-      .get("http://localhost:8080/api/v1/admin/get-all-customers", {
-        headers: {
-          token:token
-        },
-      })
-      .then((res) => {
-        setRows(res.data.data);
-        setOriginalRows(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error, "error");
-      });
+    if(token){
+      axios
+        .get("http://localhost:8080/api/v1/admin/get-all-customers", {
+          headers: {
+            token:token
+          },
+        })
+        .then((res) => {
+          setRows(res.data.data);
+          setOriginalRows(res.data.data);
+          console.log(res)
+        })
+        .catch((error) => {
+          console.log(error, "error");
+        });
+    }
   }, []);
 
   const handleRequestSort = (event, property) => {
