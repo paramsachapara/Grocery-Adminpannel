@@ -23,18 +23,20 @@ import { Grid } from "react-loader-spinner";
 
 
 
-export default function AddProduct() {
+export default function EditProductForm(props) {
+  const { productDetails, setOpenEditCustomer,encryptedId } = props;
+
   const theme = useTheme();
 
 
   const initialValues = {
-    title: "",
-    short_description: "",
-    description: "",
-    amount: "",
-    discount_type: "",
-    discount_amount: "",
-    avatar_image: [],
+    title: productDetails.title||"",
+    short_description: productDetails.short_description||"",
+    description:productDetails.description|| "",
+    amount:productDetails.amount|| "",
+    discount_type:productDetails.discount_type|| "",
+    discount_amount:productDetails.discount_amount|| "",
+    avatar_image:productDetails.avatar_image|| [],
     categoryArrayFromBody: [2, 4],
   };
 
@@ -58,11 +60,12 @@ export default function AddProduct() {
 
         const options = {
           method: "post",
-          url: "http://localhost:8080/api/v1/product/add-product",
+          url: "http://localhost:8080/api/v1/product/update-product",
 
           data: values,
-          headers: { token: JSON.parse(token) },
-        };
+          headers: { token: JSON.parse(token) ,
+                      product_id:encryptedId}
+                    };
 
         axios
           .request(options)
@@ -98,6 +101,9 @@ export default function AddProduct() {
     },
     validationSchema: AddProductSchema,
   });
+  const handleCancel = () => {
+    setOpenEditCustomer(false);
+  };
   console.log(formik.errors);
   return (
     <ThemeProvider theme={theme}>
@@ -297,10 +303,15 @@ export default function AddProduct() {
             <Button
               type="submit"
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{ mt: 3, mb: 2 }}
+              color="success"
+              onClick={handleCancel}
             >
-              Add Product
+              Cancel
+            </Button>
+            <Button type="submit" fullWidth variant="contained" color="success">
+              Update
             </Button>
           </Box>
         </Box>
