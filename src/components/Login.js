@@ -22,7 +22,6 @@ const initialValues = {
 
 function Login() {
 
-
   useEffect(() => {
     if(sessionStorage.getItem("token")){
       toast.success("Oops,You Already Login", {
@@ -56,7 +55,7 @@ if(!token){
             console.log("login_res.data",login_res);
             sessionStorage.setItem(
               "token",
-              JSON.stringify(login_res.data.data.authToken)
+              JSON.stringify(login_res.data.data.token)
             );
             navigate("/home");
           }

@@ -4,7 +4,6 @@ import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -15,7 +14,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import Navbar from "./Navbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -60,13 +59,16 @@ export default function ClippedDrawer({ children }) {
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
+                      <NavLink to={"/" + text.toLowerCase().replace(" ", "-")}>
                       <ListItemText
                         primary={text}
-                        onClick={() => {
+                        // onClick={() => {
                           // navigate("signup");
-                          navigate("/" + text.toLowerCase().replace(" ", "-"));
-                        }}
-                      />
+                          // navigate("/" + text.toLowerCase().replace(" ", "-"));
+                          
+                          // }}
+                          />
+                      </NavLink>
                     </ListItemButton>
                   </ListItem>
                 ))}
