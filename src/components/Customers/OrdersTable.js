@@ -110,12 +110,12 @@ function OrdersTable(props) {
                     {index + 1}
                   </TableCell>
                   <TableCell align="left">{row.order_date}</TableCell>
-                  <TableCell align="left">{row.order_status}</TableCell>
+                  <TableCell align="left">{row.order_status_masters.title}</TableCell>
                   <TableCell align="left">
                     {row.estimate_delivery_date}
                   </TableCell>
                   <TableCell align="left">{row.paid_amount}</TableCell>
-                  <TableCell align="left">{row.payment_status}</TableCell>
+                  <TableCell align="left">{row.payment_status_masters.title}</TableCell>
                   <TableCell align="left">{row.special_note}</TableCell>
                   <TableCell align="left">{row.sub_total}</TableCell>
                   <TableCell align="left">{row.tax_amount}</TableCell>

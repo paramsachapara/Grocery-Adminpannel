@@ -56,7 +56,7 @@ function OrderItems() {
               if(get_Orders_res.data.data[i].id==orderId){
                 get_Orders_res.data.data=get_Orders_res.data.data[i]
                 console.log("get_Orders_res.data.data ",get_Orders_res.data.data)
-                console.log("get_Orders_res.data.data ",get_Orders_res.data.data[i])
+                // console.log("get_Orders_res.data.data ",get_Orders_res.data.data[i])
                 if(get_Orders_res.data.data.estimate_delivery_date===orderDate){
                   get_Orders_res.data.data.estimate_delivery_date="Delivered"
                   console.log("Delivered")
@@ -92,7 +92,7 @@ function OrderItems() {
           }}
         >
           <Tooltip title="Go Back">
-            <IconButton onClick={() => navigate("/customer-list")}>
+            <IconButton onClick={() => navigate(`/customer-details/${orderData.customer_id}`)}>
               <KeyboardBackspaceIcon />
             </IconButton>
           </Tooltip>
