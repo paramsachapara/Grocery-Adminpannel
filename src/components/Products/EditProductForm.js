@@ -19,25 +19,23 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-import { Grid } from "react-loader-spinner";
-
-
+import {Grid} from "@mui/material";
+// import { Grid } from "react-loader-spinner";
 
 export default function EditProductForm(props) {
-  const { productDetails, setOpenEditCustomer,encryptedId } = props;
+  const { selectedProduct, setOpenEditDialog } = props;
 
   const theme = useTheme();
 
-
   const initialValues = {
-    title: productDetails.title||"",
-    short_description: productDetails.short_description||"",
-    description:productDetails.description|| "",
-    amount:productDetails.amount|| "",
-    discount_type:productDetails.discount_type|| "",
-    discount_amount:productDetails.discount_amount|| "",
-    avatar_image:productDetails.avatar_image|| [],
-    categoryArrayFromBody: [2, 4],
+    title: selectedProduct.title || "",
+    short_description: selectedProduct.short_description || "",
+    description: selectedProduct.description || "",
+    amount: selectedProduct.amount || "",
+    discount_type: selectedProduct.discount_type || "",
+    discount_amount: selectedProduct.discount_amount || 0,
+    avatar_image: selectedProduct.avatar_image || [],
+    categoryArrayFromBody:[1],
   };
 
   // const handleChange = (event, value) => {
@@ -47,64 +45,95 @@ export default function EditProductForm(props) {
     const files = e.target.files[0];
     console.log("Files ", files);
     // const files = e.target.files;
-    formik.setFieldValue("avatar_image", files);
+    formik.setFieldValue("avatar_image", files.name);
   };
+  const onSubmit = (values) =>{
+    console.log("on submit",values)
+    if(values){
+      let token = JSON.parse(sessionStorage.getItem('token'))
+      console.log(token,"token")
+      if(token){
+      axios
+      .get("http://localhost:8080/api/v1/encryption", {
+        headers: {
+          id: selectedProduct.id,
+        },
+      })
+      .then((res) => {
+        // console.log("id", id);
+        console.log("Eid", res.data.data);
+     
+        axios.put("http://localhost:8080/api/v1/product/update-product",values,{
+          headers:{
+            token:token,
+            product_id:res.data.data
+          }
+        }).then((res)=>{
+          console.log("Product Updated",res)
+          setOpenEditDialog(false)
+        }).catch((error)=>{
+          console.log("Error",error)
+        })
+      }).catch(error=>console.log(error))
+    }
+    
+    }
+  }
 
   const formik = useFormik({
-    initialValues: initialValues,
-    onSubmit: (values, action) => {
-      let token = sessionStorage.getItem("token");
-      console.log(values);
-      if (token) {
-        console.log(values);
+    initialValues: initialValues,onSubmit:onSubmit
+    // onSubmit: (values, action) => {
+    //   let token = sessionStorage.getItem("token");
+    //   console.log(values);
+    //   if (token) {
+    //     console.log(values);
 
-        const options = {
-          method: "post",
-          url: "http://localhost:8080/api/v1/product/update-product",
+    //     const options = {
+    //       method: "post",
+    //       url: "http://localhost:8080/api/v1/product/update-product",
 
-          data: values,
-          headers: { token: JSON.parse(token) ,
-                      product_id:encryptedId}
-                    };
+    //       data: values,
+    //       headers: { token: JSON.parse(token), product_id: encryptedId },
+    //     };
 
-        axios
-          .request(options)
-          .then(function (login_res) {
-            if (login_res) {
-              console.log("login_res data", login_res);
-              toast.success("Signup Successfully", {
-                position: "bottom-center",
-                duration: 3000,
-              });
-              // navigate("/login");
-            }
-          })
-          .catch(function (error) {
-            console.error(error);
-            toast.error(
-              error.response.data.message
-                ? error.response.data.message
-                : "Error With fetching data",
-              {
-                position: "bottom-center",
-                duration: 3000,
-              }
-            );
-          });
-        action.resetForm();
-      } else {
-        toast.error("You are already logged in", {
-          position: "bottom-center",
-          duration: 3000,
-        });
-      }
-    },
-    validationSchema: AddProductSchema,
+    //     axios
+    //       .request(options)
+    //       .then(function (login_res) {
+    //         if (login_res) {
+    //           console.log("login_res data", login_res);
+    //           toast.success("Signup Successfully", {
+    //             position: "bottom-center",
+    //             duration: 3000,
+    //           });
+    //           // navigate("/login");
+    //         }
+    //       })
+    //       .catch(function (error) {
+    //         console.error(error);
+    //         toast.error(
+    //           error.response.data.message
+    //             ? error.response.data.message
+    //             : "Error With fetching data",
+    //           {
+    //             position: "bottom-center",
+    //             duration: 3000,
+    //           }
+    //         );
+    //       });
+    //     action.resetForm();
+    //   } else {
+    //     toast.error("You are already logged in", {
+    //       position: "bottom-center",
+    //       duration: 3000,
+    //     });
+    //   }
+    // },,
+    ,validationSchema: AddProductSchema,
   });
   const handleCancel = () => {
-    setOpenEditCustomer(false);
+    setOpenEditDialog(false);
   };
-  console.log(formik.errors);
+  // console.log(formik.errors);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="lg">
@@ -113,14 +142,12 @@ export default function EditProductForm(props) {
         <Sidebar />
         <Box
           sx={{
-            marginTop: 8,
-            marginLeft: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Box component="form" sx={{ mt: 3 }} onSubmit={formik.handleSubmit}>
+          <Box component="form" sx={{ mt:1 }} onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6}>
                 <TextField

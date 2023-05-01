@@ -5,14 +5,14 @@ import DialogContent from '@mui/material/DialogContent';
 import EditProductForm from './EditProductForm'
 
 function EditProductDialog(props) {
-    const {openEditProduct,setOpenEditProduct,userDetails,encryptedId} = props
+    const {openEditDialog,setOpenEditDialog,selectedProduct} = props
   return (
-    <Dialog open={openEditProduct}>
+    <Dialog open={openEditDialog}>
         <DialogTitle variant={'h4'} textAlign={'center'}>
             Edit product Details
         </DialogTitle>
         <DialogContent>
-        <EditProductForm userDetails = {userDetails} setOpenEditProduct = {setOpenEditProduct} encryptedId = {encryptedId} />
+        <EditProductForm selectedProduct = {selectedProduct} setOpenEditDialog = {setOpenEditDialog}  />
         </DialogContent>
     </Dialog>
   )

@@ -26,6 +26,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import EditProductDialog from "./EditProductDialog"
 
 import Encryption from "./Encryption";
 import EditProductForm from "./EditProductForm";
@@ -34,7 +35,7 @@ function AllProduct() {
   const navigate = useNavigate();
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
   let data;
@@ -42,7 +43,7 @@ function AllProduct() {
   // Fetch data on component mount
   useEffect(() => {
     fetchAllProduct();
-  }, [tableData]);
+  }, []);
 
   const fetchAllProduct = () => {
     let token = sessionStorage.getItem("token");
@@ -90,6 +91,7 @@ function AllProduct() {
       .then((res) => {
         console.log("id", id);
         console.log("Eid", res.data.data);
+       
         let token = JSON.parse(sessionStorage.getItem("token"));
         if (token) {
           const options = {
@@ -152,7 +154,7 @@ function AllProduct() {
             <TableBody>
               {tableData &&
                 tableData.map((product) => (
-                  <TableRow>
+                  <TableRow key={product.id}>
                     <TableCell>{product.id}</TableCell>
                     <TableCell>{product.title}</TableCell>
                     <TableCell>{product.amount}</TableCell>
@@ -173,9 +175,15 @@ function AllProduct() {
             </TableBody>
           </Table>
         </TableContainer>
+        <EditProductDialog
+        openEditDialog={openEditDialog}
+        setOpenEditDialog={setOpenEditDialog}
+        selectedProduct={selectedProduct}
+        
+      />
 
         {/* Dialog for editing product */}
-        <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
+        {/* <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
           <DialogTitle>Edit Product</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -193,7 +201,9 @@ function AllProduct() {
           <DialogActions>
             <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
           </DialogActions>
-        </Dialog>
+        </Dialog> */}
+
+      
       </div>
     </>
   );
