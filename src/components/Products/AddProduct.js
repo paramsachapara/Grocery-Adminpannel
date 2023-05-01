@@ -107,7 +107,8 @@ export default function AddProduct() {
         const options = {
           method: "post",
           url: "http://localhost:8080/api/v1/product/add-product",
-          data: values,
+
+          data: initialValues,
           headers: { token: token },
         };
 
