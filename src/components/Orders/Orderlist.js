@@ -256,7 +256,7 @@ const [isLoader,setIsLoader]=React.useState(true)
           </TableRow>
         </TableHead>
         <TableBody>
-          {orderData ? orderData.map((row,index) => (
+          {orderData ? orderData.length ? orderData.map((row,index) => (
             <TableRow key={index} onClick={() => oderDetail(row.id)} style={{cursor:'pointer'}}>
               <TableCell component="th" scope="row" align="left">
                 {index+1}
@@ -270,7 +270,10 @@ const [isLoader,setIsLoader]=React.useState(true)
           <Typography  variant="h4" gutterBottom align='center'>
       No Orders Are There
       </Typography>
-          }
+          : 
+          <Typography  variant="h4" gutterBottom align='center'>
+          No Orders Are There
+          </Typography>}
         </TableBody>
       </Table>
     </TableContainer>
