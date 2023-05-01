@@ -238,7 +238,9 @@ const [isLoader,setIsLoader]=React.useState(true)
       />
     </div> : 
       <>
-      {orderData ? <Typography  variant="h2" gutterBottom align='center'>
+      {orderData? orderData.length>0 ? 
+<>
+        {orderData ? <Typography  variant="h2" gutterBottom align='center'>
       Order List
       </Typography>:null}
       <Typography  variant="h6" gutterBottom align='right'>
@@ -256,7 +258,7 @@ const [isLoader,setIsLoader]=React.useState(true)
           </TableRow>
         </TableHead>
         <TableBody>
-          {orderData ? orderData.length ? orderData.map((row,index) => (
+          {orderData ? orderData.map((row,index) => (
             <TableRow key={index} onClick={() => oderDetail(row.id)} style={{cursor:'pointer'}}>
               <TableCell component="th" scope="row" align="left">
                 {index+1}
@@ -266,27 +268,29 @@ const [isLoader,setIsLoader]=React.useState(true)
               <TableCell align="left">{row.estimate_delivery_date}</TableCell>
               <TableCell align="left">{row.paid_amount}</TableCell>
             </TableRow>
-          )): 
-          <Typography  variant="h4" gutterBottom align='center'>
-      No Orders Are There
-      </Typography>
+          ))
           : 
-          <Typography  variant="h4" gutterBottom align='center'>
-          No Orders Are There
-          </Typography>}
-        </TableBody>
-      </Table>
-    </TableContainer>
-      <TablePagination
-        component="div"
-        count={orderData.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-      </>
-
+          null}
+          </TableBody>
+          </Table>
+          </TableContainer>
+          <TablePagination
+          component="div"
+          count={orderData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          </>
+        : 
+        <Typography  variant="h4" gutterBottom align='center'>
+        No Orders Are There
+        </Typography>
+          :null  
+          }
+          </>
+          
     }
 
     </Sidebar>
