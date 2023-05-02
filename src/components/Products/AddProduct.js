@@ -112,7 +112,7 @@ const handleChange = (event) => {
     amount: "",
     discount_type: "",
     discount_amount: "",
-    avatar_image: [],
+    avatar_image: null,
     categoryArrayFromBody: [],
   };
 
@@ -130,44 +130,59 @@ const handleChange = (event) => {
     initialValues: initialValues,
     onSubmit: (values, action) => {
 
-      const AddProductObj = {
-        title: values.title,
-        amount: values.amount,
-        discount_type: values.discount_type,
-        discount_amount: values.discount_amount,
-        short_description: values.short_description,  
-        description: values.description,
-        avatar_image: values.avatar_image,
-        categoryArrayFromBody: values.categoryArrayFromBody,
-      };
-      // var formData = new FormData()
-      // formData.append('title',initialValues.title);
-      // formData.append('short_description',initialValues.short_description);
-      // formData.append('description',initialValues.description);
-      // formData.append('amount',initialValues.amount);
-      // formData.append('discount_type',initialValues.discount_type);
-      // formData.append('discount_amount',initialValues.discount_amount);
-      // formData.append('avatar_image',initialValues.avatar_image);
-      // formData.append('categoryArrayFromBody',initialValues.categoryArrayFromBody);
+      // const AddProductObj = {
+      //   title: values.title,
+      //   amount: values.amount,
+      //   discount_type: values.discount_type,
+      //   discount_amount: values.discount_amount,
+      //   short_description: values.short_description,  
+      //   description: values.description,
+      //   avatar_image: values.avatar_image,
+      //   categoryArrayFromBody: values.categoryArrayFromBody,
+      // };
+      let formData = new FormData()
+
+      console.log("formData>>>>>>>>>>>>>>>>>>>>>>>>>>>>", formData);
+
+      formData.append('title',values.title);
+      formData.append('short_description',values.short_description);
+      formData.append('description',values.description);
+      formData.append('amount',values.amount);
+      formData.append('discount_type',values.discount_type);
+      formData.append('discount_amount',values.discount_amount);
+      formData.append('avatar_image',values.avatar_image);
+      formData.append('categoryArrayFromBody',JSON.stringify(values.categoryArrayFromBody));
+
+      // console.log("FormTitle>>>>>>>", formData.getAll());
+      for (var [key, value] of formData.entries()) { 
+        console.log(key, value);
+    }
 
       // console.log("personName", personName);
       
       
-      const formData = new FormData();
-      formData.append('AddProductObj', JSON.stringify(AddProductObj));
-      console.log("FormData", formData);
+      // const formData = new FormData();
+      // formData.append('AddProductObj', JSON.stringify(AddProductObj));
+      // console.log("FormData", formData);
+
+      // form data convert into form-data format
+
+
+
 
       let token = JSON.parse(sessionStorage.getItem("token"));
       if (token) {
-        console.log("AddProductObj",AddProductObj);
+        // console.log("AddProductObj",AddProductObj);
         const options = {
-          method: "post",
-          url: "http://localhost:8080/api/v1/product/add-product",
-          data: AddProductObj,
-          headers:{'token':token}
+          method:'post',
+          url:"http://localhost:8080/api/v1/product/add-product",
+          data: formData,
+          headers:{'token':token,"Content-Type": "multipart/form-data" }
         }
-        console.log(values);
-
+        // console.log(values);
+        // axios.post("http://localhost:8080/api/v1/product/add-product", formData,options).then((response) => {
+        //   console.log("response.data==>>",response.data);
+        // });
         axios
           .request(options)
           .then(function (AddProduct_res) {
@@ -202,7 +217,7 @@ const handleChange = (event) => {
     },
     validationSchema: AddProductSchema,
   });
-  console.log(formik.errors);
+  // console.log(errors);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="lg">
@@ -454,7 +469,7 @@ const handleChange = (event) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              style={{}}
+
             >
               Add Product
             </Button>
