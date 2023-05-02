@@ -34,7 +34,7 @@ function AllProduct() {
   // Fetch data on component mount
   useEffect(() => {
     fetchAllProduct();
-  },[tableData, open, block, selectedProduct, openEditDialog, openBlockDialog, openUnblockDialog, title, id]);
+  },[tableData]);
 
   const fonttheme = createTheme({
     typography: {
@@ -242,8 +242,8 @@ function AllProduct() {
                     <ThemeProvider theme={boldFontTheme}>
                       <TableRow>
                         <TableCell>Id</TableCell>
+                        <TableCell>Image</TableCell>
                         <TableCell>Name</TableCell>
-                        {/* <TableCell>Category</TableCell> */}
                         <TableCell>Price</TableCell>
                         <TableCell>Action</TableCell>
                       </TableRow>
@@ -252,9 +252,21 @@ function AllProduct() {
                   <TableBody>
                     {tableData &&
                       tableData.map((product) => (
-                        <TableRow key={product.id} >
+                        <TableRow key={product.id}>
                           <TableCell>{product.id}</TableCell>
+                          <TableCell>
+                            <img
+                              src={product.avatar_image}
+                              alt={product.title}
+                              style={{
+                                height: "50px",
+                                width: "50px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          </TableCell>
                           <TableCell>{product.title}</TableCell>
+                          {/* <TableCell>{product.avatar_image}</TableCell> */}
                           <TableCell>{product.amount}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit">
@@ -269,22 +281,24 @@ function AllProduct() {
                                 <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                           { product.is_active ? 
-                            <Tooltip title="Block">
-                              <IconButton
-                                onClick={() => handleBlock(product.id)}
-                              >
-                                <BlockIcon />
-                              </IconButton>
-                            </Tooltip>:
-                            <Tooltip title="Unblock">
-                              <IconButton
-                                onClick={() => handleUnBlock(product.id)}
-                                sx={{color:"red"}}
-                              >
-                                <BlockIcon />
-                              </IconButton>
-                            </Tooltip>}
+                            {product.is_active ? (
+                              <Tooltip title="Block">
+                                <IconButton
+                                  onClick={() => handleBlock(product.id)}
+                                >
+                                  <BlockIcon />
+                                </IconButton>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Unblock">
+                                <IconButton
+                                  onClick={() => handleUnBlock(product.id)}
+                                  sx={{ color: "red" }}
+                                >
+                                  <BlockIcon />
+                                </IconButton>
+                              </Tooltip>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
