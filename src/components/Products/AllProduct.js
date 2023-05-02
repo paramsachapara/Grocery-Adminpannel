@@ -242,7 +242,6 @@ function AllProduct() {
                             <IconButton
                               onClick={() => handleBlock(product.id)}
                               sx={{ color:block ? "red" : "green"}}
-                             
                             >
                               <BlockIcon />
                             </IconButton>
