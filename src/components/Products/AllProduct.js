@@ -38,7 +38,7 @@ function AllProduct() {
 
   const fonttheme = createTheme({
     typography: {
-      fontSize: 25,
+      fontSize: 15  ,
     },
   });
 
