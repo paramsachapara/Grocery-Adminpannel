@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
 import Sidebar from "../Layout/Sidebar";
-
 import {
   Table,
   TableBody,
@@ -11,8 +9,8 @@ import {
   TableHead,
   TableRow,
   IconButton,
-
 } from "@mui/material";
+import BlockIcon from "@mui/icons-material/Block";
 import { Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,8 +23,10 @@ function AllProduct() {
 
   const [tableData, setTableData] = useState([]);
   const [setOpen] = useState(false);
+  const [block,setblock] =useState(false)
   const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [title, setTitle] = useState("");
 
   let data;
 
@@ -100,7 +100,7 @@ function AllProduct() {
           const options = {
             method: "delete",
             url: "http://localhost:8080/api/v1/product/delete-product",
-            headers: { token: token, product_id: res.data.data },
+            headers: { "token": token, "product_id": res.data.data },
           };
           axios
             .request(options)
@@ -126,7 +126,44 @@ function AllProduct() {
     setOpenEditDialog(true);
     setOpen(true);
   };
+ const handleBlock=(id)=>{
+  let token = JSON.parse(sessionStorage.getItem("token"));
+  if (token){
+      axios
+      .get("http://localhost:8080/api/v1/encryption", {
+        headers: {
+          id: id,
+        },
+      })
+      .then((res)=>{
+        if(block){
+          
+          axios  
+          .put( "http://localhost:8080/api/v1/product/active-product", {
+              headers: { 
+                "token": token, "product_id": res.data.data 
+              }
+            })
+          .then(()=>{
+            toast.success("product BLOCKED successfully...", {
+              position: "bottom-center",
+              duration: 800,
+            });
+            setblock(true)
+          })
+        }
+        else{
 
+        }
+      })
+     .catch((error) => {
+        console.log(error, "error");
+      });
+  }else//admin not found
+  {
+    console.log("admin not found")
+  }
+ }
   const handleClose = () => {
     setOpen(false);
   };
@@ -140,79 +177,74 @@ function AllProduct() {
 
   return (
     <>
-      <Sidebar >
-
-    
-        <div className="toolbar" style={{ display: 'flex', justifyContent: 'center' }}  >
-        <ThemeProvider theme={fonttheme}>
-        <TableContainer style={{ marginTop: "50px" , width:"60%",  alignItems:"center",fontSize:"20px"} } >
-          <Table>
-            <TableHead>
-            <ThemeProvider theme={boldFontTheme}>
-              <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>Name</TableCell>
-                {/* <TableCell>Category</TableCell> */}
-                <TableCell>Price</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-              </ThemeProvider>
-            </TableHead>
-            <TableBody>
-              {tableData &&
-                tableData.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.id}</TableCell>
-                    <TableCell>{product.title}</TableCell>
-                    <TableCell>{product.amount}</TableCell>
-                    <TableCell>
-                      <Tooltip title="Edit">
-                        <IconButton onClick={() => handleEdit(product)}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton onClick={() => handleDelete(product._id)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <EditProductDialog
-        openEditDialog={openEditDialog}
-        setOpenEditDialog={setOpenEditDialog}
-        selectedProduct={selectedProduct}
-        
-      />
-
-        {/* Dialog for editing product */}
-        {/* <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-          <DialogTitle>Edit Product</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Update the product details below:
-            </DialogContentText>
-            <EditProductForm
-              initialValues={selectedProduct}
-              onSubmit={(values) => {
-                // Make an API call to update the product with the new values
-                handleUpdateProduct(selectedProduct.id, values);
-                setOpenEditDialog(false);
+      <Sidebar>
+        <div
+          className="toolbar"
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <ThemeProvider theme={fonttheme}>
+            <TableContainer
+              style={{
+                marginTop: "50px",
+                width: "60%",
+                alignItems: "center",
+                fontSize: "20px",
               }}
+            >
+              <Table>
+                <TableHead>
+                  <ThemeProvider theme={boldFontTheme}>
+                    <TableRow>
+                      <TableCell>Id</TableCell>
+                      <TableCell>Name</TableCell>
+                      {/* <TableCell>Category</TableCell> */}
+                      <TableCell>Price</TableCell>
+                      <TableCell>Action</TableCell>
+                    </TableRow>
+                  </ThemeProvider>
+                </TableHead>
+                <TableBody>
+                  {tableData &&
+                    tableData.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell>{product.id}</TableCell>
+                        <TableCell>{product.title}</TableCell>
+                        <TableCell>{product.amount}</TableCell>
+                        <TableCell>
+                          <Tooltip title="Edit">
+                            <IconButton onClick={() => handleEdit(product)}>
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <IconButton
+                              onClick={() => handleDelete(product._id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Block">
+                            <IconButton
+                              onClick={() => handleBlock(product._id)}
+                              color={product.is_active ? "primary" : "danger"}
+                            >
+                              <BlockIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <EditProductDialog
+              openEditDialog={openEditDialog}
+              setOpenEditDialog={setOpenEditDialog}
+              selectedProduct={selectedProduct}
             />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-          </DialogActions>
-        </Dialog> */}
-
-      </ThemeProvider>
-      </div>
-      </Sidebar >
+          </ThemeProvider>
+        </div>
+      </Sidebar>
     </>
   );
 }
