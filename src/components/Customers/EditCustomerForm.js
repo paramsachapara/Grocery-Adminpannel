@@ -9,6 +9,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from 'axios'
+import { Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 
 const theme = createTheme();
@@ -38,10 +40,13 @@ export default function EditCustomerForm(props) {
             })
             .then((res) => {
               console.log("response",res);
+              toast.success("Customer Details Updated Successfully!",{position:'top-right'})
+
               setOpenEditCustomer(false);
             })
             .catch((error) => {
               console.log(error, "error");
+              toast.error(error.response.data.message?error.response.data.message:"error in Editing  Customer",{position:'top-right'})
             });
         }
     }
@@ -84,7 +89,9 @@ export default function EditCustomerForm(props) {
   });
   // console.log(userDetails)
   return (
+    
     <ThemeProvider theme={theme}>
+    <div><Toaster/></div>
       <Container component="main" maxWidth="lg">
         <Box
           sx={{

@@ -21,11 +21,26 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import { Grid, Typography, TextField, Autocomplete } from "@mui/material";
+import { Grid, Typography, TextField, Autocomplete, Divider } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import BlockIcon from "@mui/icons-material/Block";
+import TableHead from "@mui/material/TableHead";
+
+import { DeleteCategory } from "./DeleteCategory";
+import { Stack } from "@mui/system";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 // import * as React from 'react';
 function TablePaginationActions(props) {
@@ -111,13 +126,40 @@ function SubCategory() {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [encryptedId, setEncryptedId] = useState("");
-  const [subCategoryId,setSubCategoryId] = useState(null)
-  const [parentCategory, setParentCategory] = useState('')
-  
+  const [subCategoryId, setSubCategoryId] = useState(null);
+  const [parentCategory, setParentCategory] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [active, setActive] = useState(true);
+  const [title, setTitle] = useState("");
+  const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
+
+  const encryption = async (id) => {
+    const config = {
+      headers: {
+        id: id,
+      },
+    };
+    try {
+      const res = await axios.get(
+        "http://localhost:8080/api/v1/encryption",
+        config
+      );
+      return res.data.data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const initialValues = {
     categoryName: "",
-    parentCategory:parentCategory,
+    parentCategory: parentCategory,
   };
   const formik = useFormik({
     initialValues: initialValues,
@@ -129,129 +171,223 @@ function SubCategory() {
   });
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-  page > 0 ? Math.max(0, (1 + page) * rowsPerPage - subCategory.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - subCategory.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  
 
   useEffect(() => {
     setIde(id);
     console.log(ide);
     axios
-    .get("http://localhost:8080/api/v1/category/get-all-categories")
-    .then((res) => {
+      .get("http://localhost:8080/api/v1/category/get-all-categories")
+      .then((res) => {
+        const parentCategory = res.data.data.find((res) => res.id == id);
+        const subCategories = res.data.data.filter((category) => {
         console.log(res.data.data);
         setCategories(res.data.data);
-        const parentCategory=res.data.data.find((res)=>res.id==id);
-        console.log(parentCategory,'pc')
-        setParentCategory(parentCategory.title);
-        const subCategories = res.data.data.filter((category) => {
+        console.log(parentCategory, "pc");
+        setParentCategory(parentCategory);
           return category.parent_id == id;
         });
-
         console.log(subCategories, "subCategories");
         setSubCategory(subCategories);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [id]);
+  }, [id, active, isEditing, isCategoryDeleted]);
 
-  const handleClick = (title,id,parentId) => {
-    setSubCategoryId(id) 
-    console.log(id,'id')
+  const handleClick = (title, id, parentId) => {
+    setSubCategoryId(id);
+    console.log(id, "id");
     setIsEditing(true);
-    formik.setFieldValue('categoryName',title)
-    const parentCategory = categories.find((res)=>res.id==parentId)
-    console.log(parentCategory.title,'parentCategory')
-    formik.setFieldValue('parentCategory',parentCategory.title)
+    formik.setFieldValue("categoryName", title);
+    const parentCategory = categories.find((res) => res.id == parentId);
+    console.log(parentCategory.title, "parentCategory");
+    formik.setFieldValue("parentCategory", parentCategory.title);
   };
 
   const handleDelete = (title) => {
-    console.log(title);
+    if (title) {
+      let matchedCategory = categories.find((res) => res.title == title);
+      const config = {
+        headers: {
+          id: matchedCategory.id,
+        },
+      };
+      let encryptedId;
+      axios
+        .get("http://localhost:8080/api/v1/encryption", config)
+        .then((res) => {
+          encryptedId = res;
+          const token = JSON.parse(sessionStorage.getItem("token"));
+          if (token) {
+            axios
+              .delete("http://localhost:8080/api/v1/category/delete-category", {
+                headers: {
+                  token: token,
+                  category_id: encryptedId.data.data,
+                },
+              })
+              .then((res) => {
+                setIsCategoryDeleted(!isCategoryDeleted);
+                console.log(res);
+              })
+              .catch((err) => console.log(err));
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
-  const updateSubCategory = () =>{
-    let matchedCategory
-    console.log(subCategoryId,'subCadhf')
-    console.log(formik.values.categoryName,'dsafun')
-    if(subCategoryId){
-      matchedCategory = categories.find((res) => res.id == subCategoryId )
-      console.log(JSON.stringify(matchedCategory.parent_id,'asd'),
-      )
-      console.log(matchedCategory,'mat')
-      if(matchedCategory){
-        const values =   {
+  const handleBlockClick = () => {
+    const onClickCategory = subCategory.find((res) => res.title == title);
+    console.log(title);
+
+    encryption(onClickCategory.id)
+      .then((data) => {
+        const token = JSON.parse(sessionStorage.getItem("token"));
+        console.log(data);
+        console.log(onClickCategory, "occ");
+        if (onClickCategory && onClickCategory.is_active) {
+          axios
+            .put(
+              "http://localhost:8080/api/v1/category/inactive-category",
+              {},
+              {
+                headers: {
+                  category_id: data,
+                  token: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              setActive(!active);
+            })
+            .catch((err) => console.log(err));
+        } else {
+          axios
+            .put(
+              "http://localhost:8080/api/v1/category/active-category",
+              {},
+              {
+                headers: {
+                  category_id: data,
+                  token: token,
+                },
+              }
+            )
+            .then((res) => {
+              setActive(!active);
+              console.log(res);
+            })
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
+    const matchedIsActive = subCategory.filter((res) => res.is_active);
+    const matchedIsInActive = subCategory.filter((res) => !res.is_active);
+    console.log(parentCategory);
+    if (matchedIsActive.length > 0 || matchedIsInActive.length===subCategory.length) {
+      const token = JSON.parse(sessionStorage.getItem("token"));
+      encryption(parentCategory.id).then((data) => {
+        axios
+          .put(
+            "http://localhost:8080/api/v1/category/active-category",
+            {},
+            {
+              headers: {
+                category_id: data,
+                token: token,
+              },
+            }
+          )
+          .then((res) => {
+            setActive(!active);
+            console.log(res);
+          })
+          .catch((err) => console.log(err));
+      });
+    }
+    setOpen(false);
+  };
+
+  const updateSubCategory = () => {
+    setOpen(false);
+    let matchedCategory;
+    console.log(subCategoryId, "subCadhf");
+    console.log(formik.values.categoryName, "dsafun");
+    setSubCategory(formik.values.categoryName);
+
+    if (subCategoryId) {
+      matchedCategory = categories.find((res) => res.id == subCategoryId);
+      if (matchedCategory) {
+        const values = {
           title: formik.values.categoryName,
           parent_id: JSON.stringify(matchedCategory.parent_id),
-        }
+        };
         const config = {
           headers: {
             id: matchedCategory.id,
           },
         };
-        if(values){
+        if (values) {
           axios
-          .get("http://localhost:8080/api/v1/encryption", config)
-          .then((res) => {
-            
-            const token = JSON.parse(sessionStorage.getItem("token"));
-            axios
-            .put(
-              "http://localhost:8080/api/v1/category/update-category",values,
-              {
-                headers: {
-                  id: res.data.data,
-                  token: token,
-                },
-              }
-              )
-              .then((res) => {
-                console.log(res);
+            .get("http://localhost:8080/api/v1/encryption", config)
+            .then((res) => {
+              const token = JSON.parse(sessionStorage.getItem("token"));
+              axios
+                .put(
+                  "http://localhost:8080/api/v1/category/update-category",
+                  values,
+                  {
+                    headers: {
+                      id: res.data.data,
+                      token: token,
+                    },
+                  }
+                )
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => console.log(err));
             })
-            .catch((err) => console.log(err));
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+            .catch((err) => {
+              console.log(err);
+            });
         }
       }
     }
-  }
-  
+  };
+
   return (
     <Sidebar>
       {isEditing ? (
         <Box sx={{ marginTop: "100px" }}>
+          <Typography variant="h4" color="initial">
+            Update Category
+          </Typography>
           <form onSubmit={formik.handleSubmit}>
             <Box>
-              <Autocomplete
-              disabled
+              <TextField
+                disabled
                 id="category"
                 freeSolo
-                options={categories
-                  .filter((res) => res.parent_id == null)
-                  .map((option) => option.title)}
-                  value={parentCategory}
-                  onChange={(event, newValue) => {
-                    console.log(newValue);
-                    setValue(newValue);
-                  }}
-                  inputValue={inputValue}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue);
-                  }}
-                  style={{ width: "50%" }}
-                  // onChange={handleParentCategoryChange}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Category" />
+                value={parentCategory.title}
+                style={{ width: "50%", marginTop:'30px' }}
+                // onChange={handleParentCategoryChange}
+                renderInput={(params) => (
+                  <TextField {...params} label="Category" />
                 )}
               />
             </Box>
@@ -279,6 +415,26 @@ function SubCategory() {
               >
                 Update Category
               </Button>
+              {/* <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClose}
+                aria-describedby="alert-dialog-slide-description"
+              >
+                <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-slide-description">
+                    Let Google help apps determine location. This means sending
+                    anonymous location data to Google, even when no apps are
+                    running.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Disagree</Button>
+                  <Button onClick={handleClickOpen}>Agree</Button>
+                </DialogActions>
+              </Dialog> */}
               <Button
                 variant="contained"
                 onClick={() => setIsEditing(false)}
@@ -292,18 +448,29 @@ function SubCategory() {
       ) : null}
 
       <Grid container>
-        <Grid item xs={8}>
+        <Grid item xs={11}>
           <Box sx={{ height: "50px" }}>
             <Typography variant="h4" sx={{ marginTop: "70px" }} color="initial">
               Sub Category
             </Typography>
           </Box>
           <Box sx={{ height: "50px" }}>
-            <TableContainer component={Paper} elevation={3}>
+            <TableContainer component={Paper} elevation={7}>
               <Table
                 sx={{ minWidth: 500 }}
                 aria-label="custom pagination table"
               >
+                 <TableHead  sx={{backgroundColor:'green'}}>
+                    <TableRow >
+                      <TableCell variant="h4">
+                        <Typography variant="body1" color="initial">Sub Category</Typography>
+                        </TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+
+                    </TableRow>
+                  </TableHead>
                 <TableBody>
                   {(rowsPerPage > 0
                     ? subCategory.slice(
@@ -311,19 +478,77 @@ function SubCategory() {
                         page * rowsPerPage + rowsPerPage
                       )
                     : subCategory
-                  ).map((row) => (
-                    <TableRow key={row.title}>
+                  ).map((row, index) => (
+                    <TableRow
+                      key={row.title}
+                      sx={{
+                        cursor: "pointer",
+                        backgroundColor: row.is_active ? undefined : "#f5f5f5",
+                        "&:hover": {
+                          backgroundColor: row.is_active
+                            ? "rgba(0, 0, 0, 0.08)"
+                            : undefined,
+                        },
+                      }}
+                    >
                       <TableCell component="th" scope="row">
+                        <Stack direction="row" spacing={3}>
+                        <Typography variant="body1" color="initial"  >
+                          {index+1}
+                        </Typography>
                         <Typography
-                          variant="h6"
-                          sx={{ marginLeft: "50px" }}
+                          variant="body1"
                           color="initial"
-                        >
+                          >
                           {row.title}
                         </Typography>
+                          </Stack>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
-                        <EditIcon onClick={()=>handleClick(row.title,row.id,row.parent_id)} />
+                        <BlockIcon
+                          className="blockIcon"
+                          sx={{ color: row.is_active ? undefined : "red" }}
+                          onClick={() => {
+                            setTitle(row.title);
+                            setOpen(true);
+                          }}
+                        />
+                        <Dialog
+                          open={open}
+                          keepMounted
+                          onClose={handleClose}
+                          aria-describedby="alert-dialog-slide-description"
+                        >
+                          <DialogTitle>{title}</DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                              {row.is_active
+                                ? "Are you sure you want to inactive the category"
+                                : "are you sure you want to active the category"}
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose}>Disagree</Button>
+                            <Button
+                              onClick={() =>
+                                handleBlockClick(
+                                  row.title,
+                                  row.id,
+                                  row.parent_id
+                                )
+                              }
+                            >
+                              Agree
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </TableCell>
+                      <TableCell style={{ width: 50 }} align="right">
+                        <EditIcon
+                          onClick={() =>
+                            handleClick(row.title, row.id, row.parent_id)
+                          }
+                        />
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
                         <DeleteIcon onClick={() => handleDelete(row.title)} />

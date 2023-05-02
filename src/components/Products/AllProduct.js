@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Toaster, toast } from "react-hot-toast";
+
 import Sidebar from "../Layout/Sidebar";
-import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Table,
   TableBody,
@@ -12,29 +11,20 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  TextField,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
+
 } from "@mui/material";
 import { Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import * as Yup from "yup";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { toast } from "react-hot-toast";
 import EditProductDialog from "./EditProductDialog"
 
-import Encryption from "./Encryption";
-import EditProductForm from "./EditProductForm";
+
 function AllProduct() {
-  const [encryptedId, setEncryptedId] = useState("");
-  const navigate = useNavigate();
+
   const [tableData, setTableData] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
@@ -44,6 +34,19 @@ function AllProduct() {
   useEffect(() => {
     fetchAllProduct();
   }, []);
+
+  const fonttheme = createTheme({
+    typography: {
+      fontSize: 25,
+    },
+  });
+
+  const boldFontTheme = createTheme({
+    typography: {
+      fontSize: 30,
+      fontWeight: "bold",
+    },
+  });
 
   const fetchAllProduct = () => {
     let token = sessionStorage.getItem("token");
@@ -137,12 +140,15 @@ function AllProduct() {
 
   return (
     <>
-      <Sidebar />
-      <div className="main-content">
-        <div className="toolbar" />
-        <TableContainer style={{ marginTop: "25px", marginLeft: "15px" }}>
+      <Sidebar >
+
+    
+        <div className="toolbar" style={{ display: 'flex', justifyContent: 'center' }}  >
+        <ThemeProvider theme={fonttheme}>
+        <TableContainer style={{ marginTop: "50px" , width:"60%",  alignItems:"center",fontSize:"20px"} } >
           <Table>
             <TableHead>
+            <ThemeProvider theme={boldFontTheme}>
               <TableRow>
                 <TableCell>Id</TableCell>
                 <TableCell>Name</TableCell>
@@ -150,6 +156,7 @@ function AllProduct() {
                 <TableCell>Price</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
+              </ThemeProvider>
             </TableHead>
             <TableBody>
               {tableData &&
@@ -203,8 +210,9 @@ function AllProduct() {
           </DialogActions>
         </Dialog> */}
 
-      
+      </ThemeProvider>
       </div>
+      </Sidebar >
     </>
   );
 }
