@@ -163,17 +163,10 @@ const handleChange = (event) => {
         const options = {
           method: "post",
           url: "http://localhost:8080/api/v1/product/add-product",
-<<<<<<< HEAD
 
           data: initialValues,
           headers: { "token": token },
         };
-=======
-          data: AddProductObj,
-          headers:{'token':token}
-        }
-        console.log(values);
->>>>>>> beead099d2df56028a02a147ccc80603269dd066
 
         axios
           .request(options)

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import { Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Button from "@mui/material/Button";
-// import * as React from 'react';
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -21,7 +21,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import { Grid, Typography, TextField, Autocomplete, Divider } from "@mui/material";
+import { Grid, Typography, TextField } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Formik, useFormik } from "formik";
@@ -34,9 +34,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import BlockIcon from "@mui/icons-material/Block";
 import TableHead from "@mui/material/TableHead";
-
-import { DeleteCategory } from "./DeleteCategory";
 import { Stack } from "@mui/system";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -132,6 +131,7 @@ function SubCategory() {
   const [active, setActive] = useState(true);
   const [title, setTitle] = useState("");
   const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
+  const navigate = useNavigate();
 
   const encryption = async (id) => {
     const config = {
@@ -165,7 +165,6 @@ function SubCategory() {
     initialValues: initialValues,
     validationSchema: subCategoryValidationSchema,
     onSubmit: (values, actions) => {
-      console.log(values);
       actions.resetForm();
     },
   });
@@ -184,19 +183,17 @@ function SubCategory() {
 
   useEffect(() => {
     setIde(id);
-    console.log(ide);
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
         const parentCategory = res.data.data.find((res) => res.id == id);
         const subCategories = res.data.data.filter((category) => {
-        console.log(res.data.data);
-        setCategories(res.data.data);
-        console.log(parentCategory, "pc");
-        setParentCategory(parentCategory);
+          setCategories(res.data.data);
+
+          setParentCategory(parentCategory);
           return category.parent_id == id;
         });
-        console.log(subCategories, "subCategories");
+
         setSubCategory(subCategories);
       })
       .catch((err) => {
@@ -206,11 +203,11 @@ function SubCategory() {
 
   const handleClick = (title, id, parentId) => {
     setSubCategoryId(id);
-    console.log(id, "id");
+
     setIsEditing(true);
     formik.setFieldValue("categoryName", title);
     const parentCategory = categories.find((res) => res.id == parentId);
-    console.log(parentCategory.title, "parentCategory");
+
     formik.setFieldValue("parentCategory", parentCategory.title);
   };
 
@@ -238,7 +235,6 @@ function SubCategory() {
               })
               .then((res) => {
                 setIsCategoryDeleted(!isCategoryDeleted);
-                console.log(res);
               })
               .catch((err) => console.log(err));
           }
@@ -249,85 +245,78 @@ function SubCategory() {
     }
   };
 
-  const handleBlockClick = () => {
+  const handleBlockClick = async () => {
     const onClickCategory = subCategory.find((res) => res.title == title);
-    console.log(title);
 
-    encryption(onClickCategory.id)
-      .then((data) => {
-        const token = JSON.parse(sessionStorage.getItem("token"));
-        console.log(data);
-        console.log(onClickCategory, "occ");
-        if (onClickCategory && onClickCategory.is_active) {
-          axios
-            .put(
-              "http://localhost:8080/api/v1/category/inactive-category",
-              {},
-              {
-                headers: {
-                  category_id: data,
-                  token: token,
-                },
-              }
-            )
-            .then((res) => {
-              console.log(res);
-              setActive(!active);
-            })
-            .catch((err) => console.log(err));
-        } else {
-          axios
-            .put(
-              "http://localhost:8080/api/v1/category/active-category",
-              {},
-              {
-                headers: {
-                  category_id: data,
-                  token: token,
-                },
-              }
-            )
-            .then((res) => {
-              setActive(!active);
-              console.log(res);
-            })
-            .catch((err) => console.log(err));
-        }
-      })
-      .catch((err) => console.log(err));
+    try {
+      const data = await encryption(onClickCategory.id);
+      const token = JSON.parse(sessionStorage.getItem("token"));
+
+      if (onClickCategory && onClickCategory.is_active) {
+        await axios.put(
+          "http://localhost:8080/api/v1/category/inactive-category",
+          {},
+          {
+            headers: {
+              category_id: data,
+              token: token,
+            },
+          }
+        );
+      } else {
+        await axios.put(
+          "http://localhost:8080/api/v1/category/active-category",
+          {},
+          {
+            headers: {
+              category_id: data,
+              token: token,
+            },
+          }
+        );
+      }
+
+      setActive(!active);
+    } catch (err) {
+      console.log(err);
+    }
+
     const matchedIsActive = subCategory.filter((res) => res.is_active);
     const matchedIsInActive = subCategory.filter((res) => !res.is_active);
-    console.log(parentCategory);
-    if (matchedIsActive.length > 0 || matchedIsInActive.length===subCategory.length) {
+
+    if (
+      matchedIsActive.length > 0 ||
+      matchedIsInActive.length === subCategory.length
+    ) {
       const token = JSON.parse(sessionStorage.getItem("token"));
-      encryption(parentCategory.id).then((data) => {
-        axios
-          .put(
-            "http://localhost:8080/api/v1/category/active-category",
-            {},
-            {
-              headers: {
-                category_id: data,
-                token: token,
-              },
-            }
-          )
-          .then((res) => {
-            setActive(!active);
-            console.log(res);
-          })
-          .catch((err) => console.log(err));
-      });
+
+      try {
+        const data = await encryption(parentCategory.id);
+
+        await axios.put(
+          "http://localhost:8080/api/v1/category/active-category",
+          {},
+          {
+            headers: {
+              category_id: data,
+              token: token,
+            },
+          }
+        );
+
+        setActive(!active);
+      } catch (err) {
+        console.log(err);
+      }
     }
+
     setOpen(false);
   };
 
   const updateSubCategory = () => {
     setOpen(false);
     let matchedCategory;
-    console.log(subCategoryId, "subCadhf");
-    console.log(formik.values.categoryName, "dsafun");
-    setSubCategory(formik.values.categoryName);
+    // setSubCategory(formik.values.categoryName);
 
     if (subCategoryId) {
       matchedCategory = categories.find((res) => res.id == subCategoryId);
@@ -384,7 +373,7 @@ function SubCategory() {
                 id="category"
                 freeSolo
                 value={parentCategory.title}
-                style={{ width: "50%", marginTop:'30px' }}
+                style={{ width: "50%", marginTop: "30px" }}
                 // onChange={handleParentCategoryChange}
                 renderInput={(params) => (
                   <TextField {...params} label="Category" />
@@ -450,9 +439,15 @@ function SubCategory() {
       <Grid container>
         <Grid item xs={11}>
           <Box sx={{ height: "50px" }}>
-            <Typography variant="h4" sx={{ marginTop: "70px" }} color="initial">
-              Sub Category
-            </Typography>
+            <Stack direction="row" spacing={2} sx={{ marginTop: "70px" }}>
+              <ArrowBackIcon
+                sx={{ marginTop: "10px" }}
+                onClick={() => navigate("/add-category")}
+              />
+              <Typography variant="h4" color="initial">
+                Sub Category
+              </Typography>
+            </Stack>
           </Box>
           <Box sx={{ height: "50px" }}>
             <TableContainer component={Paper} elevation={7}>
@@ -460,17 +455,16 @@ function SubCategory() {
                 sx={{ minWidth: 500 }}
                 aria-label="custom pagination table"
               >
-                 <TableHead  sx={{backgroundColor:'green'}}>
-                    <TableRow >
-                      <TableCell variant="h4">
-                        <Typography variant="body1" color="initial">Sub Category</Typography>
-                        </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-
-                    </TableRow>
-                  </TableHead>
+                <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                      Sub Category
+                    </TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
                 <TableBody>
                   {(rowsPerPage > 0
                     ? subCategory.slice(
@@ -493,18 +487,16 @@ function SubCategory() {
                     >
                       <TableCell component="th" scope="row">
                         <Stack direction="row" spacing={3}>
-                        <Typography variant="body1" color="initial"  >
-                          {index+1}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          color="initial"
-                          >
-                          {row.title}
-                        </Typography>
-                          </Stack>
+                          <Typography variant="body1" color="initial">
+                            {index + 1}
+                          </Typography>
+                          <Typography variant="body1" color="initial">
+                            {row.title}
+                          </Typography>
+                        </Stack>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
+                      <Tooltip title="Block">
                         <BlockIcon
                           className="blockIcon"
                           sx={{ color: row.is_active ? undefined : "red" }}
@@ -513,6 +505,7 @@ function SubCategory() {
                             setOpen(true);
                           }}
                         />
+                        </Tooltip>
                         <Dialog
                           open={open}
                           keepMounted
@@ -544,11 +537,16 @@ function SubCategory() {
                         </Dialog>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
-                        <EditIcon
-                          onClick={() =>
-                            handleClick(row.title, row.id, row.parent_id)
-                          }
-                        />
+                        {row.is_active ? (
+                          <EditIcon
+                            disabled={!row.is_active ? true : false}
+                            onClick={() =>
+                              handleClick(row.title, row.id, row.parent_id)
+                            }
+                          />
+                        ) : (
+                          <EditIcon disabled />
+                        )}
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
                         <DeleteIcon onClick={() => handleDelete(row.title)} />

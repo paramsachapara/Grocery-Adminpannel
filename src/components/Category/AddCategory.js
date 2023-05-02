@@ -192,19 +192,16 @@ function AddCategory() {
     const onClickCategory = collapsableCategory.find(
       (res) => res.title == title
     );
-    console.log(title);
-    console.log(onClickCategory, "occ");
     const subCategoryOfSelectedCategory = categories.filter(
       (res) => res.parent_id == onClickCategory.id
     );
-    console.log(subCategoryOfSelectedCategory, "skjidfjid");
+
     if (subCategoryOfSelectedCategory) {
       subCategoryOfSelectedCategory.map((res) => {
         encryption(res.id)
           .then((data) => {
             const token = JSON.parse(sessionStorage.getItem("token"));
-            console.log(data);
-            console.log(onClickCategory, "occ");
+
             if (onClickCategory && onClickCategory.is_active && token) {
               axios
                 .put(
@@ -256,7 +253,6 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            console.log(res);
             setActive(!active);
           })
           .catch((err) => console.log(err));
@@ -275,7 +271,6 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            console.log(res);
             setActive(!active);
           })
           .catch((err) => console.log(err));
@@ -286,7 +281,6 @@ function AddCategory() {
     formik.setFieldValue("categoryName", title);
     setValue(title);
     setEdit(false);
-    console.log(title);
   };
 
   const updateCategory = () => {
@@ -317,7 +311,6 @@ function AddCategory() {
             )
             .then((res) => {
               setEdit(true);
-              console.log(res);
             })
             .catch((err) => console.log(err));
         } else {
@@ -337,7 +330,6 @@ function AddCategory() {
             )
             .then((res) => {
               setEdit(true);
-              console.log(res);
             })
             .catch((err) => console.log(err));
         }
@@ -348,7 +340,6 @@ function AddCategory() {
   };
 
   const handleDelete = (title) => {
-    console.log(title);
     let matchedCategory = categories.find((res) => res.title == title);
     const config = {
       headers: {
@@ -401,15 +392,11 @@ function AddCategory() {
 
   useEffect(() => {
     if (categories) {
-      console.log(categories, "categories");
       const transformedData = categories.filter((res) => res.parent_id == null);
-      console.log(transformedData, "");
+
       setCollapsableCategory(transformedData);
-      console.log(collapsableCategory, "trasformedData");
     }
   }, [categories, active]);
-
-
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -487,8 +474,8 @@ function AddCategory() {
                     <Button
                       variant="contained"
                       onClick={() => {
-                        setEdit(true)
-                        formik.setFieldValue("categoryName", '')
+                        setEdit(true);
+                        formik.setFieldValue("categoryName", "");
                       }}
                       color="success"
                     >
@@ -523,7 +510,6 @@ function AddCategory() {
                       .map((option) => option.title)}
                     value={value}
                     onChange={(event, newValue) => {
-                      console.log(newValue);
                       setValue(newValue);
                     }}
                     inputValue={inputValue}
@@ -586,12 +572,20 @@ function AddCategory() {
                   sx={{ minWidth: 500 }}
                   aria-label="custom pagination table"
                 >
-                  <TableHead sx={{ backgroundColor: "green" }}>
+                  <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
                     <TableRow>
-                      <TableCell>Category</TableCell>
-                      <TableCell>Sub Category</TableCell>
-                      <TableCell>Active Category</TableCell>
-                      <TableCell>In Active Category(g)</TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Sub Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Active Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        In Active Category
+                      </TableCell>
                       <TableCell></TableCell>
                       <TableCell></TableCell>
                       <TableCell></TableCell>
