@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-import { Autocomplete, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select } from "@mui/material";
+import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, Select } from "@mui/material";
 import { OutlinedInput } from "@mui/material";
 import { useFormik } from "formik";
 
@@ -19,7 +19,7 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-import { Grid } from "react-loader-spinner";
+// import { Grid } from "react-loader-spinner";
 
 
 const names = [
