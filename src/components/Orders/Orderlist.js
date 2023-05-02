@@ -130,6 +130,7 @@ export default function Orderlist() {
             width="200"
             visible={true}
             ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
           />
         </div>
       ) : (

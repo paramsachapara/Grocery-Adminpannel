@@ -24,7 +24,7 @@ function Login() {
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       toast.success("Oops,You Already Login", {
-        position: "bottom-center",
+        position: "top-right",
         duration: 3000,
       });
       navigate("/home");
@@ -47,7 +47,7 @@ function Login() {
           .then(function (login_res) {
             if (login_res) {
               toast.success("Login Successfully", {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               });
               console.log("login_res.data", login_res);
@@ -67,7 +67,7 @@ function Login() {
                 ? error.response.data.message
                 : "Error With Login",
               {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               }
             );
@@ -75,7 +75,7 @@ function Login() {
         action.resetForm();
       } else {
         toast.error("You are already logged in", {
-          position: "bottom-center",
+          position: "top-right",
           duration: 3000,
         });
       }
