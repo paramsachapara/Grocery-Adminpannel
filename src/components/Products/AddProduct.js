@@ -109,7 +109,7 @@ export default function AddProduct() {
           url: "http://localhost:8080/api/v1/product/add-product",
 
           data: initialValues,
-          headers: { token: token },
+          headers: { "token": token },
         };
 
         axios
