@@ -1,8 +1,9 @@
 import React from 'react'
 import axios from 'axios';
 
-function DeleteCategory(categories,title) {
-
+function DeleteCategory(props) {
+  const {title,categories} = props
+  console.log(title,categories)
     let matchedCategory = categories.find((res) => res.title == title);
     const config = {
       headers: {

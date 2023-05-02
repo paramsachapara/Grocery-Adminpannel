@@ -40,7 +40,8 @@ function CustomersDetails() {
 
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
-    let token = JSON.parse(sessionStorage.getItem("toen"));
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    console.log(token,'token');
     if (encryptedId && token) {
       axios
         .get("http://localhost:8080/api/v1/admin/get-all-orders-by-id", {
@@ -51,7 +52,7 @@ function CustomersDetails() {
         })
         .then((res) => {
           setUserDetails(res.data.data);
-          // console.log(res.data.data);
+          console.log(res.data.data,'res.data.data');
         })
         .catch((error) => {
           console.log(error, "error");
@@ -181,13 +182,14 @@ function CustomersDetails() {
   const handleNoForUnblock = () => {
     setOpenConfirmUnblockDialog(false);
   };
+  console.log(userDetails);
   return (
     <>
       <div>
         <Toaster />
       </div>
       <Sidebar />
-      {userDetails.length > 0 ? (
+     
         <Box marginTop={5} marginLeft={35} marginRight={10}>
           <Box
             sx={{
@@ -336,11 +338,7 @@ function CustomersDetails() {
 
           <OrdersTable userDetails={userDetails} />
         </Box>
-      ) : (
-        <Box variant="h1" component='h1' alignItems="center" sx={{marginTop:20,marginLeft:'35%'}}>
-          Error in getting data from server
-        </Box>
-      )}
+     
       <EditCustomerDialog
         openEditCustomer={openEditCustomer}
         setOpenEditCustomer={setOpenEditCustomer}
