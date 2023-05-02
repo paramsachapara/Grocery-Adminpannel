@@ -22,20 +22,6 @@ import { useTheme } from "@mui/material/styles";
 import AddProductSchema from "../../schemas/AddProductSchema";
 
 
-const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
-
-
 export default function AddProduct() {
   const theme = useTheme();
   const [categoryName, setcategoryName] = React.useState([]);
@@ -55,34 +41,9 @@ export default function AddProduct() {
       });
   },[])
 
-//   const handleChange = (event) => {
-//     let {
-//       target: { value },
-//     } = event;
-//     setPersonName(
-//       // On autofill we get a stringified value.
-//       typeof value === 'string' ? value.split(',') : value,
-//     );
-//     setcategoryId(personName);
-//     console.log("personName", personName);
-//     for (let i = 0; i < categoryId.length; i++) {
-//       for (let j = 0; j < category.length; j++) {
-//         if(categoryId[i]===category[j].title){
-//           categoryId[i] = category[j].id
-//           setPersonName(categoryId);
-//           console.log("categoryId", categoryId);
-//         }
-//       } 
-//     };
-//     formik.setFieldValue("categoryArrayFromBody", categoryId);
-
-    
-    
-// }
 const handleChange = (event) => {
-  const { value } = event.target || {}; // set default empty object if event.target is undefined
-  
-  // Use the spread operator instead of split() to turn a string value into an array
+  const { value } = event.target || {}; 
+
   const categoryNames = Array.isArray(value)
     ? value
     : [value];
@@ -94,8 +55,6 @@ const handleChange = (event) => {
     return matchingCategory ? matchingCategory.id : categoryName;
   });
   
-
-  // Update state variables with updated/corrected values
   setcategoryName(categoryNames);
   setcategoryId(newCategoryIds);
   console.log("newCategoryIds", newCategoryIds);
@@ -116,9 +75,6 @@ const handleChange = (event) => {
     categoryArrayFromBody: [],
   };
 
-  // const handleChange = (event, value) => {
-  //   formik.setFieldValue("categoryArrayFromBody", value);
-  // };
   const handleImageUpload = (e) => {
     const files = e.target.files[0];
     console.log("Files ", files);
@@ -413,7 +369,7 @@ const handleChange = (event) => {
               </Grid>
               <Grid item xs={12} sm={12} md={6} >
                 <FormControl sx={{ width: "100%", maxWidth: 600 }}>
-                  <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+                  <InputLabel id="demo-multiple-chip-label">Product Category</InputLabel>
                   <Select
           labelId="demo-multiple-checkbox-label"
           id="categoryArrayFromBody"
@@ -432,23 +388,6 @@ const handleChange = (event) => {
           ))}
         </Select>
                 </FormControl>
-              {/* <Autocomplete
-                  multiple
-                  required
-                  id="categoryArrayFromBody"
-                  name="categoryArrayFromBody"
-                  options={products.map((option) => option.name)}
-                  filterSelectedOptions
-                  onChange={formik.handleChange}
-                  value={formik.values.categoryArrayFromBody}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Category of product"
-                      placeholder="Select Category of Product"
-                    />
-                  )}
-                /> */}
               {formik.touched.categoryArrayFromBody &&
                   formik.errors.categoryArrayFromBody && (
                     <div
@@ -468,7 +407,8 @@ const handleChange = (event) => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2}}
+              className="btn btn-success"
 
             >
               Add Product

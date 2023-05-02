@@ -23,6 +23,7 @@ function AllProduct() {
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = useState(false);
   const [block, setblock] = useState(false);
+  const [openEditCustomer, setOpenEditCustomer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openBlockDialog, setOpenBlockDialog] = useState(false);
