@@ -36,6 +36,8 @@ import BlockIcon from "@mui/icons-material/Block";
 import TableHead from "@mui/material/TableHead";
 import { Stack } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { toast } from "react-hot-toast";
+import { DeleteCategory } from "./DeleteCategory";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -129,7 +131,7 @@ function SubCategory() {
   const [parentCategory, setParentCategory] = useState("");
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = useState(true);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(null);
   const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
   const navigate = useNavigate();
 
@@ -212,7 +214,7 @@ function SubCategory() {
   };
 
   const handleDelete = (title) => {
-    if (title) {
+        if (title) {
       let matchedCategory = categories.find((res) => res.title == title);
       const config = {
         headers: {
@@ -263,6 +265,10 @@ function SubCategory() {
             },
           }
         );
+        toast.success(`${onClickCategory.title}`+ " inactivated",{
+          position: "top-right",
+          autoClose: 3000,
+        })
       } else {
         await axios.put(
           "http://localhost:8080/api/v1/category/active-category",
@@ -274,10 +280,18 @@ function SubCategory() {
             },
           }
         );
+        toast.success(`${onClickCategory.title}`+ " activated",{
+          position: "top-right",
+          autoClose: 3000,
+        })
       }
-
+      
       setActive(!active);
     } catch (err) {
+      toast.error(`${onClickCategory.title}`+ " Not Updated",{
+        position: "top-right",
+        autoClose: 3000,
+      })
       console.log(err);
     }
 
@@ -303,7 +317,6 @@ function SubCategory() {
             },
           }
         );
-
         setActive(!active);
       } catch (err) {
         console.log(err);
@@ -347,9 +360,19 @@ function SubCategory() {
                   }
                 )
                 .then((res) => {
+                  toast.success(`${matchedCategory.title}`+ "Updated",{
+                    position: "top-right",
+                    autoClose: 3000,
+                  })
                   console.log(res);
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => {
+                  toast.error(`${matchedCategory.title}`+ " Not Updated",{
+                    position: "top-right",
+                    autoClose: 3000,
+                  })
+                });
+                
             })
             .catch((err) => {
               console.log(err);
@@ -537,6 +560,7 @@ function SubCategory() {
                         </Dialog>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
+                      <Tooltip title="Edit">
                         {row.is_active ? (
                           <EditIcon
                             disabled={!row.is_active ? true : false}
@@ -547,9 +571,12 @@ function SubCategory() {
                         ) : (
                           <EditIcon disabled />
                         )}
+                        </Tooltip>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
+                      <Tooltip title="Delete">
                         <DeleteIcon onClick={() => handleDelete(row.title)} />
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -590,7 +617,10 @@ function SubCategory() {
           </Box>
         </Grid>
       </Grid>
-    </Sidebar>
+                    
+                      {/* <DeleteCategory title = {title} categories = {categories}/> */}
+                      
+      </Sidebar>
   );
 }
 export default SubCategory;
