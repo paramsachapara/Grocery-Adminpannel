@@ -454,7 +454,7 @@ const handleChange = (event) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              style={{}}
+              color="success"
             >
               Add Product
             </Button>
