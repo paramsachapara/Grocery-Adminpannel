@@ -139,7 +139,7 @@ export default function AddProduct() {
             if (AddProduct_res) {
               console.log("AddProduct_res data", AddProduct_res);
               toast.success("Product added successfully", {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               });
               navigate("/all-product");
@@ -152,7 +152,7 @@ export default function AddProduct() {
                 ? error.response.data.message
                 : "Error With fetching data",
               {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               }
             );
@@ -160,7 +160,7 @@ export default function AddProduct() {
         action.resetForm();
       } else {
         toast.error("please login", {
-          position: "bottom-center",
+          position: "top-right",
           duration: 3000,
         });
       }

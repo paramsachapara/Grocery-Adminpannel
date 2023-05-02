@@ -145,14 +145,14 @@ function AllProduct() {
                 ? error.response.data.message
                 : "Error With fetching product",
               {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               }
             );
           });
       } else {
         toast.error("Please login first...", {
-          position: "bottom-center",
+          position: "top-right",
           duration: 800,
         });
       }

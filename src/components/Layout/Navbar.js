@@ -61,7 +61,7 @@ function Navbar() {
   const Logout = (setting) => {
     if (setting === "Logout") {
       toast.success("Logout Successfully", {
-        position: "bottom-center",
+        position: "top-right",
         duration: 3000,
       });
       sessionStorage.clear();
