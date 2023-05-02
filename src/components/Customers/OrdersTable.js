@@ -7,18 +7,21 @@ import TableRow from "@mui/material/TableRow";
 import { Paper } from "@mui/material";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router";
-
+import { useLocation } from "react-router-dom"; 
 import { Box } from "@mui/material";
 import React, { useState } from "react";
+
 
 function OrdersTable(props) {
   const [orderData, setOrderData] = useState([]);
   const { userDetails } = props;
   const orderDetail = userDetails.orders;
   const navigate = useNavigate();
+ 
 
-  const orderItems = (id) => {
+  const orderItems = (id , userDetails) => {
     navigate(`/order-items/${id}`);
+  
   };
   // if(orderDetail){
   //     setOrderData(orderDetail)
@@ -98,7 +101,7 @@ function OrdersTable(props) {
           <TableBody>
             {orderDetail ? (
               orderDetail.map((row, index) => (
-                <TableRow
+                <TableRow 
                   key={index}
                   onClick={() => orderItems(row.id)}
                   style={{ cursor: "pointer" }}
@@ -107,12 +110,12 @@ function OrdersTable(props) {
                     {index + 1}
                   </TableCell>
                   <TableCell align="left">{row.order_date}</TableCell>
-                  <TableCell align="left">{row.order_status}</TableCell>
+                  <TableCell align="left">{row.order_status_masters.title}</TableCell>
                   <TableCell align="left">
                     {row.estimate_delivery_date}
                   </TableCell>
                   <TableCell align="left">{row.paid_amount}</TableCell>
-                  <TableCell align="left">{row.payment_status}</TableCell>
+                  <TableCell align="left">{row.payment_status_masters.title}</TableCell>
                   <TableCell align="left">{row.special_note}</TableCell>
                   <TableCell align="left">{row.sub_total}</TableCell>
                   <TableCell align="left">{row.tax_amount}</TableCell>

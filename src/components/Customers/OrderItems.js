@@ -12,13 +12,74 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Paper } from "@mui/material";
-
-
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
 function OrderItems() {
   const navigate = useNavigate();
-  let orderItems = []
-  let orderData = []
+  const {orderId} = useParams()
+  const [value, setValue] = React.useState(0);
+  const [orderData,setOrderData]=React.useState([])
+  const [orderItems,setOrderItems]=React.useState([])
+  const [isLoader,setIsLoader]=React.useState(true)
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+   
+
+  const get_All_Orders=()=>{
+    console.log("get_Orders_res");
+
+      let token=JSON.parse(sessionStorage.getItem("token"));
+      if(token){
+  const options = {
+    method: "get",
+    url: "http://localhost:8080/api/v1/admin/get-all-orders",
+    headers: 
+      {'token': token}
+    
+  };
+
+  axios
+  .request(options)
+        .then(function (get_Orders_res) {
+          if (get_Orders_res) {
+            // setTimeout(() => {
+            //   setIsLoader(false)
+            // }, 2000);
+            console.log("get_Orders_res",get_Orders_res);
+     
+            let orderDate = new Date().toLocaleDateString('en-CA')
+            for(let i=0;i<get_Orders_res.data.data.length;i++){      
+              if(get_Orders_res.data.data[i].id==orderId){
+                get_Orders_res.data.data=get_Orders_res.data.data[i]
+                console.log("get_Orders_res.data.data ",get_Orders_res.data.data)
+                // console.log("get_Orders_res.data.data ",get_Orders_res.data.data[i])
+                if(get_Orders_res.data.data.estimate_delivery_date===orderDate){
+                  get_Orders_res.data.data.estimate_delivery_date="Delivered"
+                  console.log("Delivered")
+                }
+              }
+            }
+            
+            setOrderData(get_Orders_res.data.data)
+            setOrderItems(get_Orders_res.data.data.order_items)
+            console.log("customerDetails",orderData)
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+       
+  }
+  }
+  useEffect(()=>{
+    console.log(orderId)
+    get_All_Orders()
+},[])
+
   return (
     <>
       <Sidebar />
@@ -31,12 +92,12 @@ function OrderItems() {
           }}
         >
           <Tooltip title="Go Back">
-            <IconButton onClick={() => navigate("/customer-list")}>
+            <IconButton onClick={() => navigate(`/customer-details/${orderData.customer_id}`)}>
               <KeyboardBackspaceIcon />
             </IconButton>
           </Tooltip>
           <Box component="h3">Ordered Items</Box>
-          <h4>Total Items</h4>
+          <h4>Total Items : {orderItems ? orderItems.length : 0}</h4>
         </Box>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
