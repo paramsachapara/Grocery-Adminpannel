@@ -174,15 +174,6 @@ const handleChange = (event) => {
       if (token) {
         // console.log("AddProductObj",AddProductObj);
         const options = {
-<<<<<<< HEAD
-          method: "post",
-          url: "http://localhost:8080/api/v1/product/add-product",
-
-          data: initialValues,
-          headers: { "token": token },
-        };
-
-=======
           method:'post',
           url:"http://localhost:8080/api/v1/product/add-product",
           data: formData,
@@ -192,7 +183,6 @@ const handleChange = (event) => {
         // axios.post("http://localhost:8080/api/v1/product/add-product", formData,options).then((response) => {
         //   console.log("response.data==>>",response.data);
         // });
->>>>>>> 9373d1d60c46017f35bd615dcb2e222b06af2941
         axios
           .request(options)
           .then(function (AddProduct_res) {
