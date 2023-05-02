@@ -28,7 +28,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 
-const pages = ["Dashboard", "ORDER LIST", "All PRODUCT"];
+// const pages = ["Dashboard", "ORDER LIST", "All PRODUCT"];
 const settings = ["Profile", "Logout"];
 
 function Navbar() {
@@ -49,7 +49,7 @@ function Navbar() {
   };
 
   const [open, setOpen] = React.useState(false);
-
+  // const [menu, setMenu] = React.useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -105,7 +105,7 @@ function Navbar() {
         </div>
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <Button
-            onClick={() => setOpenDrawer(true)}
+            onClick={() => setOpenDrawer(!openDrawer)}
             sx={{
               display: { xs: "block", md: "none" },
               color: "white",
@@ -115,7 +115,7 @@ function Navbar() {
             <MenuIcon />
           </Button>
 
-          <Menu
+          {/* <Menu
             id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
@@ -138,7 +138,7 @@ function Navbar() {
                 <Typography textAlign="center">{page}</Typography>
               </MenuItem>
             ))}
-          </Menu>
+          </Menu> */}
         </Box>
 
         {/* ----- */}
@@ -162,7 +162,7 @@ function Navbar() {
           GROCERY APP
         </Typography>
         <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-          {pages.map((page) => (
+          {/* {pages.map((page) => (
             <IconButton
               key={page}
               onClick={handleCloseNavMenu}
@@ -170,7 +170,7 @@ function Navbar() {
             >
               {page}
             </IconButton>
-          ))}
+          ))} */}
         </Box>
 
         <Box sx={{ flexGrow: 0 }}>
