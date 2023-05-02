@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, ListItemText } from "@mui/material";
 import { OutlinedInput } from "@mui/material";
 import { useFormik, Formik } from "formik";
 import * as Yup from "yup";
@@ -52,29 +52,75 @@ const names = [
   "Kelly Snyder",
 ];
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-const theme = createTheme();
 
 export default function AddProduct() {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
+  const [categoryName, setcategoryName] = React.useState([]);
+  const [categoryId, setcategoryId] = React.useState([]);
+  const [category, setCategory] = React.useState([]);
 
-  const selectChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+
+  React.useEffect(()=>{
+    axios
+      .get("http://localhost:8080/api/v1/category/get-all-categories")
+      .then((res) => {
+        console.log(res.data.data);
+        setCategory(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[])
+
+//   const handleChange = (event) => {
+//     let {
+//       target: { value },
+//     } = event;
+//     setPersonName(
+//       // On autofill we get a stringified value.
+//       typeof value === 'string' ? value.split(',') : value,
+//     );
+//     setcategoryId(personName);
+//     console.log("personName", personName);
+//     for (let i = 0; i < categoryId.length; i++) {
+//       for (let j = 0; j < category.length; j++) {
+//         if(categoryId[i]===category[j].title){
+//           categoryId[i] = category[j].id
+//           setPersonName(categoryId);
+//           console.log("categoryId", categoryId);
+//         }
+//       } 
+//     };
+//     formik.setFieldValue("categoryArrayFromBody", categoryId);
+
+    
+    
+// }
+const handleChange = (event) => {
+  const { value } = event.target || {}; // set default empty object if event.target is undefined
+  
+  // Use the spread operator instead of split() to turn a string value into an array
+  const categoryNames = Array.isArray(value)
+    ? value
+    : [value];
+  console.log("categoryNames", categoryNames);
+  const newCategoryIds = categoryNames.map((categoryName) => {
+    console.log("categoryName", categoryName);
+    const matchingCategory = category.find((cat) => cat.title === categoryName);
+    console.log("matchingCategory", matchingCategory);
+    return matchingCategory ? matchingCategory.id : categoryName;
+  });
+  
+
+  // Update state variables with updated/corrected values
+  setcategoryName(categoryNames);
+  setcategoryId(newCategoryIds);
+  console.log("newCategoryIds", newCategoryIds);
+  formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
+};
+
+
+  
 
   const initialValues = {
     title: "",
@@ -84,12 +130,12 @@ export default function AddProduct() {
     discount_type: "",
     discount_amount: "",
     avatar_image: [],
-    categoryArrayFromBody: [2, 4],
+    categoryArrayFromBody: [],
   };
 
-  const handleChange = (event, value) => {
-    formik.setFieldValue("categoryArrayFromBody", value);
-  };
+  // const handleChange = (event, value) => {
+  //   formik.setFieldValue("categoryArrayFromBody", value);
+  // };
   const handleImageUpload = (e) => {
     const files = e.target.files;
     console.log("Files ", files[0].name);
@@ -100,16 +146,44 @@ export default function AddProduct() {
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: (values, action) => {
+
+      const AddProductObj = {
+        title: values.title,
+        amount: values.amount,
+        discount_type: values.discount_type,
+        discount_amount: values.discount_amount,
+        short_description: values.short_description,  
+        description: values.description,
+        avatar_image: values.avatar_image,
+        categoryArrayFromBody: values.categoryArrayFromBody,
+      };
+      // var formData = new FormData()
+      // formData.append('title',initialValues.title);
+      // formData.append('short_description',initialValues.short_description);
+      // formData.append('description',initialValues.description);
+      // formData.append('amount',initialValues.amount);
+      // formData.append('discount_type',initialValues.discount_type);
+      // formData.append('discount_amount',initialValues.discount_amount);
+      // formData.append('avatar_image',initialValues.avatar_image);
+      // formData.append('categoryArrayFromBody',initialValues.categoryArrayFromBody);
+
+      // console.log("personName", personName);
+      
+      
+      const formData = new FormData();
+      formData.append('AddProductObj', JSON.stringify(AddProductObj));
+      console.log("FormData", formData);
+
       let token = JSON.parse(sessionStorage.getItem("token"));
-      console.log(values);
       if (token) {
-        console.log(values);
+        console.log("AddProductObj",AddProductObj);
         const options = {
           method: "post",
           url: "http://localhost:8080/api/v1/product/add-product",
-
-          data: initialValues,
-          headers: { token: JSON.parse(token) },
+          data: AddProductObj,
+          headers: {
+            'Content-Type': 'multipart/form-data; charset=utf-8; boundary="another cool boundary";',"token": token
+          }
         };
 
         axios
@@ -340,38 +414,28 @@ export default function AddProduct() {
                     </div>
                   )}
               </Grid>
-              {/* <Grid item xs={12} sm={12} md={6} >
+              <Grid item xs={12} sm={12} md={6} >
                 <FormControl sx={{ width: "100%", maxWidth: 600 }}>
                   <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
                   <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={selectChange}
-                    input={
-                      <OutlinedInput id="select-multiple-chip" label="Chip" />
-                    }
-                    renderValue={(selected) => (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
+          labelId="demo-multiple-checkbox-label"
+          id="categoryArrayFromBody"
+          name="categoryArrayFromBody"
+          multiple
+          value={categoryName}
+          onChange={handleChange}
+          input={<OutlinedInput label="Tag" />}
+          renderValue={(selected) => selected.join(', ')}
+          MenuProps={MenuProps}
+        >
+          {category.map((name) => (
+            <MenuItem key={name.id} value={name.title}>
+              <Checkbox checked={categoryName.indexOf(name.title) > -1} />
+              <ListItemText primary={name.title} />
+            </MenuItem>
+          ))}
+        </Select>
+                </FormControl>
               {/* <Autocomplete
                   multiple
                   required
@@ -389,7 +453,7 @@ export default function AddProduct() {
                     />
                   )}
                 /> */}
-              {/* {formik.touched.categoryArrayFromBody &&
+              {formik.touched.categoryArrayFromBody &&
                   formik.errors.categoryArrayFromBody && (
                     <div
                       style={{
@@ -401,7 +465,7 @@ export default function AddProduct() {
                       {formik.errors.categoryArrayFromBody}
                     </div>
                   )}
-              </Grid> */}
+              </Grid>
             </Grid>
 
             <Button
