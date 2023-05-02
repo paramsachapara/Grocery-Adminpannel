@@ -22,6 +22,7 @@ function AllProduct() {
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = useState(false);
   const [block, setblock] = useState(false);
+  const [openEditCustomer, setOpenEditCustomer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
@@ -30,7 +31,11 @@ function AllProduct() {
   // Fetch data on component mount
   useEffect(() => {
     fetchAllProduct();
-  }, []);
+  }, [
+    openEditCustomer,
+    selectedProduct,
+    openEditDialog,
+  ]);
 
   const fonttheme = createTheme({
     typography: {
@@ -254,6 +259,7 @@ function AllProduct() {
               </Table>
             </TableContainer>
             <EditProductDialog
+            openEditCustomer={openEditCustomer}
               openEditDialog={openEditDialog}
               setOpenEditDialog={setOpenEditDialog}
               selectedProduct={selectedProduct}

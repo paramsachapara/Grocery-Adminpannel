@@ -4,11 +4,11 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-
+import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, Select } from "@mui/material";
 import Box from "@mui/material/Box";
 
 import Container from "@mui/material/Container";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
 
 import { OutlinedInput } from "@mui/material";
@@ -19,15 +19,30 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-import {Grid} from "@mui/material";
 // import { Grid } from "react-loader-spinner";
 
+const theme = createTheme();
 export default function EditProductForm(props) {
   const { selectedProduct, setOpenEditDialog } = props;
-
-  const theme = useTheme();
+  const [categoryName, setcategoryName] = React.useState([]);
+  const [categoryId, setcategoryId] = React.useState([]);
+  const [category, setCategory] = React.useState([]);
+  const [changeProduct, setChangeProduct] = React.useState(false);
+  // const theme = useTheme();
   let avatar
 
+  React.useEffect(()=>{
+    axios
+      .get("http://localhost:8080/api/v1/category/get-all-categories")
+      .then((res) => {
+        console.log(res.data.data);
+        setCategory(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[changeProduct])
+  
   const initialValues = {
     title: selectedProduct.title || "",
     short_description: selectedProduct.short_description || "",
@@ -36,9 +51,27 @@ export default function EditProductForm(props) {
     discount_type: selectedProduct.discount_type || "",
     discount_amount: selectedProduct.discount_amount || 0,
     avatar_image: selectedProduct.avatar_image || {} ,
-    categoryArrayFromBody:[1,2],
+    categoryArrayFromBody:selectedProduct.categoryArrayFromBody || [],
   };
-
+  const handleChange = (event) => {
+    const { value } = event.target || {}; 
+  
+    const categoryNames = Array.isArray(value)
+      ? value
+      : [value];
+    console.log("categoryNames", categoryNames);
+    const newCategoryIds = categoryNames.map((categoryName) => {
+      console.log("categoryName", categoryName);
+      const matchingCategory = category.find((cat) => cat.title === categoryName);
+      console.log("matchingCategory", matchingCategory);
+      return matchingCategory ? matchingCategory.id : categoryName;
+    });
+    
+    setcategoryName(categoryNames);
+    setcategoryId(newCategoryIds);
+    console.log("newCategoryIds", newCategoryIds);
+    formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
+  };
   // const handleChange = (event, value) => {
   //   formik.setFieldValue("categoryArrayFromBody", value);
   // };
@@ -61,17 +94,39 @@ export default function EditProductForm(props) {
       .then((res) => {
         // console.log("id", id);
         console.log("Eid", res.data.data);
-       
-        axios.put("http://localhost:8080/api/v1/product/update-product",values,{
+        let formData = new FormData()
+
+        console.log("formData>>>>>>>>>>>>>>>>>>>>>>>>>>>>", formData);
+  
+        formData.append('title',values.title);
+        formData.append('short_description',values.short_description);
+        formData.append('description',values.description);
+        formData.append('amount',values.amount);
+        formData.append('discount_type',values.discount_type);
+        formData.append('discount_amount',values.discount_amount);
+        formData.append('avatar_image',values.avatar_image);
+        formData.append('categoryArrayFromBody',JSON.stringify(values.categoryArrayFromBody));
+  
+        axios.put("http://localhost:8080/api/v1/product/update-product",formData,{
           headers:{
-            token:token,
-            product_id:res.data.data
+            "token":token,
+            "product_id":res.data.data,
+            "Content-Type": "multipart/form-data"
           }
         }).then((res)=>{
           console.log("Product Updated",res)
+          toast.success(`${formData.get('title')} Product Updated`,{
+          position: "top-right",
+          autoClose: 3000,
+          })
           setOpenEditDialog(false)
+          setChangeProduct(!changeProduct)
         }).catch((error)=>{
           console.log("Error",error)
+          toast.error(error.response.data.message,{
+          position: "top-right",
+          autoClose: 3000,
+          })
         })
       }).catch(error=>console.log(error))
     }
@@ -280,7 +335,40 @@ export default function EditProductForm(props) {
                   )}
               </Grid>
             </Grid>
-
+            <Grid item xs={12} sm={12} md={6}>
+                <FormControl sx={{ width: "100%", maxWidth: 600 }}>
+                  <InputLabel id="demo-multiple-chip-label">Product Category</InputLabel>
+                  <Select
+          labelId="demo-multiple-checkbox-label"
+          id="categoryArrayFromBody"
+          name="categoryArrayFromBody"
+          multiple
+          value={categoryName}
+          onChange={handleChange}
+          input={<OutlinedInput label="Tag" />}
+          renderValue={(selected) => selected.join(', ')}
+        >
+          {category.map((name) => (
+            <MenuItem key={name.id} value={name.title}>
+              <Checkbox checked={categoryName.indexOf(name.title) > -1} />
+              <ListItemText primary={name.title} />
+            </MenuItem>
+          ))}
+        </Select>
+                </FormControl>
+              {formik.touched.categoryArrayFromBody &&
+                  formik.errors.categoryArrayFromBody && (
+                    <div
+                      style={{
+                        color: "red",
+                        marginBottom: "15px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {formik.errors.categoryArrayFromBody}
+                    </div>
+                  )}
+              </Grid>
             <Button
               type="submit"
               fullWidth
