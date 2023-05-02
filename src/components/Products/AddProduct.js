@@ -11,13 +11,8 @@ import Container from "@mui/material/Container";
  
 import { ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-<<<<<<< HEAD
-
-import { OutlinedInput,Grid } from "@mui/material";
-=======
 import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, Select } from "@mui/material";
 import { OutlinedInput } from "@mui/material";
->>>>>>> d5ed3c98bb58dfdad2cb1b2e40021d0ecae52a07
 import { useFormik } from "formik";
 
 import axios from "axios";
@@ -25,10 +20,6 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-<<<<<<< HEAD
-=======
-// import { Grid } from "react-loader-spinner";
->>>>>>> d5ed3c98bb58dfdad2cb1b2e40021d0ecae52a07
 
 
 const names = [
