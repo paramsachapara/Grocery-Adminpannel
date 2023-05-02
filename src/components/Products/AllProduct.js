@@ -16,19 +16,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { toast } from "react-hot-toast";
-import EditProductDialog from "./EditProductDialog"
-
+import EditProductDialog from "./EditProductDialog";
 
 function AllProduct() {
-
   const [tableData, setTableData] = useState([]);
-  const [setOpen] = useState(false);
-  const [block,setblock] =useState(false)
+  const [open, setOpen] = useState(false);
+  const [block, setblock] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [title, setTitle] = useState("");
 
-  let data;
+  const [title, setTitle] = useState("");
 
   // Fetch data on component mount
   useEffect(() => {
@@ -59,6 +56,7 @@ function AllProduct() {
       axios
         .request(options)
         .then((response) => {
+          let data;
           console.log("All product response", response);
           data = response.data.data;
           setTableData(data);
@@ -84,7 +82,7 @@ function AllProduct() {
     }
   };
 
-    const handleDelete = (id) => {
+  const handleDelete = (id) => {
     axios
       .get("http://localhost:8080/api/v1/encryption", {
         headers: {
@@ -94,28 +92,28 @@ function AllProduct() {
       .then((res) => {
         console.log("id", id);
         console.log("Eid", res.data.data);
-       
+  
         let token = JSON.parse(sessionStorage.getItem("token"));
         if (token) {
           const options = {
             method: "delete",
             url: "http://localhost:8080/api/v1/product/delete-product",
-            headers: { "token": token, "product_id": res.data.data },
+            headers: { token: token, product_id: res.data.data },
           };
           axios
             .request(options)
             .then(function (res) {
               console.log("deleted successfuly");
+  
+              // Remove the deleted product from tableData and set the new array as state
+              setTableData((prevTableData) =>
+                prevTableData.filter((item) => item.id !== id)
+              );
             })
             .catch(function (error) {
               console.log("erreor in deletion", error);
             });
         }
-        const index = tableData.findIndex((item) => item.id === id);
-        console.log(index);
-        tableData.splice(index, 1);
-        console.log(tableData);
-        setTableData(tableData);
       })
       .catch((error) => {
         console.log(error, "error");
@@ -126,44 +124,61 @@ function AllProduct() {
     setOpenEditDialog(true);
     setOpen(true);
   };
- const handleBlock=(id)=>{
-  let token = JSON.parse(sessionStorage.getItem("token"));
-  if (token){
+  const handleBlock = (id) => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    if (token) {
       axios
-      .get("http://localhost:8080/api/v1/encryption", {
-        headers: {
-          id: id,
-        },
-      })
-      .then((res)=>{
-        if(block){
-          
-          axios  
-          .put( "http://localhost:8080/api/v1/product/active-product", {
-              headers: { 
-                "token": token, "product_id": res.data.data 
-              }
-            })
-          .then(()=>{
-            toast.success("product BLOCKED successfully...", {
-              position: "bottom-center",
-              duration: 800,
-            });
-            setblock(true)
-          })
-        }
-        else{
-
-        }
-      })
-     .catch((error) => {
-        console.log(error, "error");
+        .get("http://localhost:8080/api/v1/encryption", {
+          headers: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          if (block) {
+            axios
+              .put(
+                "http://localhost:8080/api/v1/product/active-product",
+                {},
+                {
+                  headers: {
+                    token: token,
+                    product_id: res.data.data,
+                  },
+                }
+              )
+              .then(() => {
+                setblock(false);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          } else {
+            console.log("inactive token", token);
+            axios
+              .put("http://localhost:8080/api/v1/product/inactive-product", {},{
+                headers: {
+                  product_id: res.data.data,
+                  token: token,
+                },
+              })
+              .then(() => {
+                setblock(true);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.log(error, "error");
+        });
+    } else {
+      toast.error("Please login first...", {
+        position: "bottom-center",
+        duration: 800,
       });
-  }else//admin not found
-  {
-    console.log("admin not found")
-  }
- }
+    }
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -218,15 +233,16 @@ function AllProduct() {
                           </Tooltip>
                           <Tooltip title="Delete">
                             <IconButton
-                              onClick={() => handleDelete(product._id)}
+                              onClick={() => handleDelete(product.id)}
                             >
                               <DeleteIcon />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Block">
                             <IconButton
-                              onClick={() => handleBlock(product._id)}
-                              color={product.is_active ? "primary" : "danger"}
+                              onClick={() => handleBlock(product.id)}
+                              sx={{ color:block ? "red" : "green"}}
+                             
                             >
                               <BlockIcon />
                             </IconButton>
