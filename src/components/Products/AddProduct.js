@@ -8,10 +8,11 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 import Container from "@mui/material/Container";
+ 
 import { ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
 
-import { OutlinedInput } from "@mui/material";
+import { OutlinedInput,Grid } from "@mui/material";
 import { useFormik } from "formik";
 
 import axios from "axios";
@@ -19,7 +20,6 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-import { Grid } from "react-loader-spinner";
 
 
 
@@ -66,10 +66,10 @@ export default function AddProduct() {
 
         axios
           .request(options)
-          .then(function (login_res) {
-            if (login_res) {
-              console.log("login_res data", login_res);
-              toast.success("Signup Successfully", {
+          .then(function (AddProduct_res) {
+            if (AddProduct_res) {
+              console.log("AddProduct_res data", AddProduct_res);
+              toast.success("Product added successfully", {
                 position: "bottom-center",
                 duration: 3000,
               });
@@ -77,7 +77,7 @@ export default function AddProduct() {
             }
           })
           .catch(function (error) {
-            console.error(error);
+            console.error("Error of add product",error);
             toast.error(
               error.response.data.message
                 ? error.response.data.message
@@ -90,7 +90,7 @@ export default function AddProduct() {
           });
         action.resetForm();
       } else {
-        toast.error("You are already logged in", {
+        toast.error("please login", {
           position: "bottom-center",
           duration: 3000,
         });
@@ -299,6 +299,7 @@ export default function AddProduct() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              style={{}}
             >
               Add Product
             </Button>
