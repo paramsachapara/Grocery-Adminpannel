@@ -44,93 +44,50 @@ export default function EditProductForm(props) {
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
-        console.log("Category Response",res.data.data);
+        console.log("Category Response", res.data.data);
         setCategory(res.data.data);
+        console.log("selectedProduct", selectedProduct);
+        const categoryIds = selectedProduct.categoryArrayFromBody;
+        console.log("categoryIds", categoryIds);
+
+        const newCategoryIds = categoryIds.map((categoryId) => {
+          console.log("category", res.data.data);
+          console.log("categoryId", categoryId);
+          const matchingCategory = res.data.data.find(
+            (cat) => cat.id === categoryId.category_id
+          );
+          console.log("matchingCategory", matchingCategory);
+          return matchingCategory ? matchingCategory.title : categoryId;
+        });
+
+        setcategoryName(newCategoryIds);
+        console.log("newCategoryIds", newCategoryIds);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [changeProduct]);
+  }, [changeProduct, setOpenEditDialog]);
 
-  
-//   const handleChange = () => {
-//     axios
-//       .get("http://localhost:8080/api/v1/category/get-all-categories")
-//       .then((res) => {
-//         console.log("Category Response",res.data.data);
-//         setCategory(res.data.data);
-      
-// console.log("selectedProduct",selectedProduct)
-//     // const categoryIds = selectedProduct.categoryArrayFromBody
-//     const categoryIds = [1,2]
-//     console.log("categoryNames", categoryIds);
-//     const newCategoryIds = categoryIds.map((categoryId) => {
-//       console.log("category", category);
-//       console.log("categoryId", categoryId);
-//       const matchingCategory = selectedProduct.categoryArrayFromBody.find(
-//         (cat) => cat.category_id === categoryId
-//       );
-//       console.log("matchingCategory", matchingCategory);
-//       return matchingCategory ? matchingCategory.category.title : categoryId;
-//     });
+  const handleChange = (event) => {
+    const { value } = event.target || {};
 
-//     setcategoryName(newCategoryIds);
-//     setcategoryId(categoryIds);
-//     console.log("newCategoryIds", newCategoryIds);
-//     // return newCategoryIds
-//     // formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-//   };
+    console.log("value", value);
 
-
-// const handleChange = (event) => {
-//   axios
-//     .get("http://localhost:8080/api/v1/category/get-all-categories")
-//     .then((res) => {
-//       const categories = res.data.data;
-//       setCategory(categories);
-//       console.log("Category Response", categories);
-//                 console.log("selectedProduct.categoryArrayFromBody",selectedProduct.categoryArrayFromBody)
-                
-//       let GetIds = selectedProduct.categoryArrayFromBody;
-//       let categoryIds=[]
-//       for(let i=0;i<GetIds.length;i++){
-//         categoryIds.push(GetIds[i].category_id)
-//       }
-//       console.log("categoryIds", categoryIds);
-
-
-//       const matchingCategories = categories.filter((category) =>
-//         categoryIds.includes(category.id)
-//       );
-      
-//       console.log("matchingCategories", matchingCategories);
-
-//       const categoryNames = matchingCategories.map(
-//         (category) => category.title
-//       );
-//       console.log("categoryNames", categoryNames);
-
-//       setcategoryName(categoryNames);
-//       setcategoryId(categoryIds);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
-
-const handleChange = (event) => {
-  const {
-    target: { value },
-  } = event;
-  setcategoryName(
-    // On autofill we get a stringified value.
-    typeof value === 'string' ? value.split(',') : value,
-  );
-};
+    const categoryNames = Array.isArray(value) ? value : [value];
+    console.log("categoryNames", categoryNames);
+    const newCategory = categoryNames.map((categoryName) => {
+      console.log("categoryName", categoryName);
+      const matchingCategory = category.find(
+        (cat) => cat.title === categoryName
+      );
+      console.log("matchingCategory", matchingCategory);
+      return matchingCategory ? matchingCategory.id : categoryName;
+    });
+    formik.setFieldValue("categoryArrayFromBody", newCategory);
+    console.log("newCategoryIds", newCategory);
+    setcategoryName(categoryNames);
+    setcategoryId(newCategory);
+  };
 
   const initialValues = {
     title: selectedProduct.title || "",
@@ -142,7 +99,6 @@ const handleChange = (event) => {
     avatar_image: selectedProduct.avatar_image || {},
     categoryArrayFromBody: categoryId || [],
   };
-
 
   const handleAvatarChange = (event) => {
     formik.setFieldValue("avatar_image", event.currentTarget.files[0]);
@@ -413,44 +369,44 @@ const handleChange = (event) => {
                     </div>
                   )}
               </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormControl sx={{ width: "100%", maxWidth:300 }}>
-              <InputLabel id="demo-multiple-checkbox-label" required>
+              <Grid item xs={12} sm={12} md={6}>
+                <FormControl sx={{ width: "100%", maxWidth: 300 }}>
+                  <InputLabel id="demo-multiple-checkbox-label" required>
                     Product Category
                   </InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
-                  name="categoryArrayFromBody"
-                  multiple
-                  value={categoryName}
-                  onChange={handleChange}
-                  input={<OutlinedInput label="Product Category" />}
-                  renderValue={(selected) => selected.join(", ")}
-                >
-                  {category.map((name) => (
-                    <MenuItem key={name.id} value={name.title}>
-                      <Checkbox
-                        checked={categoryName.indexOf(name.title) > -1}
-                      />
-                      <ListItemText primary={name.title} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {formik.touched.categoryArrayFromBody &&
-                formik.errors.categoryArrayFromBody && (
-                  <div
-                    style={{
-                      color: "red",
-                      marginBottom: "15px",
-                      fontSize: "12px",
-                    }}
+                    name="categoryArrayFromBody"
+                    multiple
+                    value={categoryName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Product Category" />}
+                    renderValue={(selected) => selected.join(", ")}
                   >
-                    {formik.errors.categoryArrayFromBody}
-                  </div>
-                )}
-            </Grid>
+                    {category.map((name) => (
+                      <MenuItem key={name.id} value={name.title}>
+                        <Checkbox
+                          checked={categoryName.indexOf(name.title) > -1}
+                        />
+                        <ListItemText primary={name.title} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {formik.touched.categoryArrayFromBody &&
+                  formik.errors.categoryArrayFromBody && (
+                    <div
+                      style={{
+                        color: "red",
+                        marginBottom: "15px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {formik.errors.categoryArrayFromBody}
+                    </div>
+                  )}
+              </Grid>
             </Grid>
             <Button
               type="submit"
