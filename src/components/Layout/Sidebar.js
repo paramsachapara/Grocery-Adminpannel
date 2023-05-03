@@ -73,11 +73,7 @@ export default function ClippedDrawer({ children }) {
                   // "SIGNUP",
                   // "Login"
                 ].map((text, index) => (
-<<<<<<< HEAD
-                  <Box key={text}>
-=======
                   <Box key={index}>
->>>>>>> 6c1d434cca7ee59ee911b1b9d50770c1c93d0e29
                   {
                     text==="Logout" ? 
                     <ListItem key={text} disablePadding>
