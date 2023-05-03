@@ -78,7 +78,7 @@ export default function Orderdetails(){
             if (get_Orders_res) {
               setTimeout(() => {
                 setIsLoader(false)
-              }, 2000);
+              }, 1000);
               console.log("get_Orders_res",get_Orders_res);
               // allOrdersArr=get_Orders_res.data.data
               // let Date="2023-05-01"
@@ -141,11 +141,11 @@ export default function Orderdetails(){
           />
         </div> : 
 
-    <>
+    <div>
      <Sidebar>
           <Box sx={{ height: "100px" }} />
     {orderData ?
-    <>
+    <div>
 
           <Typography  variant="h2" gutterBottom align='center'>
       Order Details
@@ -303,12 +303,12 @@ export default function Orderdetails(){
       </Table>
     </TableContainer>
 </TabPanel>
-</> : <Typography  variant="h4" gutterBottom align='center'>
+</div> : <Typography  variant="h4" gutterBottom align='center'>
         No Orders Details are There
         </Typography>}
 
         </Sidebar>
-</>
+</div>
 }
         </>
     )

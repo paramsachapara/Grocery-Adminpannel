@@ -55,7 +55,7 @@ export default function Orderlist() {
           if (get_Orders_res) {
             setTimeout(() => {
               setIsLoader(false);
-            }, 2000);
+            }, 1000);
             console.log("get_Orders_res", get_Orders_res);
             // allOrdersArr=get_Orders_res.data.data
             // let Date="2023-05-01"
