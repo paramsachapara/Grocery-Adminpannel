@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import {
-  Autocomplete,
+
   Checkbox,
   FormControl,
   Grid,
@@ -15,30 +15,24 @@ import {
   Select,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-
 import Container from "@mui/material/Container";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-
 import { OutlinedInput } from "@mui/material";
 import { useFormik } from "formik";
-
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useTheme } from "@mui/material/styles";
-
 import AddProductSchema from "../../schemas/AddProductSchema";
-// import { Grid } from "react-loader-spinner";
+
 
 const theme = createTheme();
 export default function EditProductForm(props) {
   const { selectedProduct, setOpenEditDialog } = props;
   const [categoryName, setcategoryName] = React.useState([]);
-  const [categoryId, setcategoryId] = React.useState([]);
+
   const [category, setCategory] = React.useState([]);
   const [changeProduct, setChangeProduct] = React.useState(false);
-  // const theme = useTheme();
-  let avatar;
+
 
   React.useEffect(() => {
     axios
@@ -53,39 +47,6 @@ export default function EditProductForm(props) {
   }, [changeProduct]);
 
   
-//   const handleChange = () => {
-//     axios
-//       .get("http://localhost:8080/api/v1/category/get-all-categories")
-//       .then((res) => {
-//         console.log("Category Response",res.data.data);
-//         setCategory(res.data.data);
-      
-// console.log("selectedProduct",selectedProduct)
-//     // const categoryIds = selectedProduct.categoryArrayFromBody
-//     const categoryIds = [1,2]
-//     console.log("categoryNames", categoryIds);
-//     const newCategoryIds = categoryIds.map((categoryId) => {
-//       console.log("category", category);
-//       console.log("categoryId", categoryId);
-//       const matchingCategory = selectedProduct.categoryArrayFromBody.find(
-//         (cat) => cat.category_id === categoryId
-//       );
-//       console.log("matchingCategory", matchingCategory);
-//       return matchingCategory ? matchingCategory.category.title : categoryId;
-//     });
-
-//     setcategoryName(newCategoryIds);
-//     setcategoryId(categoryIds);
-//     console.log("newCategoryIds", newCategoryIds);
-//     // return newCategoryIds
-//     // formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-//   };
-
-
 const handleChange = () => {
   axios
     .get("http://localhost:8080/api/v1/category/get-all-categories")
@@ -115,7 +76,7 @@ const handleChange = () => {
 
       setCategory(categories);
       setcategoryName(categoryNames);
-      setcategoryId(categoryIds);
+      
     })
     .catch((err) => {
       console.log(err);
@@ -140,7 +101,6 @@ const handleChange = () => {
   };
 
   const onSubmit = (values) => {
-    console.log("on submit", values);
     if (values) {
       let token = JSON.parse(sessionStorage.getItem("token"));
       console.log(token, "token");
@@ -152,12 +112,8 @@ const handleChange = () => {
             },
           })
           .then((res) => {
-            // console.log("id", id);
             console.log("Eid", res.data.data);
             let formData = new FormData();
-
-            console.log("formData>>>>>>>>>>>>>>>>>>>>>>>>>>>>", formData);
-
             formData.append("title", values.title);
             formData.append("short_description", values.short_description);
             formData.append("description", values.description);
@@ -444,7 +400,6 @@ const handleChange = () => {
             </Grid>
             </Grid>
             <Button
-              type="submit"
               fullWidth
               variant="outlined"
               sx={{ mt: 3, mb: 2 }}
