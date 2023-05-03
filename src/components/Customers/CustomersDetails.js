@@ -40,7 +40,8 @@ function CustomersDetails() {
 
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
-    let token = JSON.parse(sessionStorage.getItem("toen"));
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    console.log(token, "token");
     if (encryptedId && token) {
       axios
         .get("http://localhost:8080/api/v1/admin/get-all-orders-by-id", {
@@ -51,7 +52,7 @@ function CustomersDetails() {
         })
         .then((res) => {
           setUserDetails(res.data.data);
-          // console.log(res.data.data);
+          console.log(res.data.data, "res.data.data");
         })
         .catch((error) => {
           console.log(error, "error");
@@ -181,166 +182,153 @@ function CustomersDetails() {
   const handleNoForUnblock = () => {
     setOpenConfirmUnblockDialog(false);
   };
+  console.log(userDetails);
   return (
     <>
       <div>
         <Toaster />
       </div>
       <Sidebar />
-      {userDetails.length > 0 ? (
-        <Box marginTop={5} marginLeft={35} marginRight={10}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Tooltip title="Go Back">
-              <IconButton onClick={() => navigate("/customer-list")}>
-                <KeyboardBackspaceIcon />
+
+      <Box marginTop={5} marginLeft={35} marginRight={10}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Tooltip title="Go Back">
+            <IconButton onClick={() => navigate("/customer-list")}>
+              <KeyboardBackspaceIcon />
+            </IconButton>
+          </Tooltip>
+          <Box component="h3">Customer Details</Box>
+          <Box>
+            <Tooltip title="Edit">
+              <IconButton onClick={editCustomer}>
+                <EditIcon />
               </IconButton>
             </Tooltip>
-            <Box component="h3">Customer Details</Box>
-            <Box>
-              <Tooltip title="Edit">
-                <IconButton onClick={editCustomer}>
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton onClick={deleteCustomer}>
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-              {userDetails.length > 0 ? (
-                userDetails.is_active ? (
-                  <Tooltip title="Block">
-                    <IconButton onClick={blockCustomer}>
-                      <BlockIcon />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="Unblock">
-                    <IconButton onClick={unblockCustomer}>
-                      <BlockIcon sx={{ color: "red" }} />
-                    </IconButton>
-                  </Tooltip>
-                )
-              ) : (
+            <Tooltip title="Delete">
+              <IconButton onClick={deleteCustomer}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            
+             { userDetails.is_active ? (
                 <Tooltip title="Block">
                   <IconButton onClick={blockCustomer}>
                     <BlockIcon />
                   </IconButton>
                 </Tooltip>
-              )}
-            </Box>
+              ) : (
+                <Tooltip title="Unblock">
+                  <IconButton onClick={unblockCustomer}>
+                    <BlockIcon sx={{ color: "red" }} />
+                  </IconButton>
+                </Tooltip>
+              )
+            }
           </Box>
-          <TableContainer component={Paper} elevation={10}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>User Name</TableCell>
-                  <TableCell align="right">{userDetails.username}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>First Name</TableCell>
-                  <TableCell align="right">{userDetails.first_name}</TableCell>
-                </TableRow>
+        </Box>
+        <TableContainer component={Paper} elevation={10}>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell>User Name</TableCell>
+                <TableCell align="right">{userDetails.username}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>First Name</TableCell>
+                <TableCell align="right">{userDetails.first_name}</TableCell>
+              </TableRow>
 
-                <TableRow>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell align="right">{userDetails.last_name}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Date Of Birth</TableCell>
-                  <TableCell align="right">
-                    {userDetails.date_of_birth}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Mobile Number</TableCell>
-                  <TableCell align="right">
-                    {userDetails.primary_mobile_number}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Email </TableCell>
-                  <TableCell align="right">
-                    {userDetails.primary_email}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Secondary Mobile Number </TableCell>
-                  <TableCell align="right">
-                    {userDetails.secondary_mobile_number}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Secondary email </TableCell>
-                  <TableCell align="right">
-                    {userDetails.secondary_email}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Addresses </TableCell>
-                  <TableCell align="right">
-                    {userDetails.addresses &&
-                    userDetails.addresses.length == 0 ? (
-                      <span style={{ color: "red" }}>No address found</span>
-                    ) : (
-                      userDetails.addresses &&
-                      userDetails.addresses.map((address) => {
-                        return (
-                          <ul
-                            style={{
-                              listStyle: "none",
-                              display: "inline-flex",
-                            }}
+              <TableRow>
+                <TableCell>Last Name</TableCell>
+                <TableCell align="right">{userDetails.last_name}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Date Of Birth</TableCell>
+                <TableCell align="right">{userDetails.date_of_birth}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Mobile Number</TableCell>
+                <TableCell align="right">
+                  {userDetails.primary_mobile_number}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Email </TableCell>
+                <TableCell align="right">{userDetails.primary_email}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Secondary Mobile Number </TableCell>
+                <TableCell align="right">
+                  {userDetails.secondary_mobile_number}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Secondary email </TableCell>
+                <TableCell align="right">
+                  {userDetails.secondary_email}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Addresses </TableCell>
+                <TableCell align="right">
+                  {userDetails.addresses &&
+                  userDetails.addresses.length == 0 ? (
+                    <span style={{ color: "red" }}>No address found</span>
+                  ) : (
+                    userDetails.addresses &&
+                    userDetails.addresses.map((address) => {
+                      return (
+                        <ul
+                          style={{
+                            listStyle: "none",
+                            display: "inline-flex",
+                          }}
+                          key={address.id}
+                        >
+                          <li
+                            style={{ display: "flex", alignItems: "center" }}
                             key={address.id}
                           >
-                            <li
-                              style={{ display: "flex", alignItems: "center" }}
-                              key={address.id}
-                            >
-                              {address.tag === "home" ? (
-                                <HomeIcon style={{ marginRight: "5px" }} />
-                              ) : (
-                                <BusinessIcon style={{ marginRight: "5px" }} />
-                              )}
-                              {address.address_line_1 +
-                                "," +
-                                address.address_line_2 +
-                                "," +
-                                address.area +
-                                "," +
-                                address.city +
-                                "-" +
-                                address.postal_code +
-                                "," +
-                                address.state +
-                                "," +
-                                address.country +
-                                "," +
-                                address.landmark}
-                            </li>
-                          </ul>
-                        );
-                      })
-                    )}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+                            {address.tag === "home" ? (
+                              <HomeIcon style={{ marginRight: "5px" }} />
+                            ) : (
+                              <BusinessIcon style={{ marginRight: "5px" }} />
+                            )}
+                            {address.address_line_1 +
+                              "," +
+                              address.address_line_2 +
+                              "," +
+                              address.area +
+                              "," +
+                              address.city +
+                              "-" +
+                              address.postal_code +
+                              "," +
+                              address.state +
+                              "," +
+                              address.country +
+                              "," +
+                              address.landmark}
+                          </li>
+                        </ul>
+                      );
+                    })
+                  )}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-          <OrdersTable userDetails={userDetails} />
-        </Box>
-      ) : (
-        <Box variant="h1" component='h1' alignItems="center" sx={{marginTop:20,marginLeft:'35%'}}>
-          Error in getting data from server
-        </Box>
-      )}
+        <OrdersTable userDetails={userDetails} />
+      </Box>
+
       <EditCustomerDialog
         openEditCustomer={openEditCustomer}
         setOpenEditCustomer={setOpenEditCustomer}

@@ -15,6 +15,7 @@ import Navbar from "./Navbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 
 const drawerWidth = 240;
 
@@ -22,8 +23,24 @@ export default function ClippedDrawer({ children }) {
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+
+  const Logout = () => {
+
+      toast.success("Logout Successfully", {
+        position: "top-right",
+        duration: 3000,
+      });
+      sessionStorage.removeItem('token');
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    
+  };
   return (
     <>
+    <div>
+      <Toaster />
+    </div>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <Navbar />
@@ -47,23 +64,24 @@ export default function ClippedDrawer({ children }) {
             <Box sx={{ overflow: "auto" }}>
               <List>
                 {[
-                  "ADD PRODUCT",
-                  "ALL PRODUCT",
-                  "MANAGE ORDERS",
-                  "ADD CATEGORY",
-                  "ORDER LIST",
-                  "CUSTOMER LIST",
-                  "LOGOUT",
-
+                  "Add Product",
+                  "All Product",
+                  "Add Category",
+                  "Order list",
+                  "Customer list",
+                  "Logout",
                   // "SIGNUP",
                   // "Login"
                 ].map((text, index) => (
-                  <ListItem key={text} disablePadding>
+                  <Box key={index}>
+                  {
+                    text==="Logout" ? 
+                    <ListItem key={text} disablePadding>
                     <ListItemButton>
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
-                      <NavLink to={"/" + text.toLowerCase().replace(" ", "-")}>
+                      <NavLink onClick={Logout} >
                         <ListItemText
                           primary={text}
                           // onClick={() => {
@@ -75,6 +93,27 @@ export default function ClippedDrawer({ children }) {
                       </NavLink>
                     </ListItemButton>
                   </ListItem>
+                  :
+                  <ListItem key={text} disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                      </ListItemIcon>
+                      <NavLink to={"/" + text.toLowerCase().replace(" ", "-")} >
+                        <ListItemText
+                          primary={text}
+                          // onClick={() => {
+                          // navigate("signup");
+                          // navigate("/" + text.toLowerCase().replace(" ", "-"));
+
+                          // }}
+                        />
+                      </NavLink>
+                    </ListItemButton>
+                  </ListItem>
+                  }
+                  
+                  </Box>
                 ))}
               </List>
               <Divider />

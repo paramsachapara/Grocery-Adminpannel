@@ -234,7 +234,7 @@ export default function EditCustomerForm(props) {
               </Grid>
             </Grid>
             <Button
-              type="submit"
+            
               fullWidth
               variant="outlined"
               sx={{ mt: 3, mb: 2 }}
@@ -243,7 +243,7 @@ export default function EditCustomerForm(props) {
             >
               Cancel
             </Button>
-            <Button type="submit" fullWidth variant="contained" color="success">
+            <Button type="submit" fullWidth variant="contained" color="success" onClick={onSubmit}>
               Update
             </Button>
           </Box>

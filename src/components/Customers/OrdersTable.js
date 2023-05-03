@@ -123,12 +123,16 @@ function OrdersTable(props) {
                 </TableRow>
               ))
             ) : (
-              <Typography variant="h4" gutterBottom align="center">
-                No Orders Are There
-              </Typography>
+              <TableRow>
+                <TableCell colSpan={10}>
+                  <Typography variant="h4" gutterBottom align="center">
+                    No Orders Are There
+                  </Typography>
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
-        </Table>
+                  </Table>
       </TableContainer>
     </>
   );
