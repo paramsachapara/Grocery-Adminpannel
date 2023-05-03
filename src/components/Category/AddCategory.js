@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -18,7 +18,6 @@ import AddCategorySchema from "../../schemas/AddCategorySchema";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
-// import Box from '@mui/material/Box';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -34,11 +33,6 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import BlockIcon from "@mui/icons-material/Block";
 import { toast } from "react-hot-toast";
 
@@ -120,12 +114,14 @@ function AddCategory() {
   const [collapsableCategory, setCollapsableCategory] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = useState(true);
+  const [catActive, setCatActive] = useState(null);
   const [title, setTitle] = useState("");
   const [deleteState, setDeleteState] = useState(true);
   const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const myRef = useRef(null);
+  const [contentOfDialog,setContentOfDialog]=useState('')
   const encryption = async (id) => {
     const config = {
       headers: {
@@ -180,7 +176,7 @@ function AddCategory() {
       if (res) {
         const newCategory = res.data.data;
         setCategories([newCategory, ...categories]);
-        toast.success(res.data.message, {
+        toast.success("Category Added Successfully", {
           position: "top-right",
           autoClose: 3000,
         });
@@ -204,7 +200,7 @@ function AddCategory() {
       (res) => res.parent_id == onClickCategory.id
     );
 
-    if (subCategoryOfSelectedCategory.length>0) {
+    if (subCategoryOfSelectedCategory.length > 0) {
       subCategoryOfSelectedCategory.map((res) => {
         encryption(res.id)
           .then((data) => {
@@ -222,10 +218,10 @@ function AddCategory() {
                     },
                   }
                 )
-                .then((res) =>{
-                  console.log(res)
+                .then((res) => {
+                  console.log(res);
                   setOpen(false);
-                  setActive(!active)
+                  setActive(!active);
                 })
                 .catch((err) => console.log(err));
             } else {
@@ -241,16 +237,14 @@ function AddCategory() {
                   }
                 )
                 .then((res) => {
-                  console.log(res)
+                  console.log(res);
                   setOpen(false);
-                  setActive(!active)
-
+                  setActive(!active);
                 })
                 .catch((err) => console.log(err));
             }
           })
           .catch((err) => console.log(err));
-        
       });
     }
     // const activeCategories =subCategoryOfSelectedCategory.find((res)=>res.is_active)
@@ -269,13 +263,12 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            toast.success(`${onClickCategory.title}`+ " inactivated",{
+            toast.success(`${onClickCategory.title}` + " inactivated", {
               position: "top-right",
               autoClose: 3000,
-            })
+            });
             setOpen(false);
             setActive(!active);
-
           })
           .catch((err) => console.log(err));
       });
@@ -293,13 +286,12 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            toast.success(`${onClickCategory.title}`+ " activated",{
+            toast.success(`${onClickCategory.title}` + " activated", {
               position: "top-right",
               autoClose: 3000,
-            })
+            });
             setOpen(false);
             setActive(!active);
-
           })
           .catch((err) => console.log(err));
       });
@@ -338,10 +330,10 @@ function AddCategory() {
               }
             )
             .then((res) => {
-              toast.success(`${matchedCategory.title}`+ "Updated",{
+              toast.success(`${matchedCategory.title}` + "Updated", {
                 position: "top-right",
                 autoClose: 3000,
-              })
+              });
               setEdit(true);
             })
             .catch((err) => console.log(err));
@@ -361,27 +353,27 @@ function AddCategory() {
               }
             )
             .then((res) => {
-              toast.success(`${matchedCategory.title}`+ "Updated",{
+              toast.success(`${matchedCategory.title}` + "Updated", {
                 position: "top-right",
                 autoClose: 3000,
-              })
+              });
 
               setEdit(true);
             })
             .catch((err) => {
-              toast.error(`${matchedCategory.title}`+ "Not Updated",{
+              toast.error(`${matchedCategory.title}` + "Not Updated", {
                 position: "top-right",
                 autoClose: 3000,
-              })
+              });
               console.log(err);
             });
         }
       })
       .catch((err) => {
-        toast.error(`${matchedCategory.title}`+ "Not Updated",{
+        toast.error(`${matchedCategory.title}` + "Not Updated", {
           position: "top-right",
           autoClose: 3000,
-        })
+        });
         console.log(err);
       });
   };
@@ -407,18 +399,18 @@ function AddCategory() {
             },
           })
           .then((res) => {
-            toast.success(`${matchedCategory.title}`+ "Deleted",{
+            toast.success(`${matchedCategory.title}` + "Deleted", {
               position: "top-right",
               autoClose: 3000,
-            })
+            });
             setDeleteState(!deleteState);
             console.log(res);
           })
           .catch((err) => {
-            toast.error(`${matchedCategory.title}`+ "Not Deleted",{
+            toast.error(`${matchedCategory.title}` + "Not Deleted", {
               position: "top-right",
               autoClose: 3000,
-            })
+            });
             console.log(err);
           });
       })
@@ -474,13 +466,6 @@ function AddCategory() {
     <>
       {subCategory ? (
         <Sidebar>
-          <DialogComponent
-                          open={open}
-                          handleClose={handleClose}
-                          handleBlockClick={handleBlockClick}
-                          title={title}
-                          isActive={active}
-                        />  
           <Box sx={{ height: "50px" }}>
             <Typography variant="h4" sx={{ marginTop: "70px" }} color="initial">
               Add Category
@@ -535,7 +520,7 @@ function AddCategory() {
                     >
                       Update category
                     </Button>
-                    
+
                     <Button
                       variant="contained"
                       onClick={() => {
@@ -714,7 +699,7 @@ function AddCategory() {
                             Subcategories
                           </Typography>
                         </TableCell>
-                        <TableCell  scope="row">
+                        <TableCell scope="row">
                           <Typography
                             variant="body1"
                             color="initial"
@@ -747,9 +732,6 @@ function AddCategory() {
                             }{" "}
                             Inactive
                           </Typography>
-                          {/* </Stack> */}
-
-                          {/* {row.name} */}
                         </TableCell>
                         <TableCell style={{ width: 50 }} align="right">
                           <Tooltip title="Block">
@@ -758,13 +740,21 @@ function AddCategory() {
                               sx={{ color: row.is_active ? undefined : "red" }}
                               onClick={() => {
                                 setOpen(true);
+                                {
+                                  row.is_active?setContentOfDialog(
+                                    "Are you sure you want to inactive this category?"
+                                  ):
+                                  setContentOfDialog(
+                                    "Are you sure you want to active this category?"
+                                    )
+                                  }
+                                setCatActive(row.is_active);
                                 setTitle(row.title);
                               }}
+                              ref={myRef}
                             />
                           </Tooltip>
                         </TableCell>
-                       
-                        
                         <TableCell style={{ width: 50 }} align="right">
                           <Tooltip title="Edit">
                             <EditIcon onClick={() => handleClick(row.title)} />
@@ -815,9 +805,16 @@ function AddCategory() {
               </TableContainer>
             </Grid>
           </Grid>
-          
         </Sidebar>
       ) : null}
+
+      <DialogComponent
+        open={open}
+        handleClose={handleClose}
+        handleBlockClick={handleBlockClick}
+        title={title}
+        contentOfDialog={contentOfDialog}
+      />
     </>
   );
 }
