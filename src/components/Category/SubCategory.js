@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
-import { Navigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -26,22 +26,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
 import BlockIcon from "@mui/icons-material/Block";
 import TableHead from "@mui/material/TableHead";
 import { Stack } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { toast } from "react-hot-toast";
-import { DeleteCategory } from "./DeleteCategory";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import DialogComponent from "./ConfirmDialog";
 
 // import * as React from 'react';
 function TablePaginationActions(props) {
@@ -120,19 +110,20 @@ const subCategoryValidationSchema = Yup.object().shape({
 function SubCategory() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [ide, setIde] = useState(null);
   const [subCategory, setSubCategory] = useState([]);
   const { id } = useParams();
   const [categories, setCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState("");
-  const [inputValue, setInputValue] = useState("");
   const [subCategoryId, setSubCategoryId] = useState(null);
   const [parentCategory, setParentCategory] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [active, setActive] = useState(true);
   const [title, setTitle] = useState(null);
   const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
+  const [contentOfDialog,setContentOfDialog]=useState('')
+
+
   const navigate = useNavigate();
 
   const encryption = async (id) => {
@@ -151,18 +142,17 @@ function SubCategory() {
       console.log(err);
     }
   };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
   const handleClose = () => {
+    console.log('handle clode')
     setOpen(false);
+    setDeleteOpen(false);
   };
+
   const initialValues = {
     categoryName: "",
     parentCategory: parentCategory,
   };
+
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: subCategoryValidationSchema,
@@ -170,7 +160,7 @@ function SubCategory() {
       actions.resetForm();
     },
   });
-  // Avoid a layout jump when reaching the last page with empty rows.
+
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - subCategory.length) : 0;
 
@@ -184,7 +174,6 @@ function SubCategory() {
   };
 
   useEffect(() => {
-    setIde(id);
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
@@ -213,9 +202,11 @@ function SubCategory() {
     formik.setFieldValue("parentCategory", parentCategory.title);
   };
 
-  const handleDelete = (title) => {
-        if (title) {
+  const handleDelete = () => {
+    setDeleteOpen(false);
+    if (title) {
       let matchedCategory = categories.find((res) => res.title == title);
+      console.log(matchedCategory,'maasndhj')
       const config = {
         headers: {
           id: matchedCategory.id,
@@ -237,6 +228,7 @@ function SubCategory() {
               })
               .then((res) => {
                 setIsCategoryDeleted(!isCategoryDeleted);
+
               })
               .catch((err) => console.log(err));
           }
@@ -265,10 +257,10 @@ function SubCategory() {
             },
           }
         );
-        toast.success(`${onClickCategory.title}`+ " inactivated",{
+        toast.success(`${onClickCategory.title}` + " inactivated", {
           position: "top-right",
           autoClose: 3000,
-        })
+        });
       } else {
         await axios.put(
           "http://localhost:8080/api/v1/category/active-category",
@@ -280,18 +272,18 @@ function SubCategory() {
             },
           }
         );
-        toast.success(`${onClickCategory.title}`+ " activated",{
+        toast.success(`${onClickCategory.title}` + " activated", {
           position: "top-right",
           autoClose: 3000,
-        })
+        });
       }
-      
+
       setActive(!active);
     } catch (err) {
-      toast.error(`${onClickCategory.title}`+ " Not Updated",{
+      toast.error(`${onClickCategory.title}` + " Not Updated", {
         position: "top-right",
         autoClose: 3000,
-      })
+      });
       console.log(err);
     }
 
@@ -327,7 +319,6 @@ function SubCategory() {
   };
 
   const updateSubCategory = () => {
-    setOpen(false);
     let matchedCategory;
     // setSubCategory(formik.values.categoryName);
 
@@ -360,19 +351,19 @@ function SubCategory() {
                   }
                 )
                 .then((res) => {
-                  toast.success(`${matchedCategory.title}`+ "Updated",{
+                  setIsEditing(false)
+                  toast.success(`${matchedCategory.title}` + " Updated", {
                     position: "top-right",
                     autoClose: 3000,
-                  })
+                  });
                   console.log(res);
                 })
                 .catch((err) => {
-                  toast.error(`${matchedCategory.title}`+ " Not Updated",{
+                  toast.error(`${matchedCategory.title}` + " Not Updated", {
                     position: "top-right",
                     autoClose: 3000,
-                  })
+                  });
                 });
-                
             })
             .catch((err) => {
               console.log(err);
@@ -384,6 +375,20 @@ function SubCategory() {
 
   return (
     <Sidebar>
+      <DialogComponent
+        open={open}
+        handleClose={handleClose}
+        handleBlockClick={handleBlockClick}
+        title={title}
+        contentOfDialog={contentOfDialog}
+      />
+      <DialogComponent
+        open={deleteOpen}
+        handleClose={handleClose}
+        handleBlockClick={handleDelete}
+        title={title}
+        contentOfDialog={contentOfDialog}
+      />
       {isEditing ? (
         <Box sx={{ marginTop: "100px" }}>
           <Typography variant="h4" color="initial">
@@ -427,26 +432,6 @@ function SubCategory() {
               >
                 Update Category
               </Button>
-              {/* <Dialog
-                open={open}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={handleClose}
-                aria-describedby="alert-dialog-slide-description"
-              >
-                <DialogTitle>{"Use Google's location service?"}</DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-slide-description">
-                    Let Google help apps determine location. This means sending
-                    anonymous location data to Google, even when no apps are
-                    running.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>Disagree</Button>
-                  <Button onClick={handleClickOpen}>Agree</Button>
-                </DialogActions>
-              </Dialog> */}
               <Button
                 variant="contained"
                 onClick={() => setIsEditing(false)}
@@ -519,63 +504,48 @@ function SubCategory() {
                         </Stack>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
-                      <Tooltip title="Block">
-                        <BlockIcon
-                          className="blockIcon"
-                          sx={{ color: row.is_active ? undefined : "red" }}
-                          onClick={() => {
-                            setTitle(row.title);
-                            setOpen(true);
-                          }}
-                        />
-                        </Tooltip>
-                        <Dialog
-                          open={open}
-                          keepMounted
-                          onClose={handleClose}
-                          aria-describedby="alert-dialog-slide-description"
-                        >
-                          <DialogTitle>{title}</DialogTitle>
-                          <DialogContent>
-                            <DialogContentText id="alert-dialog-slide-description">
-                              {row.is_active
-                                ? "Are you sure you want to inactive the category"
-                                : "are you sure you want to active the category"}
-                            </DialogContentText>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button onClick={handleClose}>Disagree</Button>
-                            <Button
-                              onClick={() =>
-                                handleBlockClick(
-                                  row.title,
-                                  row.id,
-                                  row.parent_id
-                                )
-                              }
-                            >
-                              Agree
-                            </Button>
-                          </DialogActions>
-                        </Dialog>
-                      </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
-                      <Tooltip title="Edit">
-                        {row.is_active ? (
-                          <EditIcon
-                            disabled={!row.is_active ? true : false}
-                            onClick={() =>
-                              handleClick(row.title, row.id, row.parent_id)
-                            }
+                        <Tooltip title="Block">
+                          <BlockIcon
+                            className="blockIcon"
+                            sx={{ color: row.is_active ? undefined : "red" }}
+                            onClick={() => {
+                              setTitle(row.title);
+                              {
+                                row.is_active?setContentOfDialog(
+                                  "Are you sure you want to inactive this category?"
+                                ):
+                                setContentOfDialog(
+                                  "Are you sure you want to active this category?"
+                                  )
+                                }
+                              setOpen(true);
+                            }}
                           />
-                        ) : (
-                          <EditIcon disabled />
-                        )}
                         </Tooltip>
                       </TableCell>
                       <TableCell style={{ width: 50 }} align="right">
-                      <Tooltip title="Delete">
-                        <DeleteIcon onClick={() => handleDelete(row.title)} />
+                        <Tooltip title="Edit">
+                          {row.is_active ? (
+                            <EditIcon
+                              disabled={!row.is_active ? true : false}
+                              onClick={() =>
+                                handleClick(row.title, row.id, row.parent_id)
+                              }
+                            />
+                          ) : (
+                            <EditIcon disabled />
+                          )}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell style={{ width: 50 }} align="right">
+                        <Tooltip title="Delete">
+                          <DeleteIcon onClick={() => 
+
+                            {
+                              setTitle(row.title);
+                              setDeleteOpen(true)
+                            setContentOfDialog("Are you sure you want to delete this category?")
+                            }} />
                         </Tooltip>
                       </TableCell>
                     </TableRow>
@@ -617,10 +587,8 @@ function SubCategory() {
           </Box>
         </Grid>
       </Grid>
-                    
-                      {/* <DeleteCategory title = {title} categories = {categories}/> */}
-                      
-      </Sidebar>
+      
+    </Sidebar>
   );
 }
 export default SubCategory;
