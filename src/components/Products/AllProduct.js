@@ -23,7 +23,7 @@ import ConfirmDelete from "../Customers/ConfirmDelete";
 
 function AllProduct() {
   const [tableData, setTableData] = useState([]);
-  const [open, setOpen] = useState(false);
+  
   const [block, setblock] = useState(false);
   const [openEditCustomer, setOpenEditCustomer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
@@ -223,7 +223,7 @@ function AllProduct() {
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setOpenEditDialog(true);
-    setOpen(true);
+   
   };
   const handleUnBlock = (product_id) => {
     setId(product_id);
@@ -237,7 +237,7 @@ function AllProduct() {
     setOpenBlockDialog(true);
   };
   const handleClose = () => {
-    setOpen(false);
+   
   };
 
   const handleUpdateProduct = (values) => {
