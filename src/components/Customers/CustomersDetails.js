@@ -40,7 +40,7 @@ function CustomersDetails() {
 
   useEffect(() => {
     Encryption(customerId, setEncryptedId);
-    let token = JSON.parse(sessionStorage.getItem("toen"));
+    let token = JSON.parse(sessionStorage.getItem("token"));
     if (encryptedId && token) {
       axios
         .get("http://localhost:8080/api/v1/admin/get-all-orders-by-id", {
@@ -51,7 +51,7 @@ function CustomersDetails() {
         })
         .then((res) => {
           setUserDetails(res.data.data);
-          // console.log(res.data.data);
+          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error, "error");
@@ -187,7 +187,7 @@ function CustomersDetails() {
         <Toaster />
       </div>
       <Sidebar />
-      {userDetails.length > 0 ? (
+      {userDetails ? (
         <Box marginTop={5} marginLeft={35} marginRight={10}>
           <Box
             sx={{
