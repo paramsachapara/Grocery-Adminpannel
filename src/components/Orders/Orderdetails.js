@@ -80,27 +80,27 @@ export default function Orderdetails(){
                 setIsLoader(false)
               }, 1000);
               console.log("get_Orders_res",get_Orders_res);
-              // allOrdersArr=get_Orders_res.data.data
+              let allOrdersArr=get_Orders_res.data.data
               // let Date="2023-05-01"
               let orderDate = new Date().toLocaleDateString('en-CA')
               // let orderDataById=[]
-              for(let i=0;i<get_Orders_res.data.data.length;i++){
-                // console.log("get_Orders_res.data.data ",get_Orders_res.data.data[i])
+              for(let i=0;i<allOrdersArr.length;i++){
+                // console.log("allOrdersArr ",allOrdersArr[i])
                 // eslint-disable-next-line eqeqeq
-                if(get_Orders_res.data.data[i].id==params.id){
-                  // orderDataById=get_Orders_res.data.data;
+                if(allOrdersArr[i].id==params.id){
+                  // orderDataById=allOrdersArr;
                   // console.log("Order by Id ",orderDataById)
-                  get_Orders_res.data.data=get_Orders_res.data.data[i]
-                  console.log("get_Orders_res.data.data ",get_Orders_res.data.data)
-                  if(get_Orders_res.data.data.estimate_delivery_date===orderDate){
-                    get_Orders_res.data.data.estimate_delivery_date="Delivered"
+                  allOrdersArr=allOrdersArr[i]
+                  console.log("allOrdersArr ",allOrdersArr)
+                  if(allOrdersArr.estimate_delivery_date===orderDate){
+                    allOrdersArr.estimate_delivery_date="Delivered"
                     console.log("Delivered")
                   }
                 }
               }
               
-              setOrderData(get_Orders_res.data.data)
-              setOrderItems(get_Orders_res.data.data.order_items)
+              setOrderData(allOrdersArr)
+              setOrderItems(allOrdersArr.order_items)
               console.log("customerDetails",orderData)
               // customerDetails.push(get_Orders_res.data.data.customer)
               // setCustomerDetails(customerDetails.push(get_Orders_res.data.data.customer))
