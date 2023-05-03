@@ -86,42 +86,51 @@ export default function EditProductForm(props) {
 //   };
 
 
-const handleChange = () => {
-  axios
-    .get("http://localhost:8080/api/v1/category/get-all-categories")
-    .then((res) => {
-      const categories = res.data.data;
-      console.log("Category Response", categories);
-                // console.log("selectedProduct.categoryArrayFromBody",selectedProduct.categoryArrayFromBody)
+// const handleChange = (event) => {
+//   axios
+//     .get("http://localhost:8080/api/v1/category/get-all-categories")
+//     .then((res) => {
+//       const categories = res.data.data;
+//       setCategory(categories);
+//       console.log("Category Response", categories);
+//                 console.log("selectedProduct.categoryArrayFromBody",selectedProduct.categoryArrayFromBody)
                 
-      let GetIds = selectedProduct.categoryArrayFromBody;
-      let categoryIds=[]
-      for(let i=0;i<GetIds.length;i++){
-        categoryIds.push(GetIds[i].category_id)
-      }
-      console.log("categoryIds", categoryIds);
+//       let GetIds = selectedProduct.categoryArrayFromBody;
+//       let categoryIds=[]
+//       for(let i=0;i<GetIds.length;i++){
+//         categoryIds.push(GetIds[i].category_id)
+//       }
+//       console.log("categoryIds", categoryIds);
 
 
-      const matchingCategories = categories.filter((category) =>
-        categoryIds.includes(category.id)
-      );
+//       const matchingCategories = categories.filter((category) =>
+//         categoryIds.includes(category.id)
+//       );
       
-      console.log("matchingCategories", matchingCategories);
+//       console.log("matchingCategories", matchingCategories);
 
-      const categoryNames = matchingCategories.map(
-        (category) => category.title
-      );
-      console.log("categoryNames", categoryNames);
+//       const categoryNames = matchingCategories.map(
+//         (category) => category.title
+//       );
+//       console.log("categoryNames", categoryNames);
 
-      setCategory(categories);
-      setcategoryName(categoryNames);
-      setcategoryId(categoryIds);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+//       setcategoryName(categoryNames);
+//       setcategoryId(categoryIds);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
+
+const handleChange = (event) => {
+  const {
+    target: { value },
+  } = event;
+  setcategoryName(
+    // On autofill we get a stringified value.
+    typeof value === 'string' ? value.split(',') : value,
+  );
 };
-
 
   const initialValues = {
     title: selectedProduct.title || "",
@@ -131,7 +140,7 @@ const handleChange = () => {
     discount_type: selectedProduct.discount_type || "",
     discount_amount: selectedProduct.discount_amount || 0,
     avatar_image: selectedProduct.avatar_image || {},
-    categoryArrayFromBody: handleChange() || [],
+    categoryArrayFromBody: categoryId || [],
   };
 
 
