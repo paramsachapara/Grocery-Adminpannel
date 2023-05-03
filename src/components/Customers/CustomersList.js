@@ -405,8 +405,8 @@ export default function CustomersList() {
     <Box sx={{display:'flex'}}>
     <Sidebar></Sidebar>
    
-    <Box component="h1" variant="h3" sx={{ marginTop: 25, marginLeft: 30 }}>
-      Error in getting data from server
+    <Box component="h1" variant="h3" sx={{ marginTop: 25, marginLeft: 40 }}>
+      No Customers Available
     </Box>
     </Box>
 
