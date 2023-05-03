@@ -172,8 +172,8 @@ export default function AddProduct() {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="lg">
         <CssBaseline />
-        <Navbar />
-        <Sidebar />
+        {/* <Navbar /> */}
+        <Sidebar >
         <Box
           sx={{
             marginTop: 8,
@@ -414,6 +414,7 @@ export default function AddProduct() {
             </Button>
           </Box>
         </Box>
+        </Sidebar>
       </Container>
     </ThemeProvider>
   );

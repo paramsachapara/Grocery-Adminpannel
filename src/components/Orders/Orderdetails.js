@@ -78,29 +78,29 @@ export default function Orderdetails(){
             if (get_Orders_res) {
               setTimeout(() => {
                 setIsLoader(false)
-              }, 2000);
+              }, 1000);
               console.log("get_Orders_res",get_Orders_res);
-              // allOrdersArr=get_Orders_res.data.data
+              let allOrdersArr=get_Orders_res.data.data
               // let Date="2023-05-01"
               let orderDate = new Date().toLocaleDateString('en-CA')
               // let orderDataById=[]
-              for(let i=0;i<get_Orders_res.data.data.length;i++){
-                // console.log("get_Orders_res.data.data ",get_Orders_res.data.data[i])
+              for(let i=0;i<allOrdersArr.length;i++){
+                // console.log("allOrdersArr ",allOrdersArr[i])
                 // eslint-disable-next-line eqeqeq
-                if(get_Orders_res.data.data[i].id==params.id){
-                  // orderDataById=get_Orders_res.data.data;
+                if(allOrdersArr[i].id==params.id){
+                  // orderDataById=allOrdersArr;
                   // console.log("Order by Id ",orderDataById)
-                  get_Orders_res.data.data=get_Orders_res.data.data[i]
-                  console.log("get_Orders_res.data.data ",get_Orders_res.data.data)
-                  if(get_Orders_res.data.data.estimate_delivery_date===orderDate){
-                    get_Orders_res.data.data.estimate_delivery_date="Delivered"
+                  allOrdersArr=allOrdersArr[i]
+                  console.log("allOrdersArr ",allOrdersArr)
+                  if(allOrdersArr.estimate_delivery_date===orderDate){
+                    allOrdersArr.estimate_delivery_date="Delivered"
                     console.log("Delivered")
                   }
                 }
               }
               
-              setOrderData(get_Orders_res.data.data)
-              setOrderItems(get_Orders_res.data.data.order_items)
+              setOrderData(allOrdersArr)
+              setOrderItems(allOrdersArr.order_items)
               console.log("customerDetails",orderData)
               // customerDetails.push(get_Orders_res.data.data.customer)
               // setCustomerDetails(customerDetails.push(get_Orders_res.data.data.customer))
@@ -118,35 +118,40 @@ export default function Orderdetails(){
       get_All_Orders()
   },[])
     return (
-        <Sidebar>
-          <Box sx={{ height: "100px" }} />
+      <>
+       
 
           {
         isLoader ? 
         <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%"
-      }}
-    >
-      <FallingLines
-        color="#4fa94d"
-        width="200"
-        visible={true}
-        ariaLabel='falling-lines-loading'
-      />
-    </div> : 
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            marginTop:"18%"
+          }}
+        >
+          <FallingLines
+            color="#4fa94d"
+            width="200"
+            visible={true}
+            ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
+          />
+        </div> : 
 
-    <>
+    <div>
+     <Sidebar>
+          <Box sx={{ height: "100px" }} />
     {orderData ?
-    <>
+    <div>
+
           <Typography  variant="h2" gutterBottom align='center'>
       Order Details
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
     <Tab label="Order Items" {...a11yProps(0)} style={{fontWeight:'bolder'}}/>
     <Tab label="Customer Details" {...a11yProps(1)} style={{fontWeight:'bolder'}} />
     <Tab label="Customer Address" {...a11yProps(2)} style={{fontWeight:'bolder'}} />
@@ -157,7 +162,7 @@ export default function Orderdetails(){
       Order Items
       </Typography>
 <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <Table sx={{ minWidth: 700 }} aria-label="customized table" color="success">
         <TableHead>
           <TableRow>
             <TableCell style={{fontWeight:'bolder'}} align="left">Sr. No.</TableCell>
@@ -298,12 +303,13 @@ export default function Orderdetails(){
       </Table>
     </TableContainer>
 </TabPanel>
-</> : <Typography  variant="h4" gutterBottom align='center'>
+</div> : <Typography  variant="h4" gutterBottom align='center'>
         No Orders Details are There
         </Typography>}
 
-</>
-}
         </Sidebar>
+</div>
+}
+        </>
     )
 }
