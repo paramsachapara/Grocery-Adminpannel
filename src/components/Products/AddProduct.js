@@ -107,18 +107,9 @@ export default function AddProduct() {
         JSON.stringify(values.categoryArrayFromBody)
       );
 
-      // console.log("FormTitle>>>>>>>", formData.getAll());
       for (var [key, value] of formData.entries()) {
         console.log(key, value);
       }
-
-      // console.log("personName", personName);
-
-      // const formData = new FormData();
-      // formData.append('AddProductObj', JSON.stringify(AddProductObj));
-      // console.log("FormData", formData);
-
-      // form data convert into form-data format
 
       let token = JSON.parse(sessionStorage.getItem("token"));
       if (token) {
@@ -167,17 +158,17 @@ export default function AddProduct() {
     },
     validationSchema: AddProductSchema,
   });
-  // console.log(errors);
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="lg">
+      <Container component="main" >
         <CssBaseline />
         {/* <Navbar /> */}
         <Sidebar >
         <Box
           sx={{
             marginTop: 8,
-            marginLeft: 8,
+            // marginLeft: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -189,7 +180,7 @@ export default function AddProduct() {
                 <TextField
                   autoComplete="off"
                   name="title"
-                  required
+                  
                   fullWidth
                   id="title"
                   label="Product Title"
@@ -213,7 +204,7 @@ export default function AddProduct() {
                 <TextField
                   autoComplete="off"
                   name="short_description"
-                  required
+                  
                   fullWidth
                   id="short_description"
                   label="Short Description"
@@ -236,7 +227,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <TextField
-                  required
+                  
                   fullWidth
                   id="description"
                   label="Description"
@@ -260,7 +251,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <TextField
-                  required
+                  
                   fullWidth
                   id="amount"
                   label="Product Amount"
@@ -284,7 +275,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <TextField
-                  required
+                  
                   fullWidth
                   name="discount_type"
                   label="Discount Type"
@@ -310,7 +301,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <TextField
-                  required
+                  
                   fullWidth
                   name="discount_amount"
                   label="Discount Amount"
@@ -336,7 +327,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <OutlinedInput
-                  required
+                  
                   fullWidth
                   accept="image/*"
                   type="file"
@@ -363,7 +354,7 @@ export default function AddProduct() {
               </Grid>
               <Grid item xs={12} sm={12} md={6}>
                 <FormControl sx={{ width: "100%", maxWidth: 600 }}>
-                  <InputLabel id="demo-multiple-checkbox-label" required>
+                  <InputLabel id="demo-multiple-checkbox-label" >
                     Product Category
                   </InputLabel>
                   <Select

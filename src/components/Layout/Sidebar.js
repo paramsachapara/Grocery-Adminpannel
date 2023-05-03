@@ -54,6 +54,7 @@ export default function ClippedDrawer({ children }) {
                 width: drawerWidth,
                 boxSizing: "border-box",
               },
+              display: { xs: "none", md: "flex" }
             }}
 
             // style={{
@@ -61,7 +62,7 @@ export default function ClippedDrawer({ children }) {
             // }}
           >
             <Toolbar />
-            <Box sx={{ overflow: "auto" }}>
+            <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 ,overflow: "auto"}}>
               <List>
                 {[
                   "Add Product",
