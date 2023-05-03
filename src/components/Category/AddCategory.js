@@ -8,6 +8,8 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
+import { Tooltip } from "@mui/material";
+import DialogComponent from "./ConfirmDialog";
 import TableHead from "@mui/material/TableHead";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Layout/Sidebar";
@@ -37,10 +39,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
 import BlockIcon from "@mui/icons-material/Block";
-import { width } from "@mui/system";
-import Divider from "@mui/material/Divider";
+import { toast } from "react-hot-toast";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -180,10 +180,18 @@ function AddCategory() {
       if (res) {
         const newCategory = res.data.data;
         setCategories([newCategory, ...categories]);
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
       setValue("");
       console.log(res);
     } catch (err) {
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
       console.log(err);
     }
   };
@@ -192,19 +200,16 @@ function AddCategory() {
     const onClickCategory = collapsableCategory.find(
       (res) => res.title == title
     );
-    console.log(title);
-    console.log(onClickCategory, "occ");
     const subCategoryOfSelectedCategory = categories.filter(
       (res) => res.parent_id == onClickCategory.id
     );
-    console.log(subCategoryOfSelectedCategory, "skjidfjid");
-    if (subCategoryOfSelectedCategory) {
+
+    if (subCategoryOfSelectedCategory.length>0) {
       subCategoryOfSelectedCategory.map((res) => {
         encryption(res.id)
           .then((data) => {
             const token = JSON.parse(sessionStorage.getItem("token"));
-            console.log(data);
-            console.log(onClickCategory, "occ");
+
             if (onClickCategory && onClickCategory.is_active && token) {
               axios
                 .put(
@@ -217,7 +222,11 @@ function AddCategory() {
                     },
                   }
                 )
-                .then((res) => console.log(res))
+                .then((res) =>{
+                  console.log(res)
+                  setOpen(false);
+                  setActive(!active)
+                })
                 .catch((err) => console.log(err));
             } else {
               axios
@@ -231,18 +240,22 @@ function AddCategory() {
                     },
                   }
                 )
-                .then((res) => console.log(res))
+                .then((res) => {
+                  console.log(res)
+                  setOpen(false);
+                  setActive(!active)
+
+                })
                 .catch((err) => console.log(err));
             }
           })
           .catch((err) => console.log(err));
-        setOpen(false);
+        
       });
     }
     // const activeCategories =subCategoryOfSelectedCategory.find((res)=>res.is_active)
     const token = JSON.parse(sessionStorage.getItem("token"));
-
-    if (onClickCategory.is_active) {
+    if (onClickCategory.is_active && token) {
       encryption(onClickCategory.id).then((data) => {
         axios
           .put(
@@ -256,8 +269,13 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            console.log(res);
+            toast.success(`${onClickCategory.title}`+ " inactivated",{
+              position: "top-right",
+              autoClose: 3000,
+            })
+            setOpen(false);
             setActive(!active);
+
           })
           .catch((err) => console.log(err));
       });
@@ -275,8 +293,13 @@ function AddCategory() {
             }
           )
           .then((res) => {
-            console.log(res);
+            toast.success(`${onClickCategory.title}`+ " activated",{
+              position: "top-right",
+              autoClose: 3000,
+            })
+            setOpen(false);
             setActive(!active);
+
           })
           .catch((err) => console.log(err));
       });
@@ -286,7 +309,6 @@ function AddCategory() {
     formik.setFieldValue("categoryName", title);
     setValue(title);
     setEdit(false);
-    console.log(title);
   };
 
   const updateCategory = () => {
@@ -316,8 +338,11 @@ function AddCategory() {
               }
             )
             .then((res) => {
+              toast.success(`${matchedCategory.title}`+ "Updated",{
+                position: "top-right",
+                autoClose: 3000,
+              })
               setEdit(true);
-              console.log(res);
             })
             .catch((err) => console.log(err));
         } else {
@@ -336,19 +361,32 @@ function AddCategory() {
               }
             )
             .then((res) => {
+              toast.success(`${matchedCategory.title}`+ "Updated",{
+                position: "top-right",
+                autoClose: 3000,
+              })
+
               setEdit(true);
-              console.log(res);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              toast.error(`${matchedCategory.title}`+ "Not Updated",{
+                position: "top-right",
+                autoClose: 3000,
+              })
+              console.log(err);
+            });
         }
       })
       .catch((err) => {
+        toast.error(`${matchedCategory.title}`+ "Not Updated",{
+          position: "top-right",
+          autoClose: 3000,
+        })
         console.log(err);
       });
   };
 
   const handleDelete = (title) => {
-    console.log(title);
     let matchedCategory = categories.find((res) => res.title == title);
     const config = {
       headers: {
@@ -369,10 +407,20 @@ function AddCategory() {
             },
           })
           .then((res) => {
+            toast.success(`${matchedCategory.title}`+ "Deleted",{
+              position: "top-right",
+              autoClose: 3000,
+            })
             setDeleteState(!deleteState);
             console.log(res);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            toast.error(`${matchedCategory.title}`+ "Not Deleted",{
+              position: "top-right",
+              autoClose: 3000,
+            })
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -401,15 +449,11 @@ function AddCategory() {
 
   useEffect(() => {
     if (categories) {
-      console.log(categories, "categories");
       const transformedData = categories.filter((res) => res.parent_id == null);
-      console.log(transformedData, "");
+
       setCollapsableCategory(transformedData);
-      console.log(collapsableCategory, "trasformedData");
     }
   }, [categories, active]);
-
-
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -430,6 +474,13 @@ function AddCategory() {
     <>
       {subCategory ? (
         <Sidebar>
+          <DialogComponent
+                          open={open}
+                          handleClose={handleClose}
+                          handleBlockClick={handleBlockClick}
+                          title={title}
+                          isActive={active}
+                        />  
           <Box sx={{ height: "50px" }}>
             <Typography variant="h4" sx={{ marginTop: "70px" }} color="initial">
               Add Category
@@ -484,11 +535,12 @@ function AddCategory() {
                     >
                       Update category
                     </Button>
+                    
                     <Button
                       variant="contained"
                       onClick={() => {
-                        setEdit(true)
-                        formik.setFieldValue("categoryName", '')
+                        setEdit(true);
+                        formik.setFieldValue("categoryName", "");
                       }}
                       color="success"
                     >
@@ -523,7 +575,6 @@ function AddCategory() {
                       .map((option) => option.title)}
                     value={value}
                     onChange={(event, newValue) => {
-                      console.log(newValue);
                       setValue(newValue);
                     }}
                     inputValue={inputValue}
@@ -577,7 +628,7 @@ function AddCategory() {
         </Sidebar>
       )}
 
-      {categories ? (
+      {categories.length ? (
         <Sidebar>
           <Grid container spacing={2}>
             <Grid item md={10}>
@@ -586,12 +637,20 @@ function AddCategory() {
                   sx={{ minWidth: 500 }}
                   aria-label="custom pagination table"
                 >
-                  <TableHead sx={{ backgroundColor: "green" }}>
+                  <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
                     <TableRow>
-                      <TableCell>Category</TableCell>
-                      <TableCell>Sub Category</TableCell>
-                      <TableCell>Active Category</TableCell>
-                      <TableCell>In Active Category(g)</TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Sub Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        Active Category
+                      </TableCell>
+                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                        In Active Category
+                      </TableCell>
                       <TableCell></TableCell>
                       <TableCell></TableCell>
                       <TableCell></TableCell>
@@ -619,7 +678,7 @@ function AddCategory() {
                           },
                         }}
                       >
-                        <TableCell component="tr" scope="row">
+                        <TableCell scope="row">
                           <Stack direction="row" spacing={3}>
                             <Typography
                               variant="body1"
@@ -640,7 +699,7 @@ function AddCategory() {
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell component="tr" scope="row">
+                        <TableCell scope="row">
                           <Typography
                             variant="body1"
                             color="initial"
@@ -655,7 +714,7 @@ function AddCategory() {
                             Subcategories
                           </Typography>
                         </TableCell>
-                        <TableCell component="tr" scope="row">
+                        <TableCell  scope="row">
                           <Typography
                             variant="body1"
                             color="initial"
@@ -672,7 +731,7 @@ function AddCategory() {
                             Active
                           </Typography>
                         </TableCell>
-                        <TableCell component="tr" scope="row">
+                        <TableCell scope="row">
                           <Typography
                             variant="body1"
                             color="initial"
@@ -693,39 +752,30 @@ function AddCategory() {
                           {/* {row.name} */}
                         </TableCell>
                         <TableCell style={{ width: 50 }} align="right">
-                          <BlockIcon
-                            className="blockIcon"
-                            sx={{ color: row.is_active ? undefined : "red" }}
-                            onClick={() => {
-                              setOpen(true);
-                              setTitle(row.title);
-                            }}
-                          />
+                          <Tooltip title="Block">
+                            <BlockIcon
+                              className="blockIcon"
+                              sx={{ color: row.is_active ? undefined : "red" }}
+                              onClick={() => {
+                                setOpen(true);
+                                setTitle(row.title);
+                              }}
+                            />
+                          </Tooltip>
                         </TableCell>
-                        <Dialog
-                          open={open}
-                          keepMounted
-                          onClose={handleClose}
-                          aria-describedby="alert-dialog-slide-description"
-                        >
-                          <DialogTitle>{title}</DialogTitle>
-                          <DialogContent>
-                            <DialogContentText id="alert-dialog-slide-description">
-                              {row.is_active
-                                ? "Are you sure you want to inactive the category"
-                                : "are you sure you want to active the category"}
-                            </DialogContentText>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button onClick={handleClose}>Disagree</Button>
-                            <Button onClick={handleBlockClick}>Agree</Button>
-                          </DialogActions>
-                        </Dialog>
+                       
+                        
                         <TableCell style={{ width: 50 }} align="right">
-                          <EditIcon onClick={() => handleClick(row.title)} />
+                          <Tooltip title="Edit">
+                            <EditIcon onClick={() => handleClick(row.title)} />
+                          </Tooltip>
                         </TableCell>
                         <TableCell style={{ width: 50 }} align="right">
-                          <DeleteIcon onClick={() => handleDelete(row.title)} />
+                          <Tooltip title="Delete">
+                            <DeleteIcon
+                              onClick={() => handleDelete(row.title)}
+                            />
+                          </Tooltip>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -765,6 +815,7 @@ function AddCategory() {
               </TableContainer>
             </Grid>
           </Grid>
+          
         </Sidebar>
       ) : null}
     </>

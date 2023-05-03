@@ -118,35 +118,40 @@ export default function Orderdetails(){
       get_All_Orders()
   },[])
     return (
-        <Sidebar>
-          <Box sx={{ height: "100px" }} />
+      <>
+       
 
           {
         isLoader ? 
         <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%"
-      }}
-    >
-      <FallingLines
-        color="#4fa94d"
-        width="200"
-        visible={true}
-        ariaLabel='falling-lines-loading'
-      />
-    </div> : 
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            marginTop:"18%"
+          }}
+        >
+          <FallingLines
+            color="#4fa94d"
+            width="200"
+            visible={true}
+            ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
+          />
+        </div> : 
 
     <>
+     <Sidebar>
+          <Box sx={{ height: "100px" }} />
     {orderData ?
     <>
+
           <Typography  variant="h2" gutterBottom align='center'>
       Order Details
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
     <Tab label="Order Items" {...a11yProps(0)} style={{fontWeight:'bolder'}}/>
     <Tab label="Customer Details" {...a11yProps(1)} style={{fontWeight:'bolder'}} />
     <Tab label="Customer Address" {...a11yProps(2)} style={{fontWeight:'bolder'}} />
@@ -157,7 +162,7 @@ export default function Orderdetails(){
       Order Items
       </Typography>
 <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <Table sx={{ minWidth: 700 }} aria-label="customized table" color="success">
         <TableHead>
           <TableRow>
             <TableCell style={{fontWeight:'bolder'}} align="left">Sr. No.</TableCell>
@@ -302,8 +307,9 @@ export default function Orderdetails(){
         No Orders Details are There
         </Typography>}
 
+        </Sidebar>
 </>
 }
-        </Sidebar>
+        </>
     )
 }

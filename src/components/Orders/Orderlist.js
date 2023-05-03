@@ -114,8 +114,7 @@ export default function Orderlist() {
   const Array = orderData.slice(firstPostIndex, lastPostIndex);
   console.log("Array", Array);
   return (
-    <Sidebar>
-      <Box sx={{ height: "100px" }} />
+    <>
       {isLoader ? (
         <div
           style={{
@@ -123,6 +122,7 @@ export default function Orderlist() {
             alignItems: "center",
             justifyContent: "center",
             height: "100%",
+            marginTop:"18%"
           }}
         >
           <FallingLines
@@ -130,10 +130,13 @@ export default function Orderlist() {
             width="200"
             visible={true}
             ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
           />
         </div>
       ) : (
         <>
+        <Sidebar>
+      <Box sx={{ height: "100px" }} />
           {orderData ? (
             orderData.length > 0 ? (
               <>
@@ -147,7 +150,7 @@ export default function Orderlist() {
                 </Typography>
                 <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <TableHead>
+                    <TableHead >
                       <TableRow>
                         <TableCell
                           style={{ fontWeight: "bolder" }}
@@ -183,9 +186,9 @@ export default function Orderlist() {
                     </TableHead>
                     <TableBody>
                       {orderData
-                        ? orderData.map((row, index) => (
+                        ? Array.map((row, index) => (
                             <TableRow
-                              key={index}
+                              key={firstPostIndex+index + 1}
                               onClick={() => oderDetail(row.id)}
                               style={{ cursor: "pointer" }}
                             >
@@ -194,7 +197,7 @@ export default function Orderlist() {
                                 scope="row"
                                 align="left"
                               >
-                                {index + 1}
+                                {firstPostIndex+index + 1}
                               </TableCell>
                               <TableCell align="left">
                                 {row.customer.username}
@@ -229,8 +232,11 @@ export default function Orderlist() {
               </Typography>
             )
           ) : null}
-        </>
-      )}
     </Sidebar>
+        </>
+        )
+      }
+    </>
+
   );
 }

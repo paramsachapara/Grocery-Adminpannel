@@ -8,10 +8,19 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 import Container from "@mui/material/Container";
- 
+
 import { ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, Select } from "@mui/material";
+import {
+  Autocomplete,
+  Checkbox,
+  FormControl,
+  Grid,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { OutlinedInput } from "@mui/material";
 import { useFormik } from "formik";
 
@@ -20,30 +29,16 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
 import AddProductSchema from "../../schemas/AddProductSchema";
-
-
-const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
-
+import { useNavigate } from "react-router-dom";
 
 export default function AddProduct() {
+  const navigate=useNavigate()
   const theme = useTheme();
   const [categoryName, setcategoryName] = React.useState([]);
   const [categoryId, setcategoryId] = React.useState([]);
   const [category, setCategory] = React.useState([]);
 
-
-  React.useEffect(()=>{
+  React.useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
@@ -53,57 +48,27 @@ export default function AddProduct() {
       .catch((err) => {
         console.log(err);
       });
-  },[])
+  }, []);
 
-//   const handleChange = (event) => {
-//     let {
-//       target: { value },
-//     } = event;
-//     setPersonName(
-//       // On autofill we get a stringified value.
-//       typeof value === 'string' ? value.split(',') : value,
-//     );
-//     setcategoryId(personName);
-//     console.log("personName", personName);
-//     for (let i = 0; i < categoryId.length; i++) {
-//       for (let j = 0; j < category.length; j++) {
-//         if(categoryId[i]===category[j].title){
-//           categoryId[i] = category[j].id
-//           setPersonName(categoryId);
-//           console.log("categoryId", categoryId);
-//         }
-//       } 
-//     };
-//     formik.setFieldValue("categoryArrayFromBody", categoryId);
+  const handleChange = (event) => {
+    const { value } = event.target || {};
 
-    
-    
-// }
-const handleChange = (event) => {
-  const { value } = event.target || {}; // set default empty object if event.target is undefined
-  
-  // Use the spread operator instead of split() to turn a string value into an array
-  const categoryNames = Array.isArray(value)
-    ? value
-    : [value];
-  console.log("categoryNames", categoryNames);
-  const newCategoryIds = categoryNames.map((categoryName) => {
-    console.log("categoryName", categoryName);
-    const matchingCategory = category.find((cat) => cat.title === categoryName);
-    console.log("matchingCategory", matchingCategory);
-    return matchingCategory ? matchingCategory.id : categoryName;
-  });
-  
+    const categoryNames = Array.isArray(value) ? value : [value];
+    console.log("categoryNames", categoryNames);
+    const newCategoryIds = categoryNames.map((categoryName) => {
+      console.log("categoryName", categoryName);
+      const matchingCategory = category.find(
+        (cat) => cat.title === categoryName
+      );
+      console.log("matchingCategory", matchingCategory);
+      return matchingCategory ? matchingCategory.id : categoryName;
+    });
 
-  // Update state variables with updated/corrected values
-  setcategoryName(categoryNames);
-  setcategoryId(newCategoryIds);
-  console.log("newCategoryIds", newCategoryIds);
-  formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
-};
-
-
-  
+    setcategoryName(categoryNames);
+    setcategoryId(newCategoryIds);
+    console.log("newCategoryIds", newCategoryIds);
+    formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
+  };
 
   const initialValues = {
     title: "",
@@ -112,17 +77,13 @@ const handleChange = (event) => {
     amount: "",
     discount_type: "",
     discount_amount: "",
-    avatar_image: [],
+    avatar_image: null,
     categoryArrayFromBody: [],
   };
 
-  // const handleChange = (event, value) => {
-  //   formik.setFieldValue("categoryArrayFromBody", value);
-  // };
   const handleImageUpload = (e) => {
     const files = e.target.files[0];
     console.log("Files ", files);
-    // const files = e.target.files;
     formik.setFieldValue("avatar_image", files);
   };
 
@@ -130,64 +91,68 @@ const handleChange = (event) => {
     initialValues: initialValues,
     onSubmit: (values, action) => {
 
-      const AddProductObj = {
-        title: values.title,
-        amount: values.amount,
-        discount_type: values.discount_type,
-        discount_amount: values.discount_amount,
-        short_description: values.short_description,  
-        description: values.description,
-        avatar_image: values.avatar_image,
-        categoryArrayFromBody: values.categoryArrayFromBody,
-      };
-      // var formData = new FormData()
-      // formData.append('title',initialValues.title);
-      // formData.append('short_description',initialValues.short_description);
-      // formData.append('description',initialValues.description);
-      // formData.append('amount',initialValues.amount);
-      // formData.append('discount_type',initialValues.discount_type);
-      // formData.append('discount_amount',initialValues.discount_amount);
-      // formData.append('avatar_image',initialValues.avatar_image);
-      // formData.append('categoryArrayFromBody',initialValues.categoryArrayFromBody);
+      let formData = new FormData();
+
+      console.log("formData>>>>>>>>>>>>>>>>>>>>>>>>>>>>", formData);
+
+      formData.append("title", values.title);
+      formData.append("short_description", values.short_description);
+      formData.append("description", values.description);
+      formData.append("amount", values.amount);
+      formData.append("discount_type", values.discount_type);
+      formData.append("discount_amount", values.discount_amount);
+      formData.append("avatar_image", values.avatar_image);
+      formData.append(
+        "categoryArrayFromBody",
+        JSON.stringify(values.categoryArrayFromBody)
+      );
+
+      // console.log("FormTitle>>>>>>>", formData.getAll());
+      for (var [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
       // console.log("personName", personName);
-      
-      
-      const formData = new FormData();
-      formData.append('AddProductObj', JSON.stringify(AddProductObj));
-      console.log("FormData", formData);
+
+      // const formData = new FormData();
+      // formData.append('AddProductObj', JSON.stringify(AddProductObj));
+      // console.log("FormData", formData);
+
+      // form data convert into form-data format
 
       let token = JSON.parse(sessionStorage.getItem("token"));
       if (token) {
-        console.log("AddProductObj",AddProductObj);
+        // console.log("AddProductObj",AddProductObj);
         const options = {
           method: "post",
           url: "http://localhost:8080/api/v1/product/add-product",
-
-          data: initialValues,
-          headers: { "token": token },
+          data: formData,
+          headers: { token: token, "Content-Type": "multipart/form-data" },
         };
-
+        // console.log(values);
+        // axios.post("http://localhost:8080/api/v1/product/add-product", formData,options).then((response) => {
+        //   console.log("response.data==>>",response.data);
+        // });
         axios
           .request(options)
           .then(function (AddProduct_res) {
             if (AddProduct_res) {
               console.log("AddProduct_res data", AddProduct_res);
               toast.success("Product added successfully", {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               });
-              // navigate("/login");
+              navigate("/all-product");
             }
           })
           .catch(function (error) {
-            console.error("Error of add product",error);
+            console.error("Error of add product", error);
             toast.error(
               error.response.data.message
                 ? error.response.data.message
                 : "Error With fetching data",
               {
-                position: "bottom-center",
+                position: "top-right",
                 duration: 3000,
               }
             );
@@ -195,14 +160,14 @@ const handleChange = (event) => {
         action.resetForm();
       } else {
         toast.error("please login", {
-          position: "bottom-center",
+          position: "top-right",
           duration: 3000,
         });
       }
     },
     validationSchema: AddProductSchema,
   });
-  console.log(formik.errors);
+  // console.log(errors);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="lg">
@@ -396,45 +361,33 @@ const handleChange = (event) => {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={12} sm={12} md={6} >
+              <Grid item xs={12} sm={12} md={6}>
                 <FormControl sx={{ width: "100%", maxWidth: 600 }}>
-                  <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+                  <InputLabel id="demo-multiple-checkbox-label" required>
+                    Product Category
+                  </InputLabel>
                   <Select
-          labelId="demo-multiple-checkbox-label"
-          id="categoryArrayFromBody"
-          name="categoryArrayFromBody"
-          multiple
-          value={categoryName}
-          onChange={handleChange}
-          input={<OutlinedInput label="Tag" />}
-          renderValue={(selected) => selected.join(', ')}
-        >
-          {category.map((name) => (
-            <MenuItem key={name.id} value={name.title}>
-              <Checkbox checked={categoryName.indexOf(name.title) > -1} />
-              <ListItemText primary={name.title} />
-            </MenuItem>
-          ))}
-        </Select>
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    name="categoryArrayFromBody"
+                    multiple
+                    
+                    value={categoryName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Product Category" />}
+                    renderValue={(selected) => selected.join(", ")}
+                  >
+                    {category.map((name) => (
+                      <MenuItem key={name.id} value={name.title}>
+                        <Checkbox
+                          checked={categoryName.indexOf(name.title) > -1}
+                        />
+                        <ListItemText primary={name.title} />
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </FormControl>
-              {/* <Autocomplete
-                  multiple
-                  required
-                  id="categoryArrayFromBody"
-                  name="categoryArrayFromBody"
-                  options={products.map((option) => option.name)}
-                  filterSelectedOptions
-                  onChange={formik.handleChange}
-                  value={formik.values.categoryArrayFromBody}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Category of product"
-                      placeholder="Select Category of Product"
-                    />
-                  )}
-                /> */}
-              {formik.touched.categoryArrayFromBody &&
+                {formik.touched.categoryArrayFromBody &&
                   formik.errors.categoryArrayFromBody && (
                     <div
                       style={{
@@ -453,8 +406,9 @@ const handleChange = (event) => {
               type="submit"
               fullWidth
               variant="contained"
+              color="success"
               sx={{ mt: 3, mb: 2 }}
-              style={{}}
+              className="btn btn-success"
             >
               Add Product
             </Button>
