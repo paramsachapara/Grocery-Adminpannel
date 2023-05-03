@@ -178,8 +178,8 @@ const handleChange = (event) => {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="lg">
         <CssBaseline />
-        <Navbar />
-        <Sidebar />
+        {/* <Navbar /> */}
+        <Sidebar >
         <Box
           sx={{
             marginTop: 8,
@@ -415,6 +415,7 @@ const handleChange = (event) => {
             </Button>
           </Box>
         </Box>
+        </Sidebar>
       </Container>
     </ThemeProvider>
   );
