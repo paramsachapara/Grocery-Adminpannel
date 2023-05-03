@@ -362,7 +362,6 @@ export default function AddProduct() {
                     id="demo-multiple-checkbox"
                     name="categoryArrayFromBody"
                     multiple
-                    
                     value={categoryName}
                     onChange={handleChange}
                     input={<OutlinedInput label="Product Category" />}
