@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Paper,
 } from "@mui/material";
 import BlockIcon from "@mui/icons-material/Block";
 import { Tooltip } from "@mui/material";
@@ -22,7 +23,7 @@ import ConfirmDelete from "../Customers/ConfirmDelete";
 
 function AllProduct() {
   const [tableData, setTableData] = useState([]);
-  const [open, setOpen] = useState(false);
+  
   const [block, setblock] = useState(false);
   const [openEditCustomer, setOpenEditCustomer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
@@ -46,6 +47,11 @@ function AllProduct() {
     typography: {
       fontSize: 30,
       fontWeight: "bold",
+    },
+  });
+  const headColor = createTheme({
+    typography: {
+      color : "white"
     },
   });
 
@@ -217,7 +223,7 @@ function AllProduct() {
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setOpenEditDialog(true);
-    setOpen(true);
+   
   };
   const handleUnBlock = (product_id) => {
     setId(product_id);
@@ -231,7 +237,7 @@ function AllProduct() {
     setOpenBlockDialog(true);
   };
   const handleClose = () => {
-    setOpen(false);
+   
   };
 
   const handleUpdateProduct = (values) => {
@@ -265,15 +271,32 @@ function AllProduct() {
                 },
               }}
             >
-              <Table sx={{ padding: "0 16px" }}>
-                <TableHead>
+              <Paper elevation={24} variant="outlined">
+
+              <Table sx={{ padding: "0 16px", }}>
+                <TableHead 
+                  style= {{
+                     backgroundColor : "rgb(48 132 52)"
+                  }}
+                sx={{ borderRadius:'15px'}}>
                   <ThemeProvider theme={boldFontTheme}>
-                    <TableRow>
-                      <TableCell>Id</TableCell>
-                      <TableCell>Image</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Price</TableCell>
-                      <TableCell>Action</TableCell>
+                    <TableRow
+                     color="success">
+                      <TableCell style = {{
+                         color : "white"
+                      }}>Id</TableCell>
+                      <TableCell style = {{
+                        color : "white"
+                      }}>Image</TableCell>
+                      <TableCell style = {{
+                        color : "white"
+                      }}>Name</TableCell>
+                      <TableCell style = {{
+                        color : "white"
+                      }}>Price</TableCell>
+                      <TableCell style = {{
+                        color : "white"
+                      }}>Action</TableCell>
                     </TableRow>
                   </ThemeProvider>
                 </TableHead>
@@ -335,6 +358,7 @@ function AllProduct() {
                     ))}
                 </TableBody>
               </Table>
+            </Paper>
             </TableContainer>
             <EditProductDialog
               openEditDialog={openEditDialog}

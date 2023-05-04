@@ -93,7 +93,7 @@ function CustomersDetails() {
             position: "top-right",
           });
 
-          navigate("/");
+          navigate("/customer-list");
         })
         .catch((error) => {
           console.log(error, "error");
@@ -296,9 +296,14 @@ function CustomersDetails() {
                             key={address.id}
                           >
                             {address.tag === "home" ? (
+                              <Tooltip title="Home">
                               <HomeIcon style={{ marginRight: "5px" }} />
+                              </Tooltip>
                             ) : (
+                              <Tooltip title="Office">
                               <BusinessIcon style={{ marginRight: "5px" }} />
+                              </Tooltip>
+
                             )}
                             {address.address_line_1 +
                               "," +

@@ -16,6 +16,7 @@ import CustomersList from "./components/Customers/CustomersList";
 import OrderItems from "./components/Customers/OrderItems";
 import AddProduct from './components/Products/AddProduct'
 import AllProduct from './components/Products/AllProduct'
+import ErrorPage from "./components/ErrorPage";
 // import PrivateComponent from "./PrivateComponent";
 
 // import Login from "./pages/Login";
@@ -41,14 +42,14 @@ const App = () => {
         <Route path="/order-list" element={<Orderlist />} />
         <Route path="/order-list/:id" element={<Orderdetails />} />
       </Route>
+      <Route path="/" element={<Signup />} exact />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/" element={<Signup />} exact />
 
       {/* <Route element={<PrivateComponent />}> */}
 
-      {/* <Route element={<PrivateComponent />}>
-        </Route> */}
+      <Route path="/*" element={<ErrorPage />}>
+        </Route>
     </Routes>
   );
 };

@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import {
-  Autocomplete,
+
   Checkbox,
   FormControl,
   Grid,
@@ -15,20 +15,15 @@ import {
   Select,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-
 import Container from "@mui/material/Container";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
-
 import { OutlinedInput } from "@mui/material";
 import { useFormik } from "formik";
-
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useTheme } from "@mui/material/styles";
-
 import AddProductSchema from "../../schemas/AddProductSchema";
-// import { Grid } from "react-loader-spinner";
+
 
 const theme = createTheme();
 export default function EditProductForm(props) {
@@ -37,91 +32,56 @@ export default function EditProductForm(props) {
   const [categoryId, setcategoryId] = React.useState([]);
   const [category, setCategory] = React.useState([]);
   const [changeProduct, setChangeProduct] = React.useState(false);
-  // const theme = useTheme();
-  let avatar;
+
 
   React.useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
-        console.log("Category Response",res.data.data);
+        console.log("Category Response", res.data.data);
         setCategory(res.data.data);
+        console.log("selectedProduct", selectedProduct);
+        const categoryIds = selectedProduct.categoryArrayFromBody;
+        console.log("categoryIds", categoryIds);
+
+        const newCategoryIds = categoryIds.map((categoryId) => {
+          console.log("category", res.data.data);
+          console.log("categoryId", categoryId);
+          const matchingCategory = res.data.data.find(
+            (cat) => cat.id === categoryId.category_id
+          );
+          console.log("matchingCategory", matchingCategory);
+          return matchingCategory ? matchingCategory.title : categoryId;
+        });
+
+        setcategoryName(newCategoryIds);
+        console.log("newCategoryIds", newCategoryIds);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [changeProduct]);
+  }, [changeProduct, setOpenEditDialog]);
 
-  
-//   const handleChange = () => {
-//     axios
-//       .get("http://localhost:8080/api/v1/category/get-all-categories")
-//       .then((res) => {
-//         console.log("Category Response",res.data.data);
-//         setCategory(res.data.data);
-      
-// console.log("selectedProduct",selectedProduct)
-//     // const categoryIds = selectedProduct.categoryArrayFromBody
-//     const categoryIds = [1,2]
-//     console.log("categoryNames", categoryIds);
-//     const newCategoryIds = categoryIds.map((categoryId) => {
-//       console.log("category", category);
-//       console.log("categoryId", categoryId);
-//       const matchingCategory = selectedProduct.categoryArrayFromBody.find(
-//         (cat) => cat.category_id === categoryId
-//       );
-//       console.log("matchingCategory", matchingCategory);
-//       return matchingCategory ? matchingCategory.category.title : categoryId;
-//     });
+  const handleChange = (event) => {
+    const { value } = event.target || {};
 
-//     setcategoryName(newCategoryIds);
-//     setcategoryId(categoryIds);
-//     console.log("newCategoryIds", newCategoryIds);
-//     // return newCategoryIds
-//     // formik.setFieldValue("categoryArrayFromBody", newCategoryIds);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-//   };
+    console.log("value", value);
 
-
-const handleChange = () => {
-  axios
-    .get("http://localhost:8080/api/v1/category/get-all-categories")
-    .then((res) => {
-      const categories = res.data.data;
-      console.log("Category Response", categories);
-                // console.log("selectedProduct.categoryArrayFromBody",selectedProduct.categoryArrayFromBody)
-                
-      let GetIds = selectedProduct.categoryArrayFromBody;
-      let categoryIds=[]
-      for(let i=0;i<GetIds.length;i++){
-        categoryIds.push(GetIds[i].category_id)
-      }
-      console.log("categoryIds", categoryIds);
-
-
-      const matchingCategories = categories.filter((category) =>
-        categoryIds.includes(category.id)
+    const categoryNames = Array.isArray(value) ? value : [value];
+    console.log("categoryNames", categoryNames);
+    const newCategory = categoryNames.map((categoryName) => {
+      console.log("categoryName", categoryName);
+      const matchingCategory = category.find(
+        (cat) => cat.title === categoryName
       );
-      
-      console.log("matchingCategories", matchingCategories);
-
-      const categoryNames = matchingCategories.map(
-        (category) => category.title
-      );
-      console.log("categoryNames", categoryNames);
-
-      setCategory(categories);
-      setcategoryName(categoryNames);
-      setcategoryId(categoryIds);
-    })
-    .catch((err) => {
-      console.log(err);
+      console.log("matchingCategory", matchingCategory);
+      return matchingCategory ? matchingCategory.id : categoryName;
     });
-};
-
+    formik.setFieldValue("categoryArrayFromBody", newCategory);
+    console.log("newCategoryIds", newCategory);
+    setcategoryName(categoryNames);
+    setcategoryId(newCategory);
+  };
 
   const initialValues = {
     title: selectedProduct.title || "",
@@ -131,16 +91,14 @@ const handleChange = () => {
     discount_type: selectedProduct.discount_type || "",
     discount_amount: selectedProduct.discount_amount || 0,
     avatar_image: selectedProduct.avatar_image || {},
-    categoryArrayFromBody: handleChange() || [],
+    categoryArrayFromBody: categoryId || [],
   };
-
 
   const handleAvatarChange = (event) => {
     formik.setFieldValue("avatar_image", event.currentTarget.files[0]);
   };
 
   const onSubmit = (values) => {
-    console.log("on submit", values);
     if (values) {
       let token = JSON.parse(sessionStorage.getItem("token"));
       console.log(token, "token");
@@ -152,12 +110,8 @@ const handleChange = () => {
             },
           })
           .then((res) => {
-            // console.log("id", id);
             console.log("Eid", res.data.data);
             let formData = new FormData();
-
-            console.log("formData>>>>>>>>>>>>>>>>>>>>>>>>>>>>", formData);
-
             formData.append("title", values.title);
             formData.append("short_description", values.short_description);
             formData.append("description", values.description);
@@ -404,47 +358,46 @@ const handleChange = () => {
                     </div>
                   )}
               </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormControl sx={{ width: "100%", maxWidth:300 }}>
-              <InputLabel id="demo-multiple-checkbox-label" required>
+              <Grid item xs={12} sm={12} md={6}>
+                <FormControl sx={{ width: "100%", maxWidth: 300 }}>
+                  <InputLabel id="demo-multiple-checkbox-label" required>
                     Product Category
                   </InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
-                  name="categoryArrayFromBody"
-                  multiple
-                  value={categoryName}
-                  onChange={handleChange}
-                  input={<OutlinedInput label="Product Category" />}
-                  renderValue={(selected) => selected.join(", ")}
-                >
-                  {category.map((name) => (
-                    <MenuItem key={name.id} value={name.title}>
-                      <Checkbox
-                        checked={categoryName.indexOf(name.title) > -1}
-                      />
-                      <ListItemText primary={name.title} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {formik.touched.categoryArrayFromBody &&
-                formik.errors.categoryArrayFromBody && (
-                  <div
-                    style={{
-                      color: "red",
-                      marginBottom: "15px",
-                      fontSize: "12px",
-                    }}
+                    name="categoryArrayFromBody"
+                    multiple
+                    value={categoryName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Product Category" />}
+                    renderValue={(selected) => selected.join(", ")}
                   >
-                    {formik.errors.categoryArrayFromBody}
-                  </div>
-                )}
-            </Grid>
+                    {category.map((name) => (
+                      <MenuItem key={name.id} value={name.title}>
+                        <Checkbox
+                          checked={categoryName.indexOf(name.title) > -1}
+                        />
+                        <ListItemText primary={name.title} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {formik.touched.categoryArrayFromBody &&
+                  formik.errors.categoryArrayFromBody && (
+                    <div
+                      style={{
+                        color: "red",
+                        marginBottom: "15px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {formik.errors.categoryArrayFromBody}
+                    </div>
+                  )}
+              </Grid>
             </Grid>
             <Button
-              type="submit"
               fullWidth
               variant="outlined"
               sx={{ mt: 3, mb: 2 }}
