@@ -71,7 +71,7 @@ export default function Orderdetails(){
         {'token': token}
       
     };
-  
+    let allOrdersArr=[]
     axios
     .request(options)
           .then(function (get_Orders_res) {
@@ -80,7 +80,7 @@ export default function Orderdetails(){
                 setIsLoader(false)
               }, 1000);
               console.log("get_Orders_res",get_Orders_res);
-              let allOrdersArr=get_Orders_res.data.data
+              allOrdersArr=get_Orders_res.data.data
               // let Date="2023-05-01"
               let orderDate = new Date().toLocaleDateString('en-CA')
               // let orderDataById=[]
@@ -102,6 +102,7 @@ export default function Orderdetails(){
               setOrderData(allOrdersArr)
               setOrderItems(allOrdersArr.order_items)
               console.log("customerDetails",orderData)
+              console.log("customerDetails",orderItems)
               // customerDetails.push(get_Orders_res.data.data.customer)
               // setCustomerDetails(customerDetails.push(get_Orders_res.data.data.customer))
               // console.log("customerDetails",customerDetails)
@@ -178,11 +179,11 @@ export default function Orderdetails(){
               <TableCell component="th" scope="row" align="left">
                 {index+1}
               </TableCell>
-                <TableCell align="left">{row.product.title}</TableCell>
+                <TableCell align="left">{row.product_name}</TableCell>
                 <TableCell align="left">{row.qty}</TableCell>
-                <TableCell align="left"> ₹{row.product.amount}</TableCell>
-                <TableCell align="left"> ₹{row.product.amount * row.qty}</TableCell>
-                <TableCell align="left">{row.product.description}</TableCell>
+                <TableCell align="left"> ₹{row.product_amount}</TableCell>
+                <TableCell align="left"> ₹{row.product_amount * row.qty}</TableCell>
+                <TableCell align="left">{row.product_description}</TableCell>
               </TableRow>
           ))}
         </TableBody>
