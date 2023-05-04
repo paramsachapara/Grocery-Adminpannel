@@ -19,8 +19,8 @@ const DialogComponent = ({ open, handleClose, handleBlockClick, title,contentOfD
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Disagree</Button>
-        <Button onClick={handleBlockClick}>Agree</Button>
+        <Button onClick={handleClose} variant="contained" color='success' >Disagree</Button>
+        <Button onClick={handleBlockClick} variant='outlined' color='success'  >Agree</Button>
       </DialogActions>
     </Dialog>
   );
