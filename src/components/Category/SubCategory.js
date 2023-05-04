@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -32,6 +32,7 @@ import { Stack } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { toast } from "react-hot-toast";
 import DialogComponent from "./ConfirmDialog";
+import { FallingLines } from "react-loader-spinner";
 
 // import * as React from 'react';
 function TablePaginationActions(props) {
@@ -121,8 +122,8 @@ function SubCategory() {
   const [active, setActive] = useState(true);
   const [title, setTitle] = useState(null);
   const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
-  const [contentOfDialog,setContentOfDialog]=useState('')
-
+  const [contentOfDialog, setContentOfDialog] = useState("");
+  const [isLoader, setIsLoader] = React.useState(true);
 
   const navigate = useNavigate();
 
@@ -143,7 +144,7 @@ function SubCategory() {
     }
   };
   const handleClose = () => {
-    console.log('handle clode')
+    console.log("handle clode");
     setOpen(false);
     setDeleteOpen(false);
   };
@@ -177,6 +178,11 @@ function SubCategory() {
     axios
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
+        if (res) {
+          setTimeout(() => {
+            setIsLoader(false);
+          }, 500);
+        }
         const parentCategory = res.data.data.find((res) => res.id == id);
         const subCategories = res.data.data.filter((category) => {
           setCategories(res.data.data);
@@ -203,10 +209,9 @@ function SubCategory() {
   };
 
   const handleDelete = () => {
-    setDeleteOpen(false);
     if (title) {
       let matchedCategory = categories.find((res) => res.title == title);
-      console.log(matchedCategory,'maasndhj')
+      console.log(matchedCategory, "maasndhj");
       const config = {
         headers: {
           id: matchedCategory.id,
@@ -227,8 +232,12 @@ function SubCategory() {
                 },
               })
               .then((res) => {
+                setDeleteOpen(false);
                 setIsCategoryDeleted(!isCategoryDeleted);
-
+                toast.success(`${matchedCategory.title}` + " deleted", {
+                  position: "top-right",
+                  autoClose: 3000,
+                });
               })
               .catch((err) => console.log(err));
           }
@@ -351,7 +360,7 @@ function SubCategory() {
                   }
                 )
                 .then((res) => {
-                  setIsEditing(false)
+                  setIsEditing(false);
                   toast.success(`${matchedCategory.title}` + " Updated", {
                     position: "top-right",
                     autoClose: 3000,
@@ -374,221 +383,277 @@ function SubCategory() {
   };
 
   return (
-    <Sidebar>
-      <DialogComponent
-        open={open}
-        handleClose={handleClose}
-        handleBlockClick={handleBlockClick}
-        title={title}
-        contentOfDialog={contentOfDialog}
-      />
-      <DialogComponent
-        open={deleteOpen}
-        handleClose={handleClose}
-        handleBlockClick={handleDelete}
-        title={title}
-        contentOfDialog={contentOfDialog}
-      />
-      {isEditing ? (
-        <Box sx={{ marginTop: "100px" }}>
-          <Typography variant="h4" color="initial">
-            Update Category
-          </Typography>
-          <form onSubmit={formik.handleSubmit}>
-            <Box>
-              <TextField
-                disabled
-                id="category"
-                freeSolo
-                value={parentCategory.title}
-                style={{ width: "50%", marginTop: "30px" }}
-                // onChange={handleParentCategoryChange}
-                renderInput={(params) => (
-                  <TextField {...params} label="Category" />
-                )}
+    <>
+      {isLoader ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            marginTop: "18%",
+          }}
+        >
+          <FallingLines
+            color="#4fa94d"
+            width="200"
+            visible={true}
+            ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
+          />
+        </div>
+      ) : (
+        <>
+          {subCategory.length > 0 ? (
+            <Sidebar>
+              <DialogComponent
+                open={open}
+                handleClose={handleClose}
+                handleBlockClick={handleBlockClick}
+                title={title}
+                contentOfDialog={contentOfDialog}
               />
-            </Box>
-            <Box>
-              <TextField
-                label="Sub Category"
-                name="categoryName"
-                value={formik.values.categoryName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                margin="normal"
-                style={{ width: "50%" }}
+              <DialogComponent
+                open={deleteOpen}
+                handleClose={handleClose}
+                handleBlockClick={handleDelete}
+                title={title}
+                contentOfDialog={contentOfDialog}
               />
-              {formik.touched.categoryName && formik.errors.categoryName && (
-                <div style={{ color: "red" }}>{formik.errors.categoryName}</div>
-              )}
-            </Box>
-            <Box>
-              <Button
-                type="submit"
-                sx={{ marginRight: "30px" }}
-                variant="contained"
-                color="success"
-                onClick={updateSubCategory}
-              >
-                Update Category
-              </Button>
-              <Button
-                variant="contained"
-                onClick={() => setIsEditing(false)}
-                color="success"
-              >
-                cancel
-              </Button>
-            </Box>
-          </form>
-        </Box>
-      ) : null}
+              {isEditing ? (
+                <Box sx={{ marginTop: "100px", textAlign: "center" }}>
+                  <Typography variant="h4" color="initial">
+                    Update Category
+                  </Typography>
+                  <form onSubmit={formik.handleSubmit}>
+                    <Box>
+                      <TextField
+                        disabled
+                        id="category"
+                        freeSolo
+                        value={parentCategory.title}
+                        style={{ width: "50%", marginTop: "30px" }}
+                        // onChange={handleParentCategoryChange}
+                        renderInput={(params) => (
+                          <TextField {...params} label="Category" />
+                        )}
+                      />
+                    </Box>
+                    <Box>
+                      <TextField
+                        label="Sub Category"
+                        name="categoryName"
+                        value={formik.values.categoryName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        margin="normal"
+                        style={{ width: "50%" }}
+                      />
+                      {formik.touched.categoryName &&
+                        formik.errors.categoryName && (
+                          <div style={{ color: "red" }}>
+                            {formik.errors.categoryName}
+                          </div>
+                        )}
+                    </Box>
+                    <Box>
+                      <Button
+                        type="submit"
+                        sx={{ marginRight: "30px" }}
+                        variant="contained"
+                        color="success"
+                        onClick={updateSubCategory}
+                      >
+                        Update Category
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={() => setIsEditing(false)}
+                        color="success"
+                      >
+                        cancel
+                      </Button>
+                    </Box>
+                  </form>
+                </Box>
+              ) : null}
 
-      <Grid container>
-        <Grid item xs={11}>
-          <Box sx={{ height: "50px" }}>
-            <Stack direction="row" spacing={2} sx={{ marginTop: "70px" }}>
-              <ArrowBackIcon
-                sx={{ marginTop: "10px" }}
-                onClick={() => navigate("/add-category")}
-              />
-              <Typography variant="h4" color="initial">
-                Sub Category
-              </Typography>
-            </Stack>
-          </Box>
-          <Box sx={{ height: "50px" }}>
-            <TableContainer component={Paper} elevation={7}>
-              <Table
-                sx={{ minWidth: 500 }}
-                aria-label="custom pagination table"
-              >
-                <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
-                  <TableRow>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                      Sub Category
-                    </TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? subCategory.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : subCategory
-                  ).map((row, index) => (
-                    <TableRow
-                      key={row.title}
-                      sx={{
-                        cursor: "pointer",
-                        backgroundColor: row.is_active ? undefined : "#f5f5f5",
-                        "&:hover": {
-                          backgroundColor: row.is_active
-                            ? "rgba(0, 0, 0, 0.08)"
-                            : undefined,
-                        },
-                      }}
+              <Grid container>
+                <Grid item xs={11}>
+                  <Box sx={{ height: "50px" }}>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      sx={{ marginTop: "70px" }}
                     >
-                      <TableCell component="th" scope="row">
-                        <Stack direction="row" spacing={3}>
-                          <Typography variant="body1" color="initial">
-                            {index + 1}
-                          </Typography>
-                          <Typography variant="body1" color="initial">
-                            {row.title}
-                          </Typography>
-                        </Stack>
-                      </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
-                        <Tooltip title="Block">
-                          <BlockIcon
-                            className="blockIcon"
-                            sx={{ color: row.is_active ? undefined : "red" }}
-                            onClick={() => {
-                              setTitle(row.title);
-                              {
-                                row.is_active?setContentOfDialog(
-                                  "Are you sure you want to inactive this category?"
-                                ):
-                                setContentOfDialog(
-                                  "Are you sure you want to active this category?"
-                                  )
-                                }
-                              setOpen(true);
-                            }}
-                          />
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
-                        <Tooltip title="Edit">
-                          {row.is_active ? (
-                            <EditIcon
-                              disabled={!row.is_active ? true : false}
-                              onClick={() =>
-                                handleClick(row.title, row.id, row.parent_id)
-                              }
-                            />
-                          ) : (
-                            <EditIcon disabled />
+                      <ArrowBackIcon
+                        sx={{ marginTop: "10px" }}
+                        onClick={() => navigate("/add-category")}
+                      />
+                      <Typography variant="h4" color="initial">
+                        Sub Category
+                      </Typography>
+                    </Stack>
+                  </Box>
+                  <Box sx={{ height: "50px" }}>
+                    <TableContainer component={Paper} elevation={7}>
+                      <Table
+                        sx={{ minWidth: 500 }}
+                        aria-label="custom pagination table"
+                      >
+                        <TableHead
+                          sx={{ backgroundColor: "#4caf50", height: 50 }}
+                        >
+                          <TableRow>
+                            <TableCell
+                              sx={{ color: "white", fontWeight: "bold" }}
+                            >
+                              Sub Category
+                            </TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {(rowsPerPage > 0
+                            ? subCategory.slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                              )
+                            : subCategory
+                          ).map((row, index) => (
+                            <TableRow
+                              key={row.title}
+                              sx={{
+                                cursor: "pointer",
+                                backgroundColor: row.is_active
+                                  ? undefined
+                                  : "#f5f5f5",
+                                "&:hover": {
+                                  backgroundColor: row.is_active
+                                    ? "rgba(0, 0, 0, 0.08)"
+                                    : undefined,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                <Stack direction="row" spacing={3}>
+                                  <Typography variant="body1" color="initial">
+                                    {index + 1}
+                                  </Typography>
+                                  <Typography variant="body1" color="initial">
+                                    {row.title}
+                                  </Typography>
+                                </Stack>
+                              </TableCell>
+                              <TableCell style={{ width: 50 }} align="right">
+                                <Tooltip title="Block">
+                                  <BlockIcon
+                                    className="blockIcon"
+                                    sx={{
+                                      color: row.is_active ? undefined : "red",
+                                    }}
+                                    onClick={() => {
+                                      setTitle(row.title);
+                                      {
+                                        row.is_active
+                                          ? setContentOfDialog(
+                                              "Are you sure you want to inactive this category?"
+                                            )
+                                          : setContentOfDialog(
+                                              "Are you sure you want to active this category?"
+                                            );
+                                      }
+                                      setOpen(true);
+                                    }}
+                                  />
+                                </Tooltip>
+                              </TableCell>
+                              <TableCell style={{ width: 50 }} align="right">
+                                <Tooltip title="Edit">
+                                  {row.is_active ? (
+                                    <EditIcon
+                                      disabled={!row.is_active ? true : false}
+                                      onClick={() =>
+                                        handleClick(
+                                          row.title,
+                                          row.id,
+                                          row.parent_id
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <EditIcon disabled />
+                                  )}
+                                </Tooltip>
+                              </TableCell>
+                              <TableCell style={{ width: 50 }} align="right">
+                                <Tooltip title="Delete">
+                                  <DeleteIcon
+                                    onClick={() => {
+                                      setTitle(row.title);
+                                      setDeleteOpen(true);
+                                      setContentOfDialog(
+                                        "Are you sure you want to delete this category?"
+                                      );
+                                    }}
+                                  />
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+
+                          {emptyRows > 0 && (
+                            <TableRow style={{ height: 53 * emptyRows }}>
+                              <TableCell colSpan={6} />
+                            </TableRow>
                           )}
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
-                        <Tooltip title="Delete">
-                          <DeleteIcon onClick={() => 
-
-                            {
-                              setTitle(row.title);
-                              setDeleteOpen(true)
-                            setContentOfDialog("Are you sure you want to delete this category?")
-                            }} />
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: "All", value: -1 },
-                      ]}
-                      colSpan={3}
-                      count={subCategory.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
-          </Box>
-        </Grid>
-      </Grid>
-      
-    </Sidebar>
+                        </TableBody>
+                        <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              rowsPerPageOptions={[
+                                5,
+                                10,
+                                25,
+                                { label: "All", value: -1 },
+                              ]}
+                              colSpan={3}
+                              count={subCategory.length}
+                              rowsPerPage={rowsPerPage}
+                              page={page}
+                              SelectProps={{
+                                inputProps: {
+                                  "aria-label": "rows per page",
+                                },
+                                native: true,
+                              }}
+                              onPageChange={handleChangePage}
+                              onRowsPerPageChange={handleChangeRowsPerPage}
+                              ActionsComponent={TablePaginationActions}
+                            />
+                          </TableRow>
+                        </TableFooter>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Sidebar>
+          ) : (
+            <Sidebar>
+              <Box sx={{ marginTop: "100px", textAlign: "center" }}>
+                <Typography variant="h4" color="initial">
+                  No Sub Category
+                </Typography>
+                <Button variant="contained" onClick={() => navigate("/add-category")} color="success" >Back</Button>
+              </Box>
+            </Sidebar>
+          )}
+        </>
+      )}
+    </>
   );
 }
 export default SubCategory;

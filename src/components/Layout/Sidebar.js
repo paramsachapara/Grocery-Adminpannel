@@ -26,7 +26,7 @@ export default function ClippedDrawer({ children }) {
 
   const Logout = () => {
 
-      toast.success("Logout Successfully", {
+      toast.success("Logout Successfull", {
         position: "top-right",
         duration: 3000,
       });

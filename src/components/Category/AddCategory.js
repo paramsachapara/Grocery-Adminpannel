@@ -8,6 +8,7 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
+import { FallingLines } from "react-loader-spinner";
 import { Tooltip } from "@mui/material";
 import DialogComponent from "./ConfirmDialog";
 import TableHead from "@mui/material/TableHead";
@@ -114,14 +115,16 @@ function AddCategory() {
   const [collapsableCategory, setCollapsableCategory] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = useState(true);
-  const [catActive, setCatActive] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [deleteState, setDeleteState] = useState(true);
   const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [contentOfDialog, setContentOfDialog] = useState("");
+  const [isLoader, setIsLoader] = React.useState(true);
   const myRef = useRef(null);
-  const [contentOfDialog,setContentOfDialog]=useState('')
+
   const encryption = async (id) => {
     const config = {
       headers: {
@@ -143,6 +146,7 @@ function AddCategory() {
   };
 
   const handleClose = () => {
+    setDeleteOpen(false);
     setOpen(false);
   };
   const initialValues = {
@@ -378,7 +382,7 @@ function AddCategory() {
       });
   };
 
-  const handleDelete = (title) => {
+  const handleDelete = () => {
     let matchedCategory = categories.find((res) => res.title == title);
     const config = {
       headers: {
@@ -399,6 +403,7 @@ function AddCategory() {
             },
           })
           .then((res) => {
+            setDeleteOpen(false);
             toast.success(`${matchedCategory.title}` + "Deleted", {
               position: "top-right",
               autoClose: 3000,
@@ -433,6 +438,11 @@ function AddCategory() {
       .get("http://localhost:8080/api/v1/category/get-all-categories")
       .then((res) => {
         setCategories(res.data.data);
+        if (res) {
+          setTimeout(() => {
+            setIsLoader(false);
+          }, 500);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -442,7 +452,6 @@ function AddCategory() {
   useEffect(() => {
     if (categories) {
       const transformedData = categories.filter((res) => res.parent_id == null);
-
       setCollapsableCategory(transformedData);
     }
   }, [categories, active]);
@@ -464,357 +473,422 @@ function AddCategory() {
 
   return (
     <>
-      {subCategory ? (
-        <Sidebar>
-          <Box sx={{ height: "50px" }}>
-            <Typography variant="h4" sx={{ marginTop: "70px" }} color="initial">
-              Add Category
-            </Typography>
-          </Box>
-          <Grid>
-            <Box>
-              <form onSubmit={formik.handleSubmit}>
-                <Box>
-                  <TextField
-                    label="Category Name"
-                    name="categoryName"
-                    value={formik.values.categoryName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    margin="normal"
-                    style={{ width: "50%" }}
-                  />
-                  {formik.touched.categoryName &&
-                    formik.errors.categoryName && (
-                      <div style={{ color: "red" }}>
-                        {formik.errors.categoryName}
-                      </div>
-                    )}
-                </Box>
-                {edit ? (
-                  <Stack direction="row">
-                    <Button
-                      type="submit"
-                      sx={{ marginRight: "30px" }}
-                      variant="contained"
-                      color="success"
-                    >
-                      Add category
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => {
-                        setSubCategory(false);
-                      }}
-                    >
-                      Add sub category
-                    </Button>
-                  </Stack>
-                ) : (
-                  <Stack direction="row" spacing={3}>
-                    <Button
-                      variant="contained"
-                      onClick={updateCategory}
-                      color="success"
-                    >
-                      Update category
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        setEdit(true);
-                        formik.setFieldValue("categoryName", "");
-                      }}
-                      color="success"
-                    >
-                      Back
-                    </Button>
-                  </Stack>
-                )}
-              </form>
-            </Box>
-          </Grid>
-        </Sidebar>
+      {isLoader ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            marginTop: "18%",
+          }}
+        >
+          <FallingLines
+            color="#4fa94d"
+            width="200"
+            visible={true}
+            ariaLabel="falling-lines-loading"
+            className="mt-auto mb-auto"
+          />
+        </div>
       ) : (
-        <Sidebar>
-          <Grid>
-            <Box sx={{ height: "50px" }}>
-              <Typography
-                variant="h4"
-                sx={{ marginTop: "70px" }}
-                color="initial"
-              >
-                Add Category
-              </Typography>
-            </Box>
-            <Box>
-              <form onSubmit={formik.handleSubmit}>
+        <>
+          <DialogComponent
+            open={deleteOpen}
+            handleClose={handleClose}
+            handleBlockClick={handleDelete}
+            title={title}
+            contentOfDialog={contentOfDialog}
+          />
+          {subCategory ? (
+            <Sidebar>
+              <Box sx={{ height: "50px" }}>
+                <Typography
+                  variant="h4"
+                  sx={{ marginTop: "70px" }}
+                  color="initial"
+                >
+                  Add Category
+                </Typography>
+              </Box>
+              <Grid>
                 <Box>
-                  <Autocomplete
-                    id="category"
-                    freeSolo
-                    options={categories
-                      .filter((res) => res.parent_id == null)
-                      .map((option) => option.title)}
-                    value={value}
-                    onChange={(event, newValue) => {
-                      setValue(newValue);
-                    }}
-                    inputValue={inputValue}
-                    onInputChange={(event, newInputValue) => {
-                      setInputValue(newInputValue);
-                    }}
-                    style={{ width: "50%" }}
-                    // onChange={handleParentCategoryChange}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Category" />
+                  <form onSubmit={formik.handleSubmit}>
+                    <Box>
+                      <TextField
+                        label="Category Name"
+                        name="categoryName"
+                        value={formik.values.categoryName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        margin="normal"
+                        style={{ width: "50%" }}
+                      />
+                      {formik.touched.categoryName &&
+                        formik.errors.categoryName && (
+                          <div style={{ color: "red" }}>
+                            {formik.errors.categoryName}
+                          </div>
+                        )}
+                    </Box>
+                    {edit ? (
+                      <Stack direction="row">
+                        <Button
+                          type="submit"
+                          sx={{ marginRight: "30px" }}
+                          variant="contained"
+                          color="success"
+                        >
+                          Add category
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => {
+                            setSubCategory(false);
+                          }}
+                        >
+                          Add sub category
+                        </Button>
+                      </Stack>
+                    ) : (
+                      <Stack direction="row" spacing={3}>
+                        <Button
+                          variant="contained"
+                          onClick={updateCategory}
+                          color="success"
+                        >
+                          Update category
+                        </Button>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setEdit(true);
+                            formik.setFieldValue("categoryName", "");
+                          }}
+                          color="success"
+                        >
+                          Back
+                        </Button>
+                      </Stack>
                     )}
-                  />
+                  </form>
                 </Box>
-                <Box>
-                  <TextField
-                    label="Sub Category"
-                    name="categoryName"
-                    value={formik.values.categoryName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    margin="normal"
-                    style={{ width: "50%" }}
-                  />
-                  {formik.touched.categoryName &&
-                    formik.errors.categoryName && (
-                      <div style={{ color: "red" }}>
-                        {formik.errors.categoryName}
-                      </div>
-                    )}
-                </Box>
-                <Box>
-                  <Button
-                    type="submit"
-                    sx={{ marginRight: "30px" }}
-                    variant="contained"
-                    color="success"
+              </Grid>
+            </Sidebar>
+          ) : (
+            <Sidebar>
+              <Grid>
+                <Box sx={{ height: "50px" }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ marginTop: "70px" }}
+                    color="initial"
                   >
                     Add Category
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => setSubCategory(true)}
-                    color="success"
-                  >
-                    Back
-                  </Button>
+                  </Typography>
                 </Box>
-              </form>
-            </Box>
-          </Grid>
-        </Sidebar>
-      )}
-
-      {categories.length ? (
-        <Sidebar>
-          <Grid container spacing={2}>
-            <Grid item md={10}>
-              <TableContainer component={Paper} elevation={7}>
-                <Table
-                  sx={{ minWidth: 500 }}
-                  aria-label="custom pagination table"
-                >
-                  <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
-                    <TableRow>
-                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                        Category
-                      </TableCell>
-                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                        Sub Category
-                      </TableCell>
-                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                        Active Category
-                      </TableCell>
-                      <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                        In Active Category
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {(rowsPerPage > 0
-                      ? collapsableCategory.slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                      : collapsableCategory
-                    ).map((row, index) => (
-                      <TableRow
-                        key={row.title}
-                        sx={{
-                          cursor: "pointer",
-                          backgroundColor: row.is_active
-                            ? undefined
-                            : "#f5f5f5",
-                          "&:hover": {
-                            backgroundColor: row.is_active
-                              ? "rgba(0, 0, 0, 0.08)"
-                              : undefined,
-                          },
+                <Box>
+                  <form onSubmit={formik.handleSubmit}>
+                    <Box>
+                      <Autocomplete
+                        id="category"
+                        freeSolo
+                        options={categories
+                          .filter((res) => res.parent_id == null)
+                          .map((option) => option.title)}
+                        value={value}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
                         }}
-                      >
-                        <TableCell scope="row">
-                          <Stack direction="row" spacing={3}>
-                            <Typography
-                              variant="body1"
-                              color="initial"
-                              className="parentCategory"
-                            >
-                              {index + 1}
-                            </Typography>
-
-                            <Typography
-                              sx={{ width: "140px" }}
-                              variant="body1"
-                              color="initial"
-                              className="parentCategory"
-                              onClick={() => navigate(`sub-category/${row.id}`)}
-                            >
-                              {row.title}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-                        <TableCell scope="row">
-                          <Typography
-                            variant="body1"
-                            color="initial"
-                            className="parentCategory"
-                            onClick={() => navigate(`sub-category/${row.id}`)}
-                          >
-                            {
-                              categories.filter(
-                                (res) => res.parent_id == row.id
-                              ).length
-                            }{" "}
-                            Subcategories
-                          </Typography>
-                        </TableCell>
-                        <TableCell scope="row">
-                          <Typography
-                            variant="body1"
-                            color="initial"
-                            className="parentCategory"
-                            onClick={() => navigate(`sub-category/${row.id}`)}
-                          >
-                            {
-                              categories.filter(
-                                (res) =>
-                                  res.parent_id == row.id &&
-                                  res.is_active == true
-                              ).length
-                            }{" "}
-                            Active
-                          </Typography>
-                        </TableCell>
-                        <TableCell scope="row">
-                          <Typography
-                            variant="body1"
-                            color="initial"
-                            className="parentCategory"
-                            onClick={() => navigate(`sub-category/${row.id}`)}
-                          >
-                            {
-                              categories.filter(
-                                (res) =>
-                                  res.parent_id == row.id &&
-                                  res.is_active == false
-                              ).length
-                            }{" "}
-                            Inactive
-                          </Typography>
-                        </TableCell>
-                        <TableCell style={{ width: 50 }} align="right">
-                          <Tooltip title="Block">
-                            <BlockIcon
-                              className="blockIcon"
-                              sx={{ color: row.is_active ? undefined : "red" }}
-                              onClick={() => {
-                                setOpen(true);
-                                {
-                                  row.is_active?setContentOfDialog(
-                                    "Are you sure you want to inactive this category?"
-                                  ):
-                                  setContentOfDialog(
-                                    "Are you sure you want to active this category?"
-                                    )
-                                  }
-                                setCatActive(row.is_active);
-                                setTitle(row.title);
-                              }}
-                              ref={myRef}
-                            />
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell style={{ width: 50 }} align="right">
-                          <Tooltip title="Edit">
-                            <EditIcon onClick={() => handleClick(row.title)} />
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell style={{ width: 50 }} align="right">
-                          <Tooltip title="Delete">
-                            <DeleteIcon
-                              onClick={() => handleDelete(row.title)}
-                            />
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[
-                          5,
-                          10,
-                          25,
-                          { label: "All", value: -1 },
-                        ]}
-                        colSpan={3}
-                        count={collapsableCategory.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: {
-                            "aria-label": "rows per page",
-                          },
-                          native: true,
+                        inputValue={inputValue}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
                         }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
+                        style={{ width: "50%" }}
+                        // onChange={handleParentCategoryChange}
+                        renderInput={(params) => (
+                          <TextField {...params} label="Category" />
+                        )}
                       />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
-        </Sidebar>
-      ) : null}
+                    </Box>
+                    <Box>
+                      <TextField
+                        label="Sub Category"
+                        name="categoryName"
+                        value={formik.values.categoryName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        margin="normal"
+                        style={{ width: "50%" }}
+                      />
+                      {formik.touched.categoryName &&
+                        formik.errors.categoryName && (
+                          <div style={{ color: "red" }}>
+                            {formik.errors.categoryName}
+                          </div>
+                        )}
+                    </Box>
+                    <Box>
+                      <Button
+                        type="submit"
+                        sx={{ marginRight: "30px" }}
+                        variant="contained"
+                        color="success"
+                      >
+                        Add Category
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={() => setSubCategory(true)}
+                        color="success"
+                      >
+                        Back
+                      </Button>
+                    </Box>
+                  </form>
+                </Box>
+              </Grid>
+            </Sidebar>
+          )}
 
-      <DialogComponent
-        open={open}
-        handleClose={handleClose}
-        handleBlockClick={handleBlockClick}
-        title={title}
-        contentOfDialog={contentOfDialog}
-      />
+          {categories.length ? (
+            <Sidebar>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                  <TableContainer component={Paper} elevation={7}>
+                    <Table
+                      sx={{ minWidth: 500 }}
+                      aria-label="custom pagination table"
+                    >
+                      <TableHead
+                        sx={{ backgroundColor: "#4caf50", height: 50 }}
+                      >
+                        <TableRow>
+                          <TableCell
+                            sx={{ color: "white", fontWeight: "bold" }}
+                          >
+                            Category
+                          </TableCell>
+                          <TableCell
+                            sx={{ color: "white", fontWeight: "bold" }}
+                          >
+                            Sub Category
+                          </TableCell>
+                          <TableCell
+                            sx={{ color: "white", fontWeight: "bold" }}
+                          >
+                            Active Category
+                          </TableCell>
+                          <TableCell
+                            sx={{ color: "white", fontWeight: "bold" }}
+                          >
+                            In Active Category
+                          </TableCell>
+                          <TableCell></TableCell>
+                          <TableCell></TableCell>
+                          <TableCell></TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {(rowsPerPage > 0
+                          ? collapsableCategory.slice(
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage
+                            )
+                          : collapsableCategory
+                        ).map((row, index) => (
+                          <TableRow
+                            key={row.title}
+                            sx={{
+                              cursor: "pointer",
+                              backgroundColor: row.is_active
+                                ? undefined
+                                : "#f5f5f5",
+                              "&:hover": {
+                                backgroundColor: row.is_active
+                                  ? "rgba(0, 0, 0, 0.08)"
+                                  : undefined,
+                              },
+                            }}
+                          >
+                            <TableCell scope="row" onClick={() =>
+                                    navigate(`sub-category/${row.id}`)
+                                  }>
+                              <Stack direction="row" spacing={3}>
+                                <Typography
+                                  variant="body1"
+                                  color="initial"
+                                  className="parentCategory"
+                                >
+                                  {index + 1}
+                                </Typography>
+
+                                <Typography
+                                  sx={{ width: "140px" }}
+                                  variant="body1"
+                                  color="initial"
+                                  className="parentCategory"
+                                  
+                                >
+                                  {row.title}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                            <TableCell scope="row" onClick={() =>
+                                  navigate(`sub-category/${row.id}`)
+                                }>
+                              <Typography
+                                variant="body1"
+                                color="initial"
+                                className="parentCategory"
+                                
+                              >
+                                {
+                                  categories.filter(
+                                    (res) => res.parent_id == row.id
+                                  ).length
+                                }{" "}
+                                Subcategories
+                              </Typography>
+                            </TableCell>
+                            <TableCell scope="row" onClick={() =>
+                                  navigate(`sub-category/${row.id}`)
+                                }>
+                              <Typography
+                                variant="body1"
+                                color="initial"
+                                className="parentCategory"
+                                
+                              >
+                                {
+                                  categories.filter(
+                                    (res) =>
+                                      res.parent_id == row.id &&
+                                      res.is_active == true
+                                  ).length
+                                }{" "}
+                                Active
+                              </Typography>
+                            </TableCell>
+                            <TableCell scope="row">
+                              <Typography
+                                variant="body1"
+                                color="initial"
+                                className="parentCategory"
+                                onClick={() =>
+                                  navigate(`sub-category/${row.id}`)
+                                }
+                              >
+                                {
+                                  categories.filter(
+                                    (res) =>
+                                      res.parent_id == row.id &&
+                                      res.is_active == false
+                                  ).length
+                                }{" "}
+                                Inactive
+                              </Typography>
+                            </TableCell>
+                            <TableCell style={{ width: 50 }} align="right">
+                              <Tooltip title="Block">
+                                <BlockIcon
+                                  className="blockIcon"
+                                  sx={{
+                                    color: row.is_active ? undefined : "red",
+                                  }}
+                                  onClick={() => {
+                                    setOpen(true);
+                                    {
+                                      row.is_active
+                                        ? setContentOfDialog(
+                                            "Are you sure you want to inactive this category?"
+                                          )
+                                        : setContentOfDialog(
+                                            "Are you sure you want to active this category?"
+                                          );
+                                    }
+
+                                    setTitle(row.title);
+                                  }}
+                                  ref={myRef}
+                                />
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell style={{ width: 50 }} align="right">
+                              <Tooltip title="Edit">
+                                <EditIcon
+                                  onClick={() => {
+                                    setSubCategory(true);
+                                    handleClick(row.title);
+                                  }}
+                                />
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell style={{ width: 50 }} align="right">
+                              <Tooltip title="Delete">
+                                <DeleteIcon
+                                  onClick={() => {
+                                    setTitle(row.title);
+                                    setDeleteOpen(true);
+                                    setContentOfDialog(
+                                      "Are you sure you want to delete this category?"
+                                    );
+                                  }}
+                                />
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            rowsPerPageOptions={[
+                              5,
+                              10,
+                              25,
+                              { label: "All", value: -1 },
+                            ]}
+                            colSpan={3}
+                            count={collapsableCategory.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            SelectProps={{
+                              inputProps: {
+                                "aria-label": "rows per page",
+                              },
+                              native: true,
+                            }}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActions}
+                          />
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              </Grid>
+            </Sidebar>
+          ) : null}
+
+          <DialogComponent
+            open={open}
+            handleClose={handleClose}
+            handleBlockClick={handleBlockClick}
+            title={title}
+            contentOfDialog={contentOfDialog}
+          />
+        </>
+      )}
     </>
   );
 }
