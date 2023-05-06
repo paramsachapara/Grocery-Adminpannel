@@ -18,6 +18,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import Sidebar from '../Layout/Sidebar'
+import { FallingLines } from "react-loader-spinner";
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -163,6 +165,8 @@ export default function CustomersList() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
   const [originalRows, setOriginalRows] = React.useState([]);
+  const [isLoader, setIsLoader] = React.useState(true);
+
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem('token'))
@@ -174,9 +178,15 @@ export default function CustomersList() {
           },
         })
         .then((res) => {
-          setRows(res.data.data);
-          setOriginalRows(res.data.data);
-          console.log(res)
+          if(res){
+            setTimeout(()=>{
+              setIsLoader(false)
+            },1000)
+            setRows(res.data.data);
+            setOriginalRows(res.data.data);
+            console.log(res)
+
+          }
         })
         .catch((error) => {
           console.log(error, "error");
@@ -238,7 +248,27 @@ export default function CustomersList() {
     color: "grey",
     fontWeight: "light",
   };
-  return originalRows && originalRows.length > 0 ? (
+  return  isLoader ? (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        marginTop:"18%"
+      }}
+    >
+      <FallingLines
+        color="#4fa94d"
+        width="200"
+        visible={true}
+        ariaLabel="falling-lines-loading"
+        className="mt-auto mb-auto"
+      />
+    </div>
+  ) : (
+  <>
+  {originalRows && originalRows.length > 0 ? (
     <Box sx={{display:'flex'}}>
     <Sidebar></Sidebar>
    
@@ -409,7 +439,8 @@ export default function CustomersList() {
       No Customers Available
     </Box>
     </Box>
-
+  )}
+</>
   );
  
   
