@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Drawer from "@mui/material/Drawer";
 import { useState } from "react";
 import InboxIcon from "@mui/icons-material/Inbox";
@@ -29,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 
 // const pages = ["Dashboard", "ORDER LIST", "All PRODUCT"];
-const settings = ["Profile", "Logout"];
+const settings = ["Logout"];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -60,7 +61,7 @@ function Navbar() {
   const navigate = useNavigate();
   const Logout = (setting) => {
     if (setting === "Logout") {
-      toast.success("Logout Successfully", {
+      toast.success("Logout Successfull", {
         position: "top-right",
         duration: 3000,
       });
@@ -119,7 +120,7 @@ function Navbar() {
         </Box>
 
         {/* ----- */}
-        <ShoppingCartIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+        {/* <ShoppingCartIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} /> */}
         <Typography
           variant="h5"
           noWrap
@@ -145,7 +146,7 @@ function Navbar() {
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+             <AccountCircleIcon style={{ color: "white", fontSize: "40px" }} />
             </IconButton>
           </Tooltip>
           <Menu

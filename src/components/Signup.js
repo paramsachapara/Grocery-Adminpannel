@@ -26,12 +26,12 @@ const initialValues = {
 function Signup() {
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
-      toast.success("Oops,You Already Login", {
+      toast.success("You are Already Logged in", {
         position: "top-right",
         duration: 3000,
       });
       setTimeout(() => {
-        navigate("/home");
+        navigate("/add-product");
       }, 1500);
     }
   });
@@ -60,7 +60,7 @@ function Signup() {
           .then(function (login_res) {
             if (login_res) {
               console.log("login_res data", login_res);
-              toast.success("Signup Successfully", {
+              toast.success("Signup Successfull", {
                 position: "top-right",
                 duration: 3000,
               });

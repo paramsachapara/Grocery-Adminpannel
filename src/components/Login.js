@@ -23,7 +23,7 @@ const initialValues = {
 function Login() {
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
-      toast.success("Oops,You Already Login", {
+      toast.success("You Already Logged in", {
         position: "top-right",
         duration: 3000,
       });

@@ -11,13 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-a{
+/* a{
   text-decoration: none;
-}
- a.active{
+  color: rgb(81, 77, 77);
+} */
+
+.activeLink .active{
   text-decoration: none;
   font-weight: bold;
-  color: rgb(139, 230, 139);
+  background-color: #4caf50;
+  color: white;
 }
 .blockIcon:hover{
   color: red;

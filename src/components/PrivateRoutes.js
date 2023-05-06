@@ -6,7 +6,7 @@ export default function PrivateRoutes(){
   const [istoast,setIsToast] = useState(false);
     
   const Not_Authenticate=()=>{
-    toast.error("Oops,You Already Login", {
+    toast.error("You are Already Logeed in", {
       position: "top-right",
       duration: 3000,
     })
