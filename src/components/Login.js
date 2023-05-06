@@ -27,7 +27,7 @@ function Login() {
         position: "top-right",
         duration: 3000,
       });
-      navigate("/home");
+      navigate("/");
     }
   });
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ function Login() {
           .request(options)
           .then(function (login_res) {
             if (login_res) {
-              toast.success("Login Successfully", {
+              toast.success("Login Successfull", {
                 position: "top-right",
                 duration: 3000,
               });
@@ -56,7 +56,7 @@ function Login() {
                 JSON.stringify(login_res.data.data.token)
               );
               setTimeout(() => {
-                navigate("/home");
+                navigate("/");
               }, 1500);
             }
           })
@@ -73,12 +73,7 @@ function Login() {
             );
           });
         action.resetForm();
-      } else {
-        toast.error("You are already logged in", {
-          position: "top-right",
-          duration: 3000,
-        });
-      }
+      } 
     },
 
     validationSchema: LoginSchema,

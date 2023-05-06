@@ -20,6 +20,7 @@ import { toast } from "react-hot-toast";
 import EditProductDialog from "./EditProductDialog";
 import ConfirmDelete from "../Customers/ConfirmDelete";
 import { FallingLines } from "react-loader-spinner";
+import {Typography} from "@mui/material";
 
 
 
@@ -298,6 +299,13 @@ function AllProduct() {
                 },
               }}
             >
+                <Typography
+                  variant="h4"
+                  sx={{marginY:'10px'}}
+                  color="initial"
+                >
+                  All Products
+                </Typography>
               <Paper elevation={24} variant="outlined">
 
               <Table sx={{ padding: "0 16px", }}>

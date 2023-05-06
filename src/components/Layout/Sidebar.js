@@ -39,12 +39,12 @@ export default function ClippedDrawer({ children }) {
   };
 
 
-  const Logout = () => {
+  const handleLogoutClick = () => {
     toast.success("Logout Successfull", {
       position: "top-right",
       duration: 3000,
     });
-    sessionStorage.removeItem("token");
+    sessionStorage.clear();
     setTimeout(() => {
       navigate("/login");
     }, 1500);
@@ -82,14 +82,14 @@ export default function ClippedDrawer({ children }) {
                 overflow: "auto",
               }}
             >
-             <List className="activeLink">
+            <List className="activeLink">
       {[
         { text: "Add Product", icon: <AddProductIcon /> },
         { text: "All Product", icon: <AllProductsIcon /> },
         { text: "Add Category", icon: <AddCategoryIcon /> },
         { text: "Order list", icon: <OrdersIcon /> },
         { text: "Customer list", icon: <CustomersIcon /> },
-        { text: "Logout", icon: <LogoutIcon /> },
+        { text: "Logout", icon: <LogoutIcon />, onClick: handleLogoutClick },
       ].map((item, index) => (
         <Box key={index}>
           <ListItem
@@ -99,11 +99,12 @@ export default function ClippedDrawer({ children }) {
             onClick={(event) => handleListItemClick(event, index)}
           >
             <ListItemButton
-              component={NavLink}
-              to={"/" + item.text.toLowerCase().replace(" ", "-")}
+              component={item.onClick ? "button" : NavLink}
+              to={item.onClick ? undefined : `/${item.text.toLowerCase().replace(" ", "-")}`}
+              onClick={item.onClick}
               sx={
                 selected === index
-                  ? { backgroundColor: " #4caf50",color:'white' }
+                  ? { backgroundColor: " #4caf50", color: "white" }
                   : {}
               }
             >

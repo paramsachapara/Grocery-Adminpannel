@@ -26,10 +26,10 @@ const initialValues = {
 function Signup() {
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
-      toast.success("You are Already Logged in", {
-        position: "top-right",
-        duration: 3000,
-      });
+      // toast.success("You are Already Logged in", {
+      //   position: "top-right",
+      //   duration: 3000,
+      // });
       setTimeout(() => {
         navigate("/add-product");
       }, 1500);
@@ -81,10 +81,10 @@ function Signup() {
           });
         action.resetForm();
       } else {
-        toast.error("You are already logged in", {
-          position: "top-right",
-          duration: 3000,
-        });
+        // toast.error("You are already logged in", {
+        //   position: "top-right",
+        //   duration: 3000,
+        // });
       }
     },
 

@@ -19,6 +19,7 @@ import { TextField, InputAdornment } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import Sidebar from '../Layout/Sidebar'
 import { FallingLines } from "react-loader-spinner";
+import { Typography } from "@material-ui/core";
 
 
 function descendingComparator(a, b, orderBy) {
@@ -117,6 +118,8 @@ function EnhancedTableHead(props) {
   };
 
   return (
+   <>
+   
     <TableHead sx={{ backgroundColor: "#4caf50", height: 50 }}>
       <TableRow>
         <TableCell padding="checkbox"  style={{fontWeight:'bolder',color:'white'}}>Sr No.</TableCell>
@@ -144,6 +147,7 @@ function EnhancedTableHead(props) {
         ))}
       </TableRow>
     </TableHead>
+    </>
   );
 }
 
@@ -274,9 +278,16 @@ export default function CustomersList() {
    
   
     <Box
-      sx={{ width: "100%", marginTop: 15, marginRight: 7, overflowX: "auto" }}
+      sx={{ width: "100%", marginTop: 10, marginRight: 7, overflowX: "auto" }}
     >
       <Paper sx={{ width: "100%", mb: 2 }}>
+      <Typography
+                  variant="h4"
+                  sx={{marginY:'10px'}}
+                  color="initial"
+                >
+                  Customers List
+                </Typography>
         <TextField
           variant="outlined"
           label="Search customer"
