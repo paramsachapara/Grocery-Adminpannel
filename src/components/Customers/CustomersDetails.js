@@ -295,12 +295,12 @@ function CustomersDetails() {
                             style={{ display: "flex", alignItems: "center" }}
                             key={address.id}
                           >
-                            {address.tag === "home" ? (
+                            {address.tag === "HOME" ? (
                               <Tooltip title="Home">
                               <HomeIcon style={{ marginRight: "5px" }} />
                               </Tooltip>
                             ) : (
-                              <Tooltip title="Office">
+                              <Tooltip title="OFFICE">
                               <BusinessIcon style={{ marginRight: "5px" }} />
                               </Tooltip>
 
