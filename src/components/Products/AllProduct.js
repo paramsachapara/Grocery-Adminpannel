@@ -19,6 +19,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { toast } from "react-hot-toast";
 import EditProductDialog from "./EditProductDialog";
 import ConfirmDelete from "../Customers/ConfirmDelete";
+import { FallingLines } from "react-loader-spinner";
+import {Typography} from "@mui/material";
+
 
 
 function AllProduct() {
@@ -32,6 +35,7 @@ function AllProduct() {
   const [openUnblockDialog, setOpenUnblockDialog] = useState(false);
   const [title, setTitle] = useState("");
   const [id, setId] = useState("");
+  const [isLoader, setIsLoader] = React.useState(true);
 
   // Fetch data on component mount
  
@@ -157,11 +161,16 @@ function AllProduct() {
       axios
         .request(options)
         .then((response) => {
-          let data;
-          console.log("All product response", response);
-          data = response.data.data;
-          setTableData(data);
-          console.log("res data", data);
+          if(response){
+            let data;
+            console.log("All product response", response);
+            data = response.data.data;
+            setTableData(data);
+            console.log("res data", data);
+            setTimeout(()=>{
+              setIsLoader(false)
+            },1500)
+          }
         })
         .catch(function (error) {
           console.error(error);
@@ -251,6 +260,25 @@ function AllProduct() {
   
 
   return (
+    isLoader ? (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          marginTop:"18%"
+        }}
+      >
+        <FallingLines
+          color="#4fa94d"
+          width="200"
+          visible={true}
+          ariaLabel="falling-lines-loading"
+          className="mt-auto mb-auto"
+        />
+      </div>
+    ) : (
     <>
       <Sidebar>
       
@@ -271,6 +299,13 @@ function AllProduct() {
                 },
               }}
             >
+                <Typography
+                  variant="h4"
+                  sx={{marginY:'10px'}}
+                  color="initial"
+                >
+                  All Products
+                </Typography>
               <Paper elevation={24} variant="outlined">
 
               <Table sx={{ padding: "0 16px", }}>
@@ -384,7 +419,7 @@ function AllProduct() {
         contentForDeleteDialog="Are you sure you want to Unblock this customer?"
       ></ConfirmDelete>
     </>
-  );
+  ));
 }
 
 export default AllProduct;

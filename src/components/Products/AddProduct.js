@@ -1,5 +1,6 @@
 import Sidebar from "../../components/Layout/Sidebar";
 import * as React from "react";
+import { FallingLines } from "react-loader-spinner";
 
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,7 +9,7 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 import Container from "@mui/material/Container";
-
+import { Typography } from "@material-ui/core";
 import { ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Layout/Navbar";
 import {
@@ -37,6 +38,11 @@ export default function AddProduct() {
   const [categoryName, setcategoryName] = React.useState([]);
   const [categoryId, setcategoryId] = React.useState([]);
   const [category, setCategory] = React.useState([]);
+  const [isLoader, setIsLoader] = React.useState(true);
+
+  setTimeout(()=>{
+    setIsLoader(false)
+  },1500)
 
   React.useEffect(() => {
     axios
@@ -160,6 +166,25 @@ export default function AddProduct() {
   });
 
   return (
+    isLoader ? (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          marginTop:"18%"
+        }}
+      >
+        <FallingLines
+          color="#4fa94d"
+          width="200"
+          visible={true}
+          ariaLabel="falling-lines-loading"
+          className="mt-auto mb-auto"
+        />
+      </div>
+    ) : (
     <ThemeProvider theme={theme}>
       <Container component="main" >
         <CssBaseline />
@@ -174,6 +199,13 @@ export default function AddProduct() {
             alignItems: "center",
           }}
         >
+         <Typography
+                  variant="h4"
+                  sx={{marginY:'10px'}}
+                  color="initial"
+                >
+                  Add Product
+                </Typography>
           <Box component="form" sx={{ mt: 3 }} onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6}>
@@ -407,5 +439,5 @@ export default function AddProduct() {
         </Sidebar>
       </Container>
     </ThemeProvider>
-  );
+  ));
 }

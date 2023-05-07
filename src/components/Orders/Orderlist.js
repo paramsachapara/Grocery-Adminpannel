@@ -136,48 +136,52 @@ export default function Orderlist() {
       ) : (
         <>
         <Sidebar>
-      <Box sx={{ height: "100px" }} />
+      <Box sx={{ height: "60px" }} />
           {orderData ? (
             orderData.length > 0 ? (
               <>
                 {orderData ? (
-                  <Typography variant="h2" gutterBottom align="center">
-                    Order List
-                  </Typography>
+                  <Typography
+                  variant="h4"
+                  // sx={{marginY:'10px'}}
+                  color="initial"
+                >
+                  Orders
+                </Typography>
                 ) : null}
-                <Typography variant="h6" gutterBottom align="right">
+                <Typography variant="h6"  align="right">
                   Total Orders {orderData.length}
                 </Typography>
                 <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <TableHead >
+                    <TableHead  sx={{backgroundColor:'#4caf50'}}>
                       <TableRow>
                         <TableCell
-                          style={{ fontWeight: "bolder" }}
+                          style={{ fontWeight: "bolder",color:'white' }}
                           align="left"
                         >
                           Sr. No.
                         </TableCell>
                         <TableCell
-                          style={{ fontWeight: "bolder" }}
+                          style={{ fontWeight: "bolder",color:'white' }}
                           align="left"
                         >
                           Username
                         </TableCell>
                         <TableCell
-                          style={{ fontWeight: "bolder" }}
+                          style={{ fontWeight: "bolder",color:'white' }}
                           align="left"
                         >
                           Order Date
                         </TableCell>
                         <TableCell
-                          style={{ fontWeight: "bolder" }}
+                          style={{ fontWeight: "bolder",color:'white' }}
                           align="left"
                         >
                           Estimate Delivery Date
                         </TableCell>
                         <TableCell
-                          style={{ fontWeight: "bolder" }}
+                          style={{ fontWeight: "bolder",color:'white' }}
                           align="left"
                         >
                           Paid Amount

@@ -25,7 +25,7 @@ const App = () => {
   return (
     <Routes>
       <Route element={<PrivateRoutes />}>
-        <Route path="/home" element={<Home />} />
+        {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/add-product" element={<AddProduct />} />
         <Route path="/all-product" element={<AllProduct />}></Route>
         <Route path="/customer-list" element={<CustomersList />} />

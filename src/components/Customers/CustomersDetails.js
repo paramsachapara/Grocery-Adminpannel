@@ -25,6 +25,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
 import { color } from "@mui/system";
 import { Toast, Toaster, toast } from "react-hot-toast";
+import { FallingLines } from "react-loader-spinner";
 
 function CustomersDetails() {
   const { customerId } = useParams();
@@ -35,6 +36,7 @@ function CustomersDetails() {
   const [openConfirmBlockDialog, setOpenConfirmBlockDialog] = useState(false);
   const [openConfirmUnblockDialog, setOpenConfirmUnblockDialog] =
     useState(false);
+  const [isLoader, setIsLoader] = React.useState(true);
 
   const navigate = useNavigate();
 
@@ -51,8 +53,14 @@ function CustomersDetails() {
           },
         })
         .then((res) => {
-          setUserDetails(res.data.data);
-          console.log(res.data.data, "res.data.data");
+          if(res){
+            setTimeout(()=>{
+              setIsLoader(false)
+            },1000)
+            setUserDetails(res.data.data);
+            console.log(res.data.data, "res.data.data");
+
+          }
         })
         .catch((error) => {
           console.log(error, "error");
@@ -184,6 +192,25 @@ function CustomersDetails() {
   };
   console.log(userDetails);
   return (
+    isLoader ? (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          marginTop:"18%"
+        }}
+      >
+        <FallingLines
+          color="#4fa94d"
+          width="200"
+          visible={true}
+          ariaLabel="falling-lines-loading"
+          className="mt-auto mb-auto"
+        />
+      </div>
+    ) : (
     <>
       <div>
         <Toaster />
@@ -215,21 +242,20 @@ function CustomersDetails() {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            
-             { userDetails.is_active ? (
-                <Tooltip title="Block">
-                  <IconButton onClick={blockCustomer}>
-                    <BlockIcon />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Tooltip title="Unblock">
-                  <IconButton onClick={unblockCustomer}>
-                    <BlockIcon sx={{ color: "red" }} />
-                  </IconButton>
-                </Tooltip>
-              )
-            }
+
+            {userDetails.is_active ? (
+              <Tooltip title="Block">
+                <IconButton onClick={blockCustomer}>
+                  <BlockIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Unblock">
+                <IconButton onClick={unblockCustomer}>
+                  <BlockIcon sx={{ color: "red" }} />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Box>
         <TableContainer component={Paper} elevation={10}>
@@ -295,15 +321,14 @@ function CustomersDetails() {
                             style={{ display: "flex", alignItems: "center" }}
                             key={address.id}
                           >
-                            {address.tag === "home" ? (
+                            {address.tag === "HOME" ? (
                               <Tooltip title="Home">
-                              <HomeIcon style={{ marginRight: "5px" }} />
+                                <HomeIcon style={{ marginRight: "5px" }} />
                               </Tooltip>
                             ) : (
-                              <Tooltip title="Office">
-                              <BusinessIcon style={{ marginRight: "5px" }} />
+                              <Tooltip title="OFFICE">
+                                <BusinessIcon style={{ marginRight: "5px" }} />
                               </Tooltip>
-
                             )}
                             {address.address_line_1 +
                               "," +
@@ -362,7 +387,7 @@ function CustomersDetails() {
         contentForDeleteDialog="Are you sure you want to Unblock this customer?"
       />
     </>
-  );
+  ));
 }
 
 export default CustomersDetails;
