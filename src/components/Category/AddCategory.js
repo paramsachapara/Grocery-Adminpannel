@@ -122,7 +122,7 @@ function AddCategory() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [contentOfDialog, setContentOfDialog] = useState("");
-  const [isLoader, setIsLoader] = React.useState(true);
+  const [isLoader, setIsLoader] = React.useState(false);
   const myRef = useRef(null);
 
   const encryption = async (id) => {

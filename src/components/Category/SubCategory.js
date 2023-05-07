@@ -123,7 +123,7 @@ function SubCategory() {
   const [title, setTitle] = useState(null);
   const [isCategoryDeleted, setIsCategoryDeleted] = useState(false);
   const [contentOfDialog, setContentOfDialog] = useState("");
-  const [isLoader, setIsLoader] = React.useState(true);
+  const [isLoader, setIsLoader] = React.useState(false);
 
   const navigate = useNavigate();
 
